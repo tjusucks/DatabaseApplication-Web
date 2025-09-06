@@ -27,11 +27,14 @@ body {
 }
 
 #app {
+  width: 100%;
   height: 100vh;
   overflow: hidden;
+  margin: 0;
+  padding: 0;
 }
 
-/* 滚动条样式 */
+/* Custom scrollbar styles */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -51,7 +54,7 @@ body {
   background: #a8a8a8;
 }
 
-/* Element Plus 样式覆盖 */
+/* Element Plus style overrides */
 .el-card {
   border-radius: 8px;
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
@@ -65,7 +68,7 @@ body {
   border-radius: 4px;
 }
 
-/* 响应式工具类 */
+/* Responsive utility classes */
 .hidden-xs {
   display: block;
 }
@@ -83,6 +86,20 @@ body {
 @media (max-width: 992px) {
   .hidden-sm {
     display: none !important;
+  }
+}
+
+/* Ultra-wide screen optimizations */
+@media (min-width: 1920px) {
+  body {
+    font-size: 16px;
+  }
+}
+
+/* Minimum width constraint for desktop */
+@media (min-width: 1024px) {
+  #app {
+    min-width: 1024px;
   }
 }
 </style>

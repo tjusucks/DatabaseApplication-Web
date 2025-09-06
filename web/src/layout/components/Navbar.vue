@@ -3,88 +3,78 @@
     <!-- 左侧区域 -->
     <div class="navbar-left">
       <!-- 折叠按钮 -->
-      <el-button 
-        type="text" 
-        @click="toggleSidebar"
-        class="collapse-btn"
-      >
+      <el-button type="text" @click="toggleSidebar" class="collapse-btn">
         <el-icon size="20">
           <Expand v-if="appStore.sidebarCollapsed" />
           <Fold v-else />
         </el-icon>
       </el-button>
     </div>
-    
+
     <!-- 右侧区域 -->
     <div class="navbar-right">
       <!-- 全屏按钮 -->
       <el-tooltip content="全屏" placement="bottom">
-        <el-button 
-          type="text" 
-          @click="toggleFullscreen"
-          class="action-btn"
-        >
+        <el-button type="text" @click="toggleFullscreen" class="action-btn">
           <el-icon size="18">
             <FullScreen />
           </el-icon>
         </el-button>
       </el-tooltip>
-      
+
       <!-- 主题切换 -->
       <el-tooltip content="切换主题" placement="bottom">
-        <el-button 
-          type="text" 
-          @click="toggleTheme"
-          class="action-btn"
-        >
+        <el-button type="text" @click="toggleTheme" class="action-btn">
           <el-icon size="18">
             <Sunny v-if="appStore.theme === 'light'" />
             <Moon v-else />
           </el-icon>
         </el-button>
       </el-tooltip>
-      
+
       <!-- 消息通知 -->
       <el-tooltip content="消息通知" placement="bottom">
         <el-badge :value="notificationCount" :hidden="notificationCount === 0">
-          <el-button 
-            type="text" 
-            @click="showNotifications"
-            class="action-btn"
-          >
+          <el-button type="text" @click="showNotifications" class="action-btn">
             <el-icon size="18">
               <Bell />
             </el-icon>
           </el-button>
         </el-badge>
       </el-tooltip>
-      
+
       <!-- 用户信息下拉菜单 -->
       <el-dropdown @command="handleUserCommand" class="user-dropdown">
         <div class="user-info">
-          <el-avatar 
-            :size="32" 
-            :src="userStore.avatar"
-            class="user-avatar"
-          >
-            <el-icon><User /></el-icon>
+          <el-avatar :size="32" :src="userStore.avatar" class="user-avatar">
+            <el-icon>
+              <User />
+            </el-icon>
           </el-avatar>
           <span class="user-name">{{ userStore.userName }}</span>
-          <el-icon class="dropdown-icon"><ArrowDown /></el-icon>
+          <el-icon class="dropdown-icon">
+            <ArrowDown />
+          </el-icon>
         </div>
-        
+
         <template #dropdown>
           <el-dropdown-menu>
             <el-dropdown-item command="profile">
-              <el-icon><User /></el-icon>
+              <el-icon>
+                <User />
+              </el-icon>
               个人中心
             </el-dropdown-item>
             <el-dropdown-item command="settings">
-              <el-icon><Setting /></el-icon>
+              <el-icon>
+                <Setting />
+              </el-icon>
               个人设置
             </el-dropdown-item>
             <el-dropdown-item divided command="logout">
-              <el-icon><SwitchButton /></el-icon>
+              <el-icon>
+                <SwitchButton />
+              </el-icon>
               退出登录
             </el-dropdown-item>
           </el-dropdown-menu>
@@ -154,7 +144,7 @@ const handleUserCommand = async (command) => {
             type: 'warning'
           }
         )
-        
+
         await userStore.logout()
         router.push('/login')
       } catch (error) {
@@ -240,16 +230,16 @@ const handleUserCommand = async (command) => {
   transform: rotate(180deg);
 }
 
-/* 响应式设计 */
+/* Responsive design */
 @media (max-width: 768px) {
   .navbar {
     padding: 0 10px;
   }
-  
+
   .user-name {
     display: none;
   }
-  
+
   .navbar-right {
     gap: 5px;
   }

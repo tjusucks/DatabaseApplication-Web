@@ -4,19 +4,19 @@
     <div class="sidebar-container" :class="{ collapsed: appStore.sidebarCollapsed }">
       <Sidebar />
     </div>
-    
+
     <!-- 主内容区 -->
     <div class="main-container">
       <!-- 顶部导航栏 -->
       <div class="navbar-container">
         <Navbar />
       </div>
-      
+
       <!-- 面包屑导航 -->
       <div class="breadcrumb-container">
         <Breadcrumb />
       </div>
-      
+
       <!-- 页面内容 -->
       <div class="content-container">
         <router-view v-slot="{ Component }">
@@ -26,10 +26,12 @@
         </router-view>
       </div>
     </div>
-    
+
     <!-- 全局加载遮罩 -->
     <div v-if="appStore.globalLoading" class="global-loading">
-      <el-icon class="loading-icon"><Loading /></el-icon>
+      <el-icon class="loading-icon">
+        <Loading />
+      </el-icon>
     </div>
   </div>
 </template>
@@ -109,7 +111,7 @@ onMounted(() => {
   align-items: center;
 }
 
-/* 页面切换动画 */
+/* Page transition animations */
 .fade-transform-enter-active,
 .fade-transform-leave-active {
   transition: all 0.3s;
@@ -125,7 +127,7 @@ onMounted(() => {
   transform: translateX(-30px);
 }
 
-/* 响应式设计 */
+/* Responsive design */
 @media (max-width: 768px) {
   .sidebar-container {
     position: fixed;
@@ -136,13 +138,32 @@ onMounted(() => {
     transform: translateX(-100%);
     transition: transform 0.3s;
   }
-  
+
   .sidebar-container:not(.collapsed) {
     transform: translateX(0);
   }
-  
+
   .main-container {
     margin-left: 0;
+    width: 100%;
+  }
+}
+
+/* Large screen optimizations */
+@media (min-width: 1200px) {
+  .layout-container {
+    max-width: none;
+  }
+
+  .content-container {
+    padding: 24px;
+  }
+}
+
+/* Medium screen optimizations */
+@media (min-width: 769px) and (max-width: 1199px) {
+  .content-container {
+    padding: 20px;
   }
 }
 </style>
