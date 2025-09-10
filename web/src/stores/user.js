@@ -193,8 +193,8 @@ export const useUserStore = defineStore('user', () => {
       ElMessage.success('登录成功')
       return realData
     } catch (error) {
-      ElMessage.error('登录失败：' + (error.message || '未知错误'))
-      throw error
+      ElMessage.error("登录失败：" + (error.message || "未知错误"));
+      throw error;
     }
 
     // // --- 开发环境模拟登录 (立即生效) ---
