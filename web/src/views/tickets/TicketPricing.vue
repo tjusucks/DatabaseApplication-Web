@@ -1,25 +1,28 @@
 <template>
-  <PageTemplate title="价格管理" description="为不同票种设置在不同日期的价格">
-    <el-table :data="pricingRules" border>
-      <el-table-column prop="ticketType" label="票种" />
-      <el-table-column prop="dateType" label="日期类型" />
+  <PageTemplate title="价格管理" description="查看所有票种的价格规则">
+    <el-table :data="pricingRules" border v-loading="loading">
+      <el-table-column prop="ticketTypeName" label="票种" />
+      <el-table-column prop="description" label="规则描述" />
       <el-table-column prop="price" label="价格（元）" />
-      <el-table-column label="操作">
-        <template #default>
-          <el-button size="small">编辑</el-button>
-        </template>
-      </el-table-column>
     </el-table>
   </PageTemplate>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+// [已修正]
+import { useTicketStore } from "@/stores/tickets.js";
+import { storeToRefs } from "pinia";
 import PageTemplate from "@/components/PageTemplate.vue";
-const pricingRules = ref([
-  { ticketType: "成人票", dateType: "平日", price: "180.00" },
-  { ticketType: "成人票", dateType: "周末/节假日", price: "220.00" },
-  { ticketType: "儿童票", dateType: "平日", price: "90.00" },
-  { ticketType: "儿童票", dateType: "周末/节假日", price: "110.00" },
-]);
+
+const ticketStore = useTicketStore();
+const { pricingRules } = storeToRefs(ticketStore);
+const { fetchPricingRules } = ticketStore;
+const loading = ref(false);
+
+onMounted(async () => {
+  loading.value = true;
+  await fetchPricingRules();
+  loading.value = false;
+});
 </script>

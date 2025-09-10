@@ -1,54 +1,36 @@
 <template>
-  <PageTemplate
-    title="退票列表"
-    description="查看所有已处理和未处理的退票申请记录"
-    icon="Tickets"
-  >
-    <el-table :data="refunds" border>
+  <PageTemplate title="退票列表" description="查看所有退票申请记录">
+    <el-alert
+      type="warning"
+      title="后端接口开发中"
+      description="此页面功能暂不可用。"
+      show-icon
+      :closable="false"
+      style="margin-bottom: 20px"
+    ></el-alert>
+    <el-table :data="allRefunds.list" border v-loading="loading">
       <el-table-column prop="refundId" label="退票申请ID" />
       <el-table-column prop="bookingId" label="原预订号" />
-      <el-table-column prop="refundAmount" label="退款金额" />
-      <el-table-column prop="requestTime" label="申请时间" />
-      <el-table-column label="状态">
-        <template #default="{ row }">
-          <el-tag :type="statusMap[row.status].type">{{
-            statusMap[row.status].text
-          }}</el-tag>
-        </template>
-      </el-table-column>
+      <el-table-column prop="status" label="状态" />
     </el-table>
   </PageTemplate>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+// [已修正]
+import { useRefundStore } from "@/stores/tickets.js";
+import { storeToRefs } from "pinia";
 import PageTemplate from "@/components/PageTemplate.vue";
-const statusMap = {
-  PENDING: { text: "待审批", type: "warning" },
-  APPROVED: { text: "已批准", type: "success" },
-  REJECTED: { text: "已驳回", type: "danger" },
-};
-const refunds = ref([
-  {
-    refundId: "RF001",
-    bookingId: "BK20240520003",
-    refundAmount: "¥180.00",
-    requestTime: "2024-05-21 14:00",
-    status: "APPROVED",
-  },
-  {
-    refundId: "RF002",
-    bookingId: "BK20240520005",
-    refundAmount: "¥360.00",
-    requestTime: "2024-05-21 15:30",
-    status: "PENDING",
-  },
-  {
-    refundId: "RF003",
-    bookingId: "BK20240519012",
-    refundAmount: "¥180.00",
-    requestTime: "2024-05-20 10:00",
-    status: "REJECTED",
-  },
-]);
+
+const refundStore = useRefundStore();
+const { allRefunds } = storeToRefs(refundStore);
+const { fetchAllRefunds } = refundStore;
+const loading = ref(false);
+
+onMounted(async () => {
+  loading.value = true;
+  // await fetchAllRefunds();
+  loading.value = false;
+});
 </script>
