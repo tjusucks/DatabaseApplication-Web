@@ -1,33 +1,19 @@
 <template>
   <PageTemplate
     :title="`预订详情 - ${reservationId}`"
-    description="查看单个预订的详细信息、票据和游客资料"
-    icon="Document"
+    description="查看单个预订的详细信息"
   >
-    <el-descriptions v-if="details" border :column="2">
+    <el-descriptions
+      v-if="currentReservation"
+      border
+      :column="2"
+      v-loading="loading"
+    >
       <el-descriptions-item label="预订号">{{
-        details.bookingId
+        currentReservation.reservationId
       }}</el-descriptions-item>
-      <el-descriptions-item label="预订状态">
-        <el-tag type="success">{{ details.status }}</el-tag>
-      </el-descriptions-item>
-      <el-descriptions-item label="门票名称">{{
-        details.ticketName
-      }}</el-descriptions-item>
-      <el-descriptions-item label="数量">{{
-        details.quantity
-      }}</el-descriptions-item>
-      <el-descriptions-item label="总金额"
-        >¥{{ details.totalAmount }}</el-descriptions-item
-      >
-      <el-descriptions-item label="预订时间">{{
-        details.bookingTime
-      }}</el-descriptions-item>
-      <el-descriptions-item label="游客手机号">{{
-        details.visitorPhone
-      }}</el-descriptions-item>
-      <el-descriptions-item label="游客姓名">{{
-        details.visitorName
+      <el-descriptions-item label="状态">{{
+        currentReservation.status
       }}</el-descriptions-item>
     </el-descriptions>
     <el-skeleton v-else :rows="5" animated />
@@ -37,26 +23,21 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
+// [已修正]
+import { useReservationStore } from "@/stores/tickets.js";
+import { storeToRefs } from "pinia";
 import PageTemplate from "@/components/PageTemplate.vue";
 
 const route = useRoute();
+const reservationStore = useReservationStore();
 const reservationId = ref(route.params.id);
-const details = ref(null);
+const { currentReservation } = storeToRefs(reservationStore);
+const { fetchReservationById } = reservationStore;
+const loading = ref(false);
 
-onMounted(() => {
-  // 模拟API调用
-  setTimeout(() => {
-    details.value = {
-      id: reservationId.value,
-      bookingId: "BK20240521001",
-      status: "已确认",
-      ticketName: "成人全天票",
-      quantity: 2,
-      totalAmount: "360.00",
-      bookingTime: "2024-05-21 10:30:00",
-      visitorPhone: "138****1234",
-      visitorName: "张三",
-    };
-  }, 300);
+onMounted(async () => {
+  loading.value = true;
+  await fetchReservationById(reservationId.value);
+  loading.value = false;
 });
 </script>

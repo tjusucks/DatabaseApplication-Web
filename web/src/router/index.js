@@ -176,6 +176,17 @@ const routes = [
           roles: ['super_admin', 'ticket_manager'],
         },
       },
+      // [新增详情页路由]
+      {
+        path: "types/:id",
+        name: "TicketTypeDetail",
+        component: TicketTypeDetail,
+        meta: {
+          title: "价格规则管理",
+          roles: ["super_admin", "ticket_manager"],
+          hidden: true, // 不在侧边栏显示
+        },
+      },
     ],
   },
   // 预订管理路由
@@ -246,6 +257,17 @@ const routes = [
           roles: ['super_admin', 'ticket_manager'],
         },
       },
+      // [新增详情页路由]
+      {
+        path: `detail/:id`,
+        name: "PromotionDetail",
+        component: () => import("@/views/promotions/PromotionDetail.vue"),
+        meta: {
+          title: "活动详情管理",
+          roles: ["super_admin", "ticket_manager"],
+          hidden: true, // 不在侧边栏显示
+        },
+      },
       {
         path: 'create',
         name: 'PromotionCreate',
@@ -273,8 +295,25 @@ const routes = [
         },
       },
       {
-        path: ':id',
-        name: 'FacilityDetail',
+        path: "list",
+        name: "PromotionList",
+        component: () => import("@/views/promotions/PromotionList.vue"),
+        meta: { title: "优惠活动", roles: ["super_admin", "ticket_manager"] },
+      },
+      // [新增详情页路由]
+      {
+        path: "detail/:id",
+        name: "PromotionDetail",
+        component: () => import("@/views/promotions/PromotionDetail.vue"),
+        meta: {
+          title: "活动详情管理",
+          roles: ["super_admin", "ticket_manager"],
+          hidden: true, // 不在侧边栏显示
+        },
+      },
+      {
+        path: ":id",
+        name: "FacilityDetail",
         component: FacilityDetail,
         meta: {
           title: '设施详情',

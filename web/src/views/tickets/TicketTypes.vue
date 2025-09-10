@@ -1,38 +1,39 @@
 <template>
   <PageTemplate title="票种管理" description="管理公园的所有门票种类">
-    <el-button type="primary" icon="Plus" @click="dialogVisible = true" style="margin-bottom: 20px"
-      >新增票种</el-button
-    >
-    <el-table :data="ticketTypes" border>
-      <el-table-column prop="id" label="ID" width="100" />
+    <el-button type="primary" icon="Plus" style="margin-bottom: 20px">新增票种</el-button>
+    <el-table :data="ticketTypes" border v-loading="loading">
+      <el-table-column prop="ticketTypeId" label="ID" />
       <el-table-column prop="name" label="票种名称" />
-      <el-table-column prop="description" label="描述" />
       <el-table-column label="操作">
-        <template #default>
-          <el-button size="small">编辑</el-button>
-          <el-button size="small" type="danger">删除</el-button>
+        <template #default="{ row }">
+          <el-button size="small" type="primary" @click="managePricing(row.ticketTypeId)"
+            >管理价格</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
-    <el-dialog v-model="dialogVisible" title="新增票种">
-      <el-form label-width="100px">
-        <el-form-item label="票种名称"><el-input /></el-form-item>
-        <el-form-item label="描述"><el-input type="textarea" /></el-form-item>
-      </el-form>
-      <template #footer>
-        <el-button @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="dialogVisible = false">确认</el-button>
-      </template>
-    </el-dialog>
   </PageTemplate>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+// [已修正]
+import { useTicketStore } from '@/stores/tickets.js'
+import { storeToRefs } from 'pinia'
 import PageTemplate from '@/components/PageTemplate.vue'
-const dialogVisible = ref(false)
-const ticketTypes = ref([
-  { id: 1, name: '成人票', description: '适用于18周岁以上成人' },
-  { id: 2, name: '儿童票', description: '适用于1.2米-1.5米儿童' },
-])
+
+const router = useRouter()
+const ticketStore = useTicketStore()
+const { ticketTypes } = storeToRefs(ticketStore)
+const { fetchTicketTypes } = ticketStore
+const loading = ref(false)
+
+const managePricing = (id) => router.push(`/tickets/types/${id}`)
+
+onMounted(async () => {
+  loading.value = true
+  await fetchTicketTypes()
+  loading.value = false
+})
 </script>
