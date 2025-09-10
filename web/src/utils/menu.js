@@ -25,6 +25,12 @@ const fullMenuList = [
         roles: ['super_admin', 'operations_manager', 'customer_service']
       },
       {
+        path: '/visitors/members',
+        title: '会员管理',
+        icon: 'Star',
+        roles: ['super_admin', 'customer_service']
+      },
+      {
         path: '/visitors/blacklist',
         title: '黑名单管理',
         icon: 'CircleCloseFilled',
