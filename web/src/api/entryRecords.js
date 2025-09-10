@@ -10,7 +10,7 @@ export function createEntryRecord(data) {
   return request({
     url: '/api/user/entries',
     method: 'post',
-    data,
+    data
   })
 }
 
@@ -122,6 +122,90 @@ export function registerExit(data) {
 }
 
 /**
+ * 更新入园记录
+ * @param {string|number} id 记录ID
+ * @param {Object} data 更新数据
+ */
+export function updateEntryRecord(id, data) {
+  return request({
+    url: `/api/user/entries/${id}`,
+    method: 'put',
+    data
+  })
+}
+
+/**
+ * 删除入园记录
+ * @param {string|number} id 记录ID
+ */
+export function deleteEntryRecord(id) {
+  return request({
+    url: `/api/user/entries/${id}`,
+    method: 'delete'
+  })
+}
+
+/**
+ * 搜索入园记录，支持多条件筛选和分页
+ * @param {Object} params 搜索参数
+ */
+export function searchEntryRecords(params) {
+  return request({
+    url: '/api/user/entries/search',
+    method: 'get',
+    params
+  })
+}
+
+/**
+ * 获取入园记录统计数据
+ * @param {Object} params 统计参数
+ */
+export function getEntryRecordStats(params) {
+  return request({
+    url: '/api/user/entries/stats',
+    method: 'get',
+    params
+  })
+}
+
+/**
+ * 获取分组入园记录统计数据
+ * @param {Object} params 统计参数
+ */
+export function getGroupedEntryRecordStats(params) {
+  return request({
+    url: '/api/user/entries/stats/grouped',
+    method: 'get',
+    params
+  })
+}
+
+// 便捷函数 - 基于搜索API实现
+
+/**
+ * 注册游客入园
+ * @param {Object} data 入园数据 {visitorId, entryGate, ticketId?}
+ */
+export function registerEntry(data) {
+  return createEntryRecord({
+    ...data,
+    entryTime: new Date().toISOString()
+  })
+}
+
+/**
+ * 注册游客出园
+ * @param {Object} data 出园数据 {entryRecordId, exitGate}
+ */
+export function registerExit(data) {
+  return updateEntryRecord(data.entryRecordId, {
+    exitTime: new Date().toISOString(),
+    exitGate: data.exitGate
+  })
+}
+
+/**
  * 获取特定游客的入园记录
  * @param {string|number} visitorId 游客ID
  */
@@ -135,7 +219,7 @@ export function getEntryRecordsByVisitor(visitorId) {
 export function getCurrentVisitors() {
   return searchEntryRecords({
     isCurrentlyInPark: true,
-    includeVisitorInfo: true,
+    includeVisitorInfo: true
   })
 }
 
@@ -144,7 +228,7 @@ export function getCurrentVisitors() {
  */
 export function getCurrentVisitorCount() {
   return getEntryRecordStats({
-    statType: 'currentCount',
+    statType: 'currentCount'
   })
 }
 
@@ -155,7 +239,7 @@ export function getCurrentVisitorCount() {
 export function getEntryRecordsByDateRange(params) {
   return searchEntryRecords({
     startDate: params.startDate,
-    endDate: params.endDate,
+    endDate: params.endDate
   })
 }
 
@@ -166,7 +250,7 @@ export function getEntryRecordsByDateRange(params) {
 export function getDailyStatistics(params) {
   return getGroupedEntryRecordStats({
     groupBy: 'date',
-    ...params,
+    ...params
   })
 }
 
@@ -186,6 +270,6 @@ export function getActiveEntryRecord(visitorId) {
   return searchEntryRecords({
     visitorId,
     isCurrentlyInPark: true,
-    limit: 1,
+    limit: 1
   })
 }
