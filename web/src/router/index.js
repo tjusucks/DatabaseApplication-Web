@@ -230,6 +230,7 @@ const routes = [
       },
     ],
   },
+
   // 营销管理路由
   {
     path: '/promotions',
@@ -501,6 +502,7 @@ const routes = [
       },
     ],
   },
+
   // 404 页面
   {
     path: '/:pathMatch(.*)*',
