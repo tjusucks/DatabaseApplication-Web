@@ -84,7 +84,7 @@ const resetForm = () => {
 
 const handleSubmit = async () => {
   if (!saleFormRef.value) return;
-  await saleFormRef.value.validate(async (valid) => {
+  await saleFormRef.value.validate((valid) => {
     if (valid) {
       isSubmitting.value = true;
       const saleData = { ...saleForm, totalPrice: totalPrice.value };

@@ -1,8 +1,5 @@
 <template>
-  <PageTemplate
-    :title="`预订详情 - ${currentReservation?.reservationId || ''}`"
-    description="查看单个预订的详细信息、关联票种和游客资料"
-  >
+  <PageTemplate :title="`预订详情 - ${currentReservation?.reservationId || ''}`" description="查看单个预订的详细信息、关联票种和游客资料">
     <el-card v-loading="loading" shadow="never">
       <el-descriptions :column="3" border v-if="currentReservation">
         <el-descriptions-item label="预订号">{{

@@ -1,21 +1,11 @@
 <template>
-  <PageTemplate
-    title="优惠活动"
-    description="管理所有营销和促销活动"
-    icon="Present"
-  >
+  <PageTemplate title="优惠活动" description="管理所有营销和促销活动" icon="Present">
     <div class="action-bar">
       <el-button type="primary" icon="Plus" @click="handleCreate">
         创建新活动
       </el-button>
     </div>
-    <el-table
-      :data="promotions.list"
-      v-loading="loading"
-      border
-      stripe
-      style="width: 100%"
-    >
+    <el-table :data="promotions.list" v-loading="loading" border stripe style="width: 100%">
       <el-table-column prop="promotionName" label="活动名称" min-width="180" />
       <el-table-column prop="promotionType" label="活动类型" width="120">
         <template #default="{ row }">
@@ -33,13 +23,7 @@
       </el-table-column>
       <el-table-column label="操作" width="200" align="center" fixed="right">
         <template #default="{ row }">
-          <el-button
-            size="small"
-            type="primary"
-            link
-            icon="View"
-            @click="managePromotion(row.promotionId)"
-          >
+          <el-button size="small" type="primary" link icon="View" @click="managePromotion(row.promotionId)">
             详情
           </el-button>
           <el-button size="small" type="primary" link icon="Edit">
@@ -53,15 +37,9 @@
     </el-table>
 
     <div class="pagination-container">
-      <el-pagination
-        background
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="promotions.total"
-        v-model:current-page="queryParams.page"
-        v-model:page-size="queryParams.size"
-        @size-change="loadData"
-        @current-change="loadData"
-      />
+      <el-pagination background layout="total, sizes, prev, pager, next, jumper" :total="promotions.total"
+        v-model:current-page="queryParams.page" v-model:page-size="queryParams.size" @size-change="loadData"
+        @current-change="loadData" />
     </div>
   </PageTemplate>
 </template>
@@ -99,6 +77,7 @@ onMounted(loadData);
 .action-bar {
   margin-bottom: 20px;
 }
+
 .pagination-container {
   display: flex;
   justify-content: flex-end;

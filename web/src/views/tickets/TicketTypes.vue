@@ -13,13 +13,7 @@
       <el-table-column prop="description" label="描述" min-width="200" show-overflow-tooltip />
       <el-table-column label="操作" fixed="right" align="center" width="200">
         <template #default="{ row }">
-          <el-button
-            size="small"
-            type="primary"
-            link
-            icon="Money"
-            @click="managePricing(row.ticketTypeId)"
-          >
+          <el-button size="small" type="primary" link icon="Money" @click="managePricing(row.ticketTypeId)">
             管理价格
           </el-button>
           <el-button size="small" type="primary" link icon="Edit" @click="openDialog('edit', row)">
@@ -30,13 +24,8 @@
     </el-table>
 
     <!-- 新增/编辑对话框 -->
-    <el-dialog
-      v-model="dialogVisible"
-      :title="dialogTitle"
-      width="600px"
-      @close="resetForm"
-      :close-on-click-modal="false"
-    >
+    <el-dialog v-model="dialogVisible" :title="dialogTitle" width="600px" @close="resetForm"
+      :close-on-click-modal="false">
       <el-form :model="form" :rules="rules" ref="formRef" label-width="100px">
         <el-form-item label="票种名称" prop="typeName">
           <el-input v-model="form.typeName" placeholder="请输入票种名称" />
@@ -47,11 +36,7 @@
 
         <!-- [最终修正] 添加了必填的“适用人群”字段 -->
         <el-form-item label="适用人群" prop="applicableCrowd">
-          <el-select
-            v-model="form.applicableCrowd"
-            placeholder="请选择适用人群"
-            style="width: 100%"
-          >
+          <el-select v-model="form.applicableCrowd" placeholder="请选择适用人群" style="width: 100%">
             <!-- 假设后端的枚举值为 0, 1, 2, 3 等 -->
             <el-option label="通用" :value="0" />
             <el-option label="成人" :value="1" />
@@ -62,22 +47,12 @@
         </el-form-item>
 
         <el-form-item label="描述" prop="description">
-          <el-input
-            v-model="form.description"
-            type="textarea"
-            :rows="3"
-            placeholder="请输入描述信息 (可选)"
-          />
+          <el-input v-model="form.description" type="textarea" :rows="3" placeholder="请输入描述信息 (可选)" />
         </el-form-item>
 
         <!-- [新增] 添加可选字段的输入 -->
         <el-form-item label="规则文本" prop="rulesText">
-          <el-input
-            v-model="form.rulesText"
-            type="textarea"
-            :rows="2"
-            placeholder="请输入规则文本 (可选)"
-          />
+          <el-input v-model="form.rulesText" type="textarea" :rows="2" placeholder="请输入规则文本 (可选)" />
         </el-form-item>
         <el-form-item label="销售上限" prop="maxSaleLimit">
           <el-input-number v-model="form.maxSaleLimit" :min="0" placeholder="0表示无上限 (可选)" />

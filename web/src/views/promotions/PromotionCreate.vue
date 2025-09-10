@@ -1,17 +1,7 @@
 <template>
-  <PageTemplate
-    title="创建新活动"
-    description="填写活动详细信息以创建一个新的促销活动"
-    icon="CirclePlus"
-  >
+  <PageTemplate title="创建新活动" description="填写活动详细信息以创建一个新的促销活动" icon="CirclePlus">
     <el-card shadow="never" class="form-card">
-      <el-form
-        :model="form"
-        :rules="rules"
-        ref="formRef"
-        label-width="120px"
-        label-position="right"
-      >
+      <el-form :model="form" :rules="rules" ref="formRef" label-width="120px" label-position="right">
         <el-form-item label="活动名称" prop="promotionName">
           <el-input v-model="form.promotionName" placeholder="请输入活动名称" clearable />
         </el-form-item>
@@ -25,23 +15,11 @@
         </el-form-item>
 
         <el-form-item label="活动时间" prop="dateRange">
-          <el-date-picker
-            v-model="form.dateRange"
-            type="datetimerange"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-            value-format="YYYY-MM-DDTHH:mm:ss"
-            style="width: 100%"
-          />
+          <el-date-picker v-model="form.dateRange" type="datetimerange" range-separator="至" start-placeholder="开始日期"
+            end-placeholder="结束日期" value-format="YYYY-MM-DDTHH:mm:ss" style="width: 100%" />
         </el-form-item>
         <el-form-item label="活动描述" prop="description">
-          <el-input
-            v-model="form.description"
-            type="textarea"
-            :rows="3"
-            placeholder="请输入活动描述信息 (可选)"
-          />
+          <el-input v-model="form.description" type="textarea" :rows="3" placeholder="请输入活动描述信息 (可选)" />
         </el-form-item>
         <el-form-item label="是否激活" prop="isActive">
           <el-switch v-model="form.isActive" />
@@ -124,6 +102,7 @@ const onCancel = () => router.back()
   max-width: 800px;
   margin: 0 auto;
 }
+
 .form-footer {
   display: flex;
   justify-content: flex-end;

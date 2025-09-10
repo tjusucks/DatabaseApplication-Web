@@ -1,37 +1,18 @@
 <template>
-  <PageTemplate
-    title="退票列表"
-    description="查询、查看和处理所有退票申请记录"
-    icon="List"
-  >
-    <el-form
-      :inline="true"
-      :model="queryParams"
-      @submit.prevent="handleSearch"
-      class="search-bar"
-    >
+  <PageTemplate title="退票列表" description="查询、查看和处理所有退票申请记录" icon="List">
+    <el-form :inline="true" :model="queryParams" @submit.prevent="handleSearch" class="search-bar">
       <el-form-item label="关键词">
-        <el-input
-          v-model="queryParams.keyword"
-          placeholder="票号/退票单号"
-          clearable
-        />
+        <el-input v-model="queryParams.keyword" placeholder="票号/退票单号" clearable />
       </el-form-item>
       <el-form-item label="状态">
-        <el-select
-          v-model="queryParams.status"
-          placeholder="选择状态"
-          clearable
-        >
+        <el-select v-model="queryParams.status" placeholder="选择状态" clearable>
           <el-option label="待处理" value="Pending" />
           <el-option label="已批准" value="Approved" />
           <el-option label="已驳回" value="Rejected" />
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="Search" @click="handleSearch"
-          >查询</el-button
-        >
+        <el-button type="primary" icon="Search" @click="handleSearch">查询</el-button>
       </el-form-item>
     </el-form>
 
@@ -47,37 +28,18 @@
       </el-table-column>
       <el-table-column label="操作" fixed="right" align="center">
         <template #default="{ row }">
-          <el-button
-            size="small"
-            type="primary"
-            link
-            icon="View"
-            @click="viewDetails(row.refundId)"
-            >详情</el-button
-          >
+          <el-button size="small" type="primary" link icon="View" @click="viewDetails(row.refundId)">详情</el-button>
           <el-tooltip content="批准或驳回申请" placement="top">
-            <el-button
-              v-if="row.status === 'Pending'"
-              size="small"
-              type="primary"
-              link
-              icon="Finished"
-              @click="process(row)"
-            />
+            <el-button v-if="row.status === 'Pending'" size="small" type="primary" link icon="Finished"
+              @click="process(row)" />
           </el-tooltip>
         </template>
       </el-table-column>
     </el-table>
     <div class="pagination-container">
-      <el-pagination
-        background
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="refunds.total"
-        v-model:current-page="queryParams.page"
-        v-model:page-size="queryParams.size"
-        @size-change="loadData"
-        @current-change="loadData"
-      />
+      <el-pagination background layout="total, sizes, prev, pager, next, jumper" :total="refunds.total"
+        v-model:current-page="queryParams.page" v-model:page-size="queryParams.size" @size-change="loadData"
+        @current-change="loadData" />
     </div>
   </PageTemplate>
 </template>
@@ -150,6 +112,7 @@ onMounted(loadData);
   justify-content: flex-end;
   margin-top: 20px;
 }
+
 .search-bar {
   margin-bottom: 20px;
 }
