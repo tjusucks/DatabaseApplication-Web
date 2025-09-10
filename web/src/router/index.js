@@ -36,6 +36,7 @@ const PromotionList = () => import("@/views/promotions/PromotionList.vue");
 const PromotionCreate = () => import("@/views/promotions/PromotionCreate.vue");
 const RefundList = () => import("@/views/refunds/RefundList.vue");
 const RefundManagement = () => import("@/views/refunds/RefundManagement.vue");
+const TicketTypeDetail = () => import("@/views/promotions/PromotionDetail.vue");
 
 // 权限管理模块
 const TeamManagement = () => import("@/views/auth/TeamManagement.vue");
@@ -296,6 +297,17 @@ const routes = [
 >>>>>>> a8cc468 (feat:initial development)
         },
       },
+      // [新增详情页路由]
+      {
+        path: "types/:id",
+        name: "TicketTypeDetail",
+        component: TicketTypeDetail,
+        meta: {
+          title: "价格规则管理",
+          roles: ["super_admin", "ticket_manager"],
+          hidden: true, // 不在侧边栏显示
+        },
+      },
     ],
   },
   // 预订管理路由
@@ -391,6 +403,17 @@ const routes = [
 >>>>>>> a8cc468 (feat:initial development)
         },
       },
+      // [新增详情页路由]
+      {
+        path: `detail/:id`,
+        name: "PromotionDetail",
+        component: () => import("@/views/promotions/PromotionDetail.vue"),
+        meta: {
+          title: "活动详情管理",
+          roles: ["super_admin", "ticket_manager"],
+          hidden: true, // 不在侧边栏显示
+        },
+      },
       {
         path: "create",
         name: "PromotionCreate",
@@ -415,6 +438,23 @@ const routes = [
         meta: {
           title: "设施列表",
           roles: ["super_admin", "operations_manager"],
+        },
+      },
+      {
+        path: "list",
+        name: "PromotionList",
+        component: () => import("@/views/promotions/PromotionList.vue"),
+        meta: { title: "优惠活动", roles: ["super_admin", "ticket_manager"] },
+      },
+      // [新增详情页路由]
+      {
+        path: "detail/:id",
+        name: "PromotionDetail",
+        component: () => import("@/views/promotions/PromotionDetail.vue"),
+        meta: {
+          title: "活动详情管理",
+          roles: ["super_admin", "ticket_manager"],
+          hidden: true, // 不在侧边栏显示
         },
       },
       {
