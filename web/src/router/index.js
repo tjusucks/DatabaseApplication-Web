@@ -3,6 +3,8 @@ import { useUserStore } from '@/stores/user'
 
 // 导入页面组件
 const Login = () => import('@/views/auth/Login.vue')
+const Register = () => import('@/views/auth/Register.vue')
+const TestMSW = () => import('@/views/auth/TestMSW.vue')
 const Layout = () => import('@/layout/index.vue')
 const Dashboard = () => import('@/views/dashboard/index.vue')
 const NotFound = () => import('@/views/error/404.vue')
@@ -61,9 +63,27 @@ const routes = [
     path: '/login',
     name: 'Login',
     component: Login,
-    meta: { 
+    meta: {
       title: '登录',
-      requiresAuth: false 
+      requiresAuth: false
+    }
+  },
+  {
+    path: '/register',
+    name: 'Register',
+    component: Register,
+    meta: {
+      title: '注册',
+      requiresAuth: false
+    }
+  },
+  {
+    path: '/test-msw',
+    name: 'TestMSW',
+    component: TestMSW,
+    meta: {
+      title: 'MSW 测试',
+      requiresAuth: false
     }
   },
   {
@@ -512,18 +532,24 @@ const router = createRouter({
 // 路由守卫
 router.beforeEach((to, from, next) => {
   const userStore = useUserStore()
-  
+
   // 设置页面标题
   document.title = to.meta.title ? `${to.meta.title} - ${import.meta.env.VITE_APP_TITLE}` : import.meta.env.VITE_APP_TITLE
-  
+
   // 检查是否需要登录
   if (to.meta.requiresAuth && !userStore.isLoggedIn) {
+    console.log('🔒 路由守卫: 需要登录，跳转到登录页')
     next('/login')
     return
   }
-  
+
   // 检查角色权限
   if (to.meta.roles && !userStore.hasAnyRole(to.meta.roles)) {
+    console.log('🚫 路由守卫: 权限不足')
+    console.log('  目标路由:', to.path)
+    console.log('  需要角色:', to.meta.roles)
+    console.log('  用户角色:', userStore.userRole)
+    console.log('  用户信息:', userStore.userInfo)
     next('/404')
     return
   }

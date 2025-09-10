@@ -1,12 +1,12 @@
 import axios from 'axios'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/stores/user'
 import { useAppStore } from '@/stores/app'
 import router from '@/router'
 
 // 创建 axios 实例
 const service = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL: import.meta.env.VITE_ENABLE_MSW === 'true' ? '' : import.meta.env.VITE_API_BASE_URL,
   timeout: 15000,
   headers: {
     'Content-Type': 'application/json'
@@ -68,7 +68,7 @@ service.interceptors.response.use(
     ElMessage.error(data.message || '请求失败')
     return Promise.reject(new Error(data.message || '请求失败'))
   },
-  error => {
+  async error => {
     const appStore = useAppStore()
     const userStore = useUserStore()
     appStore.setGlobalLoading(false)
@@ -83,9 +83,23 @@ service.interceptors.response.use(
           ElMessage.error(data.message || '请求参数错误')
           break
         case 401:
-          ElMessage.error('登录已过期，请重新登录')
-          userStore.logout()
-          router.push('/login')
+          // 尝试刷新token
+          if (userStore.refreshToken && !response.config._retry) {
+            response.config._retry = true
+            try {
+              await userStore.refreshAccessToken()
+              // 重新发送原请求
+              return service.request(response.config)
+            } catch (refreshError) {
+              ElMessage.error('登录已过期，请重新登录')
+              userStore.logout()
+              router.push('/login')
+            }
+          } else {
+            ElMessage.error('登录已过期，请重新登录')
+            userStore.logout()
+            router.push('/login')
+          }
           break
         case 403:
           ElMessage.error('没有权限访问该资源')
