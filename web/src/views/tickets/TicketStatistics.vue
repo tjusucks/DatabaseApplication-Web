@@ -1,6 +1,6 @@
 <template>
   <PageTemplate
-    title="票务统计报表"
+    title="销售统计"
     description="查看销售数据、趋势和关键指标"
     icon="DataLine"
   >
@@ -9,9 +9,7 @@
         <el-card shadow="hover">
           <div class="stat-item">
             <div class="stat-title">今日销售总额</div>
-            <div class="stat-value">
-              ¥ {{ statsData?.todayRevenue || "0.00" }}
-            </div>
+            <div class="stat-value">¥ {{ statsData.todayRevenue }}</div>
           </div>
         </el-card>
       </el-col>
@@ -19,9 +17,7 @@
         <el-card shadow="hover">
           <div class="stat-item">
             <div class="stat-title">今日售出票数</div>
-            <div class="stat-value">
-              {{ statsData?.todayTicketsSold || "0" }}
-            </div>
+            <div class="stat-value">{{ statsData.todayTicketsSold }}</div>
           </div>
         </el-card>
       </el-col>
@@ -29,9 +25,7 @@
         <el-card shadow="hover">
           <div class="stat-item">
             <div class="stat-title">本月累计销售额</div>
-            <div class="stat-value">
-              ¥ {{ statsData?.monthRevenue || "0.00" }}
-            </div>
+            <div class="stat-value">¥ {{ statsData.monthRevenue }}</div>
           </div>
         </el-card>
       </el-col>
@@ -48,24 +42,35 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
-import { useTicketStore } from "@/stores/ticket";
 import * as echarts from "echarts";
-import PageTemplate from '@/components/PageTemplate.vue'; // 引入通用模板
+import PageTemplate from "@/components/PageTemplate.vue";
 
-const ticketStore = useTicketStore();
-const statsData = ref(null);
 const salesChartRef = ref(null);
 let chartInstance = null;
 
-const initChart = (data) => {
+const statsData = ref({
+  todayRevenue: "25,680.00",
+  todayTicketsSold: "142",
+  monthRevenue: "458,900.00",
+});
+
+const initChart = () => {
   if (salesChartRef.value) {
     chartInstance = echarts.init(salesChartRef.value);
     const option = {
       tooltip: { trigger: "axis" },
-      xAxis: { type: "category", data: data.labels },
+      xAxis: {
+        type: "category",
+        data: ["5-15", "5-16", "5-17", "5-18", "5-19", "5-20", "5-21"],
+      },
       yAxis: { type: "value" },
       series: [
-        { name: "销售额", type: "line", data: data.values, smooth: true },
+        {
+          name: "销售额",
+          type: "line",
+          data: [12000, 15000, 13500, 22000, 25000, 18000, 25680],
+          smooth: true,
+        },
       ],
       grid: { left: "3%", right: "4%", bottom: "3%", containLabel: true },
     };
@@ -73,11 +78,8 @@ const initChart = (data) => {
   }
 };
 
-onMounted(async () => {
-  statsData.value = await ticketStore.fetchStatistics();
-  if (statsData.value && statsData.value.trend) {
-    initChart(statsData.value.trend);
-  }
+onMounted(() => {
+  initChart();
   window.addEventListener("resize", () => chartInstance?.resize());
 });
 

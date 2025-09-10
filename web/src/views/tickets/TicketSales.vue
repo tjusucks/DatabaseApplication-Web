@@ -9,6 +9,7 @@
       ref="saleFormRef"
       label-width="120px"
       :rules="rules"
+      style="max-width: 800px"
     >
       <el-row :gutter="20">
         <el-col :span="12">
@@ -56,17 +57,17 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from "vue";
-import { useTicketStore } from "@/stores/ticket";
-import { storeToRefs } from "pinia";
+import { ref, computed } from "vue";
 import { ElMessage } from "element-plus";
-import PageTemplate from '@/components/PageTemplate.vue'; // 引入通用模板
-
-const ticketStore = useTicketStore();
-const { ticketTypes } = storeToRefs(ticketStore);
+import PageTemplate from "@/components/PageTemplate.vue";
 
 const saleFormRef = ref(null);
 const isSubmitting = ref(false);
+const ticketTypes = ref([
+  { id: 1, name: "成人全天票", price: 180 },
+  { id: 2, name: "儿童/长者票", price: 90 },
+  { id: 3, name: "夜场票", price: 120 },
+]);
 
 const saleForm = ref({
   ticketTypeId: null,
@@ -85,14 +86,7 @@ const totalPrice = computed(() => {
   const selectedType = ticketTypes.value.find(
     (t) => t.id === saleForm.value.ticketTypeId
   );
-  if (selectedType) {
-    return selectedType.price * saleForm.value.quantity;
-  }
-  return 0;
-});
-
-onMounted(() => {
-  ticketStore.fetchTicketTypes();
+  return selectedType ? selectedType.price * saleForm.value.quantity : 0;
 });
 
 const handleReset = () => {
@@ -101,14 +95,15 @@ const handleReset = () => {
 
 const handleSubmit = async () => {
   if (!saleFormRef.value) return;
-  await saleFormRef.value.validate(async (valid) => {
+  await saleFormRef.value.validate((valid) => {
     if (valid) {
       isSubmitting.value = true;
-      const success = await ticketStore.createSale(saleForm.value);
-      if (success) {
+      setTimeout(() => {
+        // 模拟API调用
+        ElMessage.success("销售成功！");
         handleReset();
-      }
-      isSubmitting.value = false;
+        isSubmitting.value = false;
+      }, 500);
     } else {
       ElMessage.error("请检查表单输入");
     }
