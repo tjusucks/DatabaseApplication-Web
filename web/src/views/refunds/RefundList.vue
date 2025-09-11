@@ -1,6 +1,6 @@
 <template>
   <PageTemplate title="退票列表" description="查询、查看和处理所有退票申请记录" icon="List">
-    <el-form :inline="true" :model="queryParams" @submit.prevent="handleSearch" class="search-bar">
+    <el-form :inline="true" :model="queryParams" @submit.prevent="handleSearch">
       <el-form-item label="关键词">
         <el-input v-model="queryParams.keyword" placeholder="票号/退票单号" clearable />
       </el-form-item>
@@ -16,7 +16,7 @@
       </el-form-item>
     </el-form>
 
-    <el-table :data="refunds.list" border stripe v-loading="loading">
+    <el-table :data="refunds.list" border v-loading="loading">
       <el-table-column prop="refundId" label="退票单号" />
       <el-table-column prop="ticketId" label="关联票号" />
       <el-table-column prop="requestDate" label="申请时间" />
@@ -26,13 +26,10 @@
           <el-tag :type="getStatusType(row.status)">{{ row.status }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" fixed="right" align="center">
+      <el-table-column label="操作">
         <template #default="{ row }">
-          <el-button size="small" type="primary" link icon="View" @click="viewDetails(row.refundId)">详情</el-button>
-          <el-tooltip content="批准或驳回申请" placement="top">
-            <el-button v-if="row.status === 'Pending'" size="small" type="primary" link icon="Finished"
-              @click="process(row)" />
-          </el-tooltip>
+          <el-button size="small" @click="viewDetails(row.refundId)">详情</el-button>
+          <el-button v-if="row.status === 'Pending'" size="small" type="primary" @click="process(row)">处理</el-button>
         </template>
       </el-table-column>
     </el-table>

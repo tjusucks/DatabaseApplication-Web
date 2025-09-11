@@ -262,7 +262,7 @@ const routes = [
     path: "/promotions",
     component: Layout,
     meta: { requiresAuth: true },
-    redirect: '/promotions/list',
+    redirect: "/promotions/list",
     children: [
       {
         path: "list",
@@ -276,11 +276,11 @@ const routes = [
       // [新增详情页路由]
       {
         path: `detail/:id`,
-        name: 'PromotionDetail',
+        name: "PromotionDetail",
         component: PromotionDetail,
         meta: {
-          title: '活动详情管理',
-          roles: ['super_admin', 'ticket_manager'],
+          title: "活动详情管理",
+          roles: ["super_admin", "ticket_manager"],
           //hidden: true, // 不在侧边栏显示
         },
       },
@@ -306,8 +306,8 @@ const routes = [
         name: "FacilityList",
         component: FacilityList,
         meta: {
-          title: '设施列表',
-          roles: ['super_admin', 'operations_manager'],
+          title: "设施列表",
+          roles: ["super_admin", "operations_manager"],
         },
       },
       {

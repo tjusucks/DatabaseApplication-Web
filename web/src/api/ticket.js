@@ -8,14 +8,14 @@ import request from "@/utils/request";
 
 export function getTicketTypes() {
   return request({
-    url: "/api/ticketing/ticket-types", // 更新
+    url: "ticketing/ticket-types", // 更新
     method: "get",
   });
 }
 
 export function createTicketType(data) {
   return request({
-    url: "/api/ticketing/ticket-types", // 更新
+    url: "ticketing/ticket-types", // 更新
     method: "post",
     data,
   });
@@ -24,14 +24,14 @@ export function createTicketType(data) {
 // [新增] 根据ID获取票种详情
 export function getTicketTypeById(ticketTypeId) {
   return request({
-    url: `/api/ticketing/ticket-types/${ticketTypeId}`,
+    url: `ticketing/ticket-types/${ticketTypeId}`,
     method: "get",
   });
 }
 // [新增] 获取指定票种的价格规则
 export function getPriceRulesForTicketType(ticketTypeId) {
   return request({
-    url: `/api/ticketing/ticket-types/${ticketTypeId}/price-rules`,
+    url: `ticketing/ticket-types/${ticketTypeId}/price-rules`,
     method: "get",
   });
 }
@@ -39,7 +39,7 @@ export function getPriceRulesForTicketType(ticketTypeId) {
 // [新增] 创建价格规则
 export function createPriceRule(data) {
   return request({
-    url: `/api/ticketing/ticket-types/${data.ticketTypeId}/price-rules`,
+    url: `ticketing/ticket-types/${data.ticketTypeId}/price-rules`,
     method: "post",
     data,
   });
@@ -48,7 +48,7 @@ export function createPriceRule(data) {
 // [新增] 更新价格规则
 export function updatePriceRule(data) {
   return request({
-    url: `/api/ticketing/ticket-types/${data.ticketTypeId}/price-rules/${data.ruleId}`,
+    url: `ticketing/ticket-types/${data.ticketTypeId}/price-rules/${data.ruleId}`,
     method: "put",
     data,
   });
@@ -57,7 +57,7 @@ export function updatePriceRule(data) {
 // [新增] 删除价格规则
 export function deletePriceRule(ticketTypeId, ruleId) {
   return request({
-    url: `/api/ticketing/ticket-types/${ticketTypeId}/price-rules/${ruleId}`,
+    url: `ticketing/ticket-types/${ticketTypeId}/price-rules/${ruleId}`,
     method: "delete",
   });
 }
@@ -74,7 +74,7 @@ export function deletePriceRule(ticketTypeId, ruleId) {
 
 export function getSalesStatistics(params) {
   return request({
-    url: "/api/ticketing/tickets/sales/stats", // 更新
+    url: "ticketing/tickets/sales/stats", // 更新
     method: "get",
     params, // stats接口现在接受查询参数
   });
@@ -132,7 +132,7 @@ export function getPromotionById(promotionId) {
 
 export function createPromotion(data) {
   return request({
-    url: "/api/ticketing/promotions", // 更新
+    url: "ticketing/promotions", // 更新
     method: "post",
     data,
   });
@@ -141,7 +141,7 @@ export function createPromotion(data) {
 // [新增] 获取指定促销活动的触发条件
 export function getPromotionConditions(promotionId) {
   return request({
-    url: `/api/ticketing/promotions/${promotionId}/conditions`,
+    url: `ticketing/promotions/${promotionId}/conditions`,
     method: "get",
   });
 }
@@ -149,7 +149,7 @@ export function getPromotionConditions(promotionId) {
 // [新增] 创建触发条件
 export function createPromotionCondition(data) {
   return request({
-    url: `/api/ticketing/promotions/${data.promotionId}/conditions`,
+    url: `ticketing/promotions/${data.promotionId}/conditions`,
     method: "post",
     data,
   });
@@ -158,7 +158,7 @@ export function createPromotionCondition(data) {
 // [新增] 获取指定促销活动的优惠动作
 export function getPromotionActions(promotionId) {
   return request({
-    url: `/api/ticketing/promotions/${promotionId}/actions`,
+    url: `ticketing/promotions/${promotionId}/actions`,
     method: "get",
   });
 }
@@ -166,7 +166,7 @@ export function getPromotionActions(promotionId) {
 // [新增] 创建优惠动作
 export function createPromotionAction(data) {
   return request({
-    url: `/api/ticketing/promotions/${data.promotionId}/actions`,
+    url: `ticketing/promotions/${data.promotionId}/actions`,
     method: "post",
     data,
   });
