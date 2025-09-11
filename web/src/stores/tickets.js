@@ -23,6 +23,16 @@ export const useTicketStore = defineStore("ticket", {
         ElMessage.error("获取票种列表失败");
       }
     },
+    async createTicketType(typeData) {
+      try {
+        await ticketApi.createTicketType(typeData);
+        ElMessage.success("新增票种成功！");
+        return true;
+      } catch (error) {
+        ElMessage.error("新增票种失败");
+        return false;
+      }
+    },
     // [新增] 获取单个票种详情
     async fetchTicketTypeById(id) {
       try {
@@ -41,6 +51,14 @@ export const useTicketStore = defineStore("ticket", {
         this.priceRulesForType = response.data || [];
       } catch (error) {
         ElMessage.error("获取价格规则失败");
+      }
+    },
+    async fetchStatistics() {
+      try {
+        const response = await ticketApi.getSalesStatistics();
+        this.statistics = response.data;
+      } catch (error) {
+        ElMessage.error("获取统计数据失败");
       }
     },
   },
