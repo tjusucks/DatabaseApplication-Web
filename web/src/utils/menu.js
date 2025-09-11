@@ -190,6 +190,12 @@ const fullMenuList = [
         icon: 'PieChart',
         roles: ['Admin', 'Manager'],
       },
+      {
+        path: '/operations/ridetraffic',
+        title: '流量监控',
+        icon: 'Monitor',
+        roles: ['super_admin', 'operations_manager'],
+      },
     ],
   },
   {
