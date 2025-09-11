@@ -2,8 +2,9 @@
   <PageTemplate :title="`价格规则管理 - ${ticketTypeDetail?.typeName || ''}`" description="为当前票种设置不同条件下的价格">
     <div class="action-bar">
       <el-button type="primary" icon="Plus" @click="openDialog('create')">
-        新增价格规则
-      </el-button>
+        <el-button type="primary" icon="Plus" @click="openDialog('create')">
+          新增价格规则
+        </el-button>
     </div>
 
     <el-table :data="priceRulesForType" border stripe v-loading="loading">
@@ -65,6 +66,7 @@ import { storeToRefs } from "pinia";
 import PageTemplate from "@/components/PageTemplate.vue";
 import { ElMessageBox, ElMessage } from "element-plus";
 
+// 1. 初始化
 const route = useRoute();
 const ticketStore = useTicketStore();
 const ticketTypeId = Number(route.params.id);
