@@ -219,7 +219,7 @@ export const useReservationStore = defineStore("reservation", {
       this.currentReservation = null; // 先清空
       try {
         const response = await ticketApi.getReservationById(id);
-        this.currentReservation = response.data;
+        this.currentReservation = response;
       } catch (error) {
         ElMessage.error("获取预订详情失败");
       }

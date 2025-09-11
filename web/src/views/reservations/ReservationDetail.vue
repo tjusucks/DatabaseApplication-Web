@@ -47,17 +47,17 @@ onMounted(async () => {
   loading.value = true;
   await fetchReservationById(reservationId.value);
   // [模拟数据] 用于UI展示
-  if (!currentReservation.value) {
-    currentReservation.value = {
-      reservationId,
-      status: "已确认",
-      reservationTime: "2024-05-23 10:00:00",
-      totalAmount: 360.0,
-      visitor: {
-        user: { displayName: "模拟用户", phoneNumber: "138****1234" },
-      },
-    };
-  }
+  // if (!currentReservation.value) {
+  //   currentReservation.value = {
+  //     reservationId,
+  //     status: "已确认",
+  //     reservationTime: "2024-05-23 10:00:00",
+  //     totalAmount: 360.0,
+  //     visitor: {
+  //       user: { displayName: "模拟用户", phoneNumber: "138****1234" },
+  //     },
+  //   };
+  // }
   loading.value = false;
 });
 </script>
