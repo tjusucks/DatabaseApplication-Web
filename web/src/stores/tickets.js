@@ -108,7 +108,7 @@ export const useTicketStore = defineStore("ticket", {
     async fetchStatistics() {
       try {
         const response = await ticketApi.getSalesStatistics();
-        this.statistics = response.data;
+        this.statistics = response;
       } catch (error) {
         ElMessage.error("获取统计数据失败");
       }
