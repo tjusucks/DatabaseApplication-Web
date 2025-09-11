@@ -56,43 +56,47 @@
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { usePromotionStore } from '@/stores/tickets.js'
-import { useUserStore } from '@/stores/user.js' // [最终修正] 导入 userStore
-import PageTemplate from '@/components/PageTemplate.vue'
-import { ElMessage } from 'element-plus'
+import { reactive, ref } from "vue";
+import { useRouter } from "vue-router";
+import { usePromotionStore } from "@/stores/tickets.js";
+import { useUserStore } from "@/stores/user.js"; // [最终修正] 导入 userStore
+import PageTemplate from "@/components/PageTemplate.vue";
+import { ElMessage } from "element-plus";
 
-const router = useRouter()
-const promotionStore = usePromotionStore()
-const userStore = useUserStore() // [最终修正] 初始化 userStore
-const { createPromotion } = promotionStore
+const router = useRouter();
+const promotionStore = usePromotionStore();
+const userStore = useUserStore(); // [最终修正] 初始化 userStore
+const { createPromotion } = promotionStore;
 
-const formRef = ref(null)
-const isSubmitting = ref(false)
+const formRef = ref(null);
+const isSubmitting = ref(false);
 
 const form = reactive({
-  promotionName: '',
+  promotionName: "",
   promotionType: null,
-  description: '',
+  description: "",
   dateRange: [],
-  startDatetime: '',
-  endDatetime: '',
+  startDatetime: "",
+  endDatetime: "",
   isActive: true,
-})
+});
 
 const rules = reactive({
-  promotionName: [{ required: true, message: '请输入活动名称', trigger: 'blur' }],
-  promotionType: [{ required: true, message: '请选择活动类型', trigger: 'change' }],
-  dateRange: [{ required: true, message: '请选择活动时间', trigger: 'change' }],
-})
+  promotionName: [
+    { required: true, message: "请输入活动名称", trigger: "blur" },
+  ],
+  promotionType: [
+    { required: true, message: "请选择活动类型", trigger: "change" },
+  ],
+  dateRange: [{ required: true, message: "请选择活动时间", trigger: "change" }],
+});
 
 const onSubmit = async () => {
-  if (!formRef.value) return
+  if (!formRef.value) return;
   await formRef.value.validate(async (valid) => {
     if (valid) {
-      isSubmitting.value = true
-      const [start, end] = form.dateRange
+      isSubmitting.value = true;
+      const [start, end] = form.dateRange;
 
       // [最终修正] 从 userStore 获取当前用户ID，并添加到 payload 中
       const payload = {

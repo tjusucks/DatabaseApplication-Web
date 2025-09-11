@@ -32,6 +32,7 @@ defineProps({
   title: {
     type: String,
     required: true,
+    default: '页面标题',
   },
   description: {
     type: String,
@@ -39,7 +40,7 @@ defineProps({
   },
   icon: {
     type: String,
-    default: 'Document',
+    default: '',
   },
 })
 </script>
