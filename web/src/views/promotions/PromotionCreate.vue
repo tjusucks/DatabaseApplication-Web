@@ -5,6 +5,7 @@
         <el-form-item label="活动名称" prop="name">
           <el-input v-model="form.name" placeholder="请输入活动名称" clearable />
         </el-form-item>
+
         <el-form-item label="活动类型" prop="promotionType">
           <el-select v-model="form.promotionType" placeholder="请选择活动类型" style="width: 100%">
             <el-option label="折扣" value="Discount" />
@@ -12,6 +13,7 @@
             <el-option label="套餐" value="Package" />
           </el-select>
         </el-form-item>
+
         <el-form-item label="活动时间" prop="dateRange">
           <el-date-picker v-model="form.dateRange" type="datetimerange" range-separator="至" start-placeholder="开始日期"
             end-placeholder="结束日期" value-format="YYYY-MM-DD HH:mm:ss" style="width: 100%" />
@@ -60,7 +62,9 @@ const form = reactive({
 });
 
 const rules = reactive({
-  name: [{ required: true, message: "请输入活动名称", trigger: "blur" }],
+  promotionName: [
+    { required: true, message: "请输入活动名称", trigger: "blur" },
+  ],
   promotionType: [
     { required: true, message: "请选择活动类型", trigger: "change" },
   ],
