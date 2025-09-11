@@ -163,6 +163,15 @@ const routes = [
         },
       },
       {
+        path: "detail",
+        name: "TicketTypeDetail",
+        component: TicketTypeDetail,
+        meta: {
+          title: "票种详情",
+          roles: ["super_admin", "ticket_manager"],
+        },
+      },
+      {
         path: "pricing",
         name: "TicketPricing",
         component: TicketPricing,

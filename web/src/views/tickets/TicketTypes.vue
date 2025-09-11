@@ -162,6 +162,32 @@ const rules = reactive({
 const loadData = async () => {
   loading.value = true;
   await fetchTicketTypes();
+  if (ticketTypes.value.length === 0) {
+    console.warn("后端返回了空的票种列表，正在使用前端模拟数据进行UI展示。");
+    ticketTypes.value = [
+      {
+        ticketTypeId: 1,
+        typeName: "成人票 (模拟)",
+        basePrice: 180.0,
+        applicableCrowd: "成人",
+        description: "适用于18周岁以上游客",
+      },
+      {
+        ticketTypeId: 2,
+        typeName: "儿童票 (模拟)",
+        basePrice: 90.0,
+        applicableCrowd: "儿童",
+        description: "适用于1.2-1.5米儿童",
+      },
+      {
+        ticketTypeId: 3,
+        typeName: "长者票 (模拟)",
+        basePrice: 90.0,
+        applicableCrowd: "长者",
+        description: "适用于65周岁以上长者",
+      },
+    ];
+  }
   loading.value = false;
 };
 
