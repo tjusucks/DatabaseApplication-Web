@@ -4,49 +4,72 @@
     description="管理所有营销和促销活动"
     icon="Present"
   >
-    <div style="margin-bottom: 20px">
-      <el-button type="primary" icon="Plus" @click="handleCreate"
-        >创建新活动</el-button
-      >
+    <div class="action-bar">
+      <el-button type="primary" icon="Plus" @click="handleCreate">
+        创建新活动
+      </el-button>
     </div>
     <el-table
       :data="promotions.list"
       v-loading="loading"
       border
+      stripe
       style="width: 100%"
     >
-      <el-table-column prop="name" label="活动名称" />
-      <el-table-column prop="description" label="描述" />
-      <el-table-column prop="startDate" label="开始时间" />
-      <el-table-column prop="endDate" label="结束时间" />
-      <el-table-column label="状态">
+      <el-table-column prop="promotionName" label="活动名称" min-width="180" />
+      <el-table-column prop="promotionType" label="活动类型" width="120">
         <template #default="{ row }">
-          <el-tag :type="row.isActive ? 'success' : 'info'">{{
-            row.isActive ? "进行中" : "已结束"
-          }}</el-tag>
+          <el-tag>{{ row.promotionType }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作">
+      <el-table-column prop="startDatetime" label="开始时间" width="180" />
+      <el-table-column prop="endDatetime" label="结束时间" width="180" />
+      <el-table-column label="状态" width="100" align="center">
         <template #default="{ row }">
-          <el-button size="small">编辑</el-button>
-          <!-- [已修正] 添加了管理活动的按钮和点击事件 -->
+          <el-tag :type="row.isActive ? 'success' : 'info'">
+            {{ row.isActive ? "进行中" : "已结束" }}
+          </el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" width="200" align="center" fixed="right">
+        <template #default="{ row }">
           <el-button
             size="small"
             type="primary"
+            link
+            icon="View"
             @click="managePromotion(row.promotionId)"
-            >管理活动</el-button
           >
+            详情
+          </el-button>
+          <el-button size="small" type="primary" link icon="Edit">
+            编辑
+          </el-button>
+          <el-button size="small" type="danger" link icon="Delete">
+            删除
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
+
+    <div class="pagination-container">
+      <el-pagination
+        background
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="promotions.total"
+        v-model:current-page="queryParams.page"
+        v-model:page-size="queryParams.size"
+        @size-change="loadData"
+        @current-change="loadData"
+      />
+    </div>
   </PageTemplate>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, reactive, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
-// [已修正]
 import { usePromotionStore } from "@/stores/tickets.js";
 import PageTemplate from "@/components/PageTemplate.vue";
 
@@ -56,14 +79,29 @@ const { promotions } = storeToRefs(promotionStore);
 const { fetchPromotions } = promotionStore;
 const loading = ref(false);
 
+const queryParams = reactive({ page: 1, size: 10 });
+
+const loadData = async () => {
+  loading.value = true;
+  await fetchPromotions(queryParams);
+  loading.value = false;
+};
+
 const handleCreate = () => router.push("/promotions/create");
 const managePromotion = (id) => {
   router.push(`/promotions/detail/${id}`);
 };
 
-onMounted(async () => {
-  loading.value = true;
-  await fetchPromotions();
-  loading.value = false;
-});
+onMounted(loadData);
 </script>
+
+<style scoped>
+.action-bar {
+  margin-bottom: 20px;
+}
+.pagination-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+</style>
