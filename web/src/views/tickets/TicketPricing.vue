@@ -18,25 +18,25 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useTicketStore } from '@/stores/tickets.js' // 确保路径正确
-import { storeToRefs } from 'pinia'
-import PageTemplate from '@/components/PageTemplate.vue'
+import { ref, onMounted } from "vue";
+import { useTicketStore } from "@/stores/tickets.js"; // 确保路径正确
+import { storeToRefs } from "pinia";
+import PageTemplate from "@/components/PageTemplate.vue";
 
 // 1. 初始化
-const ticketStore = useTicketStore()
+const ticketStore = useTicketStore();
 
 // 2. 解构
-const { pricingRules } = storeToRefs(ticketStore)
+const { pricingRules } = storeToRefs(ticketStore);
 
 // 3. 本地状态
-const loading = ref(false)
+const loading = ref(false);
 
 // 4. 生命周期
 onMounted(async () => {
-  loading.value = true
+  loading.value = true;
   // 调用我们新实现的、强大的 fetchPricingRules action
-  await ticketStore.fetchPricingRules()
-  loading.value = false
-})
+  await ticketStore.fetchPricingRules();
+  loading.value = false;
+});
 </script>
