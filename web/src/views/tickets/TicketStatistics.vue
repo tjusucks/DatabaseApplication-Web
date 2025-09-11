@@ -15,6 +15,21 @@
       </el-col>
     </el-row>
     <el-skeleton v-else :rows="1" animated />
+    <el-row :gutter="20" v-if="statistics">
+      <el-col :span="6">
+        <el-statistic title="总销售额" :value="statistics.totalRevenue" />
+      </el-col>
+      <el-col :span="6">
+        <el-statistic title="总售出票数" :value="statistics.totalTicketsSold" />
+      </el-col>
+      <el-col :span="6">
+        <el-statistic title="总退款额" :value="statistics.totalRefundAmount" />
+      </el-col>
+      <el-col :span="6">
+        <el-statistic title="总退款数" :value="statistics.totalRefunds" />
+      </el-col>
+    </el-row>
+    <el-skeleton v-else :rows="1" animated />
   </PageTemplate>
 </template>
 

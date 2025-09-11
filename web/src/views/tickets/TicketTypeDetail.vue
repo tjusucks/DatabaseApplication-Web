@@ -65,7 +65,6 @@ import { storeToRefs } from "pinia";
 import PageTemplate from "@/components/PageTemplate.vue";
 import { ElMessageBox, ElMessage } from "element-plus";
 
-// 1. 初始化
 const route = useRoute();
 const ticketStore = useTicketStore();
 const ticketTypeId = Number(route.params.id);

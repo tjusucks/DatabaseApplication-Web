@@ -22,10 +22,12 @@ import { ref, reactive } from "vue";
 import { useRefundStore } from "@/stores/tickets.js";
 import PageTemplate from "@/components/PageTemplate.vue";
 import { ElMessage } from "element-plus";
+import { ElMessage } from "element-plus";
 
 const refundStore = useRefundStore();
 const formRef = ref(null);
 const isSubmitting = ref(false);
+
 
 const form = reactive({ ticketId: "", reason: "" });
 const rules = reactive({
@@ -36,8 +38,27 @@ const rules = reactive({
 const resetForm = () => {
   formRef.value.resetFields();
 };
+const rules = reactive({
+  ticketId: [{ required: true, message: "请输入票号", trigger: "blur" }],
+  reason: [{ required: true, message: "请输入退票原因", trigger: "blur" }],
+});
+
+const resetForm = () => {
+  formRef.value.resetFields();
+};
 
 const handleSubmit = async () => {
+  if (!formRef.value) return;
+  await formRef.value.validate(async (valid) => {
+    if (valid) {
+      isSubmitting.value = true;
+      const success = await refundStore.createRefundRequest(form);
+      if (success) {
+        resetForm();
+      }
+      isSubmitting.value = false;
+    }
+  });
   if (!formRef.value) return;
   await formRef.value.validate(async (valid) => {
     if (valid) {
