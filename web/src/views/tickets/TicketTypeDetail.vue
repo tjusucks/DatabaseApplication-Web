@@ -77,6 +77,12 @@ const {
   createPriceRule,
   deletePriceRule,
 } = ticketStore;
+const {
+  fetchTicketTypeById,
+  fetchPriceRulesForTicketType,
+  createPriceRule,
+  deletePriceRule,
+} = ticketStore;
 
 const loading = ref(false);
 const isSubmitting = ref(false);
@@ -92,6 +98,7 @@ const dialogTitle = computed(() =>
 const form = reactive({
   ruleId: null,
   ruleName: "",
+  ruleName: "",
   price: 0.0,
   startDate: null,
   endDate: null,
@@ -99,6 +106,7 @@ const form = reactive({
 });
 
 const rules = reactive({
+  ruleName: [{ required: true, message: "请选择规则描述", trigger: "change" }], // [已修正]
   ruleName: [{ required: true, message: "请选择规则描述", trigger: "change" }], // [已修正]
   price: [{ required: true, message: "请输入价格", trigger: "blur" }],
   startDate: [{ required: true, message: "请选择生效日期", trigger: "change" }],
@@ -115,6 +123,18 @@ const loadData = async () => {
 };
 
 const resetForm = () => {
+  if (formRef.value) {
+    formRef.value.resetFields();
+  }
+  // [已修正] 手动重置所有字段，确保表单干净
+  Object.assign(form, {
+    ruleId: null,
+    ruleName: "",
+    price: 0.0,
+    startDate: null,
+    endDate: null,
+    ticketTypeId: ticketTypeId,
+  });
   if (formRef.value) {
     formRef.value.resetFields();
   }
@@ -178,7 +198,15 @@ const handleDelete = async (row) => {
     if (success) {
       await loadData(); // 成功后刷新列表
     }
+    // [已修正] 调用真实的 action
+    const success = await deletePriceRule(ticketTypeId, row.ruleId);
+    if (success) {
+      await loadData(); // 成功后刷新列表
+    }
   } catch (e) {
+    if (e !== "cancel") {
+      console.error("删除失败:", e);
+    }
     if (e !== "cancel") {
       console.error("删除失败:", e);
     }

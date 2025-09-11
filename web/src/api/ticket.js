@@ -89,6 +89,7 @@ export function getReservations(params) {
     params,
   });
 }
+<<<<<<< HEAD
 export function getReservationById(id, params) {
   return request({
     url: `/api/ticketing/reservations/${id}`,
@@ -96,6 +97,8 @@ export function getReservationById(id, params) {
     params,
   });
 }
+=======
+>>>>>>> fdf3b9e (feat: add fun sale)
 export function createReservation(data) {
   // 假设后端的创建接口就是 POST /api/ticketing/reservations
   return request.post("/api/ticketing/reservations", data);
