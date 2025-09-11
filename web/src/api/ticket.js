@@ -28,8 +28,6 @@ export function getTicketTypeById(ticketTypeId) {
     method: "get",
   });
 }
-
-// 注意：原 getPricingRules() 已不适用，需改为针对特定票种
 // [新增] 获取指定票种的价格规则
 export function getPriceRulesForTicketType(ticketTypeId) {
   return request({
@@ -91,16 +89,22 @@ export function getReservations(params) {
     params,
   });
 }
+export function createReservation(data) {
+  // 假设后端的创建接口就是 POST /api/ticketing/reservations
+  return request.post("/api/ticketing/reservations", data);
+}
 
-// // 注意：后端没有提供 /reservations/{id} 接口。
-// // 我将保留 getReservationById 函数，但您需要与后端确认正确的URL
-// export function getReservationById(id) {
-//   return request({
-//     url: `/api/ticketing/reservations/${id}`, // [待确认] 请与后端确认此URL
-//     method: 'get'
-//   });
-// }
-
+/**
+ * @description 为预订处理支付 (销售流程的第二步)
+ * @param {number} reservationId - 预订ID
+ * @param {object} data - { paymentMethod, amount }
+ */
+export function processReservationPayment(reservationId, data) {
+  return request.post(
+    `/api/ticketing/reservations/${reservationId}/payment`,
+    data
+  );
+}
 // --- 促销管理 API ---
 
 export function getPromotions(params) {

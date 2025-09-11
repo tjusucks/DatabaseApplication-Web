@@ -46,7 +46,6 @@
       :close-on-click-modal="false"
     >
       <el-form :model="form" :rules="rules" ref="formRef" label-width="100px">
-        <!-- [最终修正] “规则描述”变为下拉选择框 -->
         <el-form-item label="规则描述" prop="ruleName">
           <el-select
             v-model="form.ruleName"
@@ -60,7 +59,6 @@
             <el-option label="夜场票" value="夜场票" />
           </el-select>
         </el-form-item>
-
         <el-form-item label="价格" prop="price">
           <el-input-number
             v-model="form.price"
@@ -117,8 +115,12 @@ const route = useRoute();
 const ticketStore = useTicketStore();
 const ticketTypeId = Number(route.params.id);
 const { ticketTypeDetail, priceRulesForType } = storeToRefs(ticketStore);
-const { fetchTicketTypeById, fetchPriceRulesForTicketType, createPriceRule } =
-  ticketStore;
+const {
+  fetchTicketTypeById,
+  fetchPriceRulesForTicketType,
+  createPriceRule,
+  deletePriceRule,
+} = ticketStore;
 
 const loading = ref(false);
 const isSubmitting = ref(false);
@@ -131,19 +133,17 @@ const dialogTitle = computed(() =>
 );
 
 // 2. 表单数据和规则
-// [最终修正] 字段名与后端期望的 JSON 字段名完全匹配
 const form = reactive({
   ruleId: null,
-  ruleName: "", // 对应后端的 RuleName
+  ruleName: "",
   price: 0.0,
   startDate: null,
   endDate: null,
   ticketTypeId: ticketTypeId,
 });
 
-// [最终修正] 验证规则也使用新的属性名
 const rules = reactive({
-  ruleName: [{ required: true, message: "请输入规则描述", trigger: "blur" }],
+  ruleName: [{ required: true, message: "请选择规则描述", trigger: "change" }], // [已修正]
   price: [{ required: true, message: "请输入价格", trigger: "blur" }],
   startDate: [{ required: true, message: "请选择生效日期", trigger: "change" }],
 });
@@ -159,15 +159,24 @@ const loadData = async () => {
 };
 
 const resetForm = () => {
-  if (formRef.value) formRef.value.resetFields();
-  form.ruleId = null;
+  if (formRef.value) {
+    formRef.value.resetFields();
+  }
+  // [已修正] 手动重置所有字段，确保表单干净
+  Object.assign(form, {
+    ruleId: null,
+    ruleName: "",
+    price: 0.0,
+    startDate: null,
+    endDate: null,
+    ticketTypeId: ticketTypeId,
+  });
 };
 
 const openDialog = (mode, rowData = null) => {
   resetForm();
   dialogMode.value = mode;
   if (mode === "edit" && rowData) {
-    // [最终修正] 编辑时，将表格的 description 赋值给表单的 ruleName
     const { description, ...rest } = rowData;
     Object.assign(form, { ...rest, ruleName: description });
   }
@@ -208,11 +217,15 @@ const handleDelete = async (row) => {
         type: "warning",
       }
     );
-    // await ticketStore.deletePriceRule(ticketTypeId, row.ruleId);
-    ElMessage.info(`删除规则 ${row.ruleId} 功能待与后端联调`);
-    await loadData();
+    // [已修正] 调用真实的 action
+    const success = await deletePriceRule(ticketTypeId, row.ruleId);
+    if (success) {
+      await loadData(); // 成功后刷新列表
+    }
   } catch (e) {
-    if (e !== "cancel") ElMessage.error("删除失败");
+    if (e !== "cancel") {
+      console.error("删除失败:", e);
+    }
   }
 };
 
@@ -223,5 +236,9 @@ onMounted(loadData);
 <style scoped>
 .action-bar {
   margin-bottom: 20px;
+}
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
 }
 </style>
