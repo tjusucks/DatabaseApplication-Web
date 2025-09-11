@@ -6,11 +6,10 @@ import router from '@/router'
 
 // 创建 axios 实例
 const service = axios.create({
-  baseURL: '/api', // 使用 Vite 代理，指向 vite.config.js 中配置的 target
-  timeout: 15000,
-  headers: {
-    'Content-Type': 'application/json'
-  }
+  // axios中请求配置有baseURL选项，表示请求URL公共部分
+  baseURL: '/api',
+  // 超时
+  timeout: 10000
 })
 
 // 请求拦截器

@@ -1,154 +1,114 @@
 import request from '@/utils/request'
 
-// 财务 API
-
-// ----------------- 收入管理 -----------------
+// ----------------- 财务记录 (Financial Records) -----------------
 
 /**
- * 获取收入列表
- * @param {Object} params 查询参数，如分页、筛选等
+ * 搜索财务记录 (包括收入、支出、消费记录)
+ * @param {Object} params 查询参数, e.g., { transactionType: 'income', page: 1, pageSize: 10 }
  */
-export function getIncomes(params) {
+export function searchFinancialRecords(params) {
   return request({
-    url: '/api/Finance/income',
+    url: '/resource/financial-records/search',
     method: 'get',
     params
   })
 }
 
 /**
- * 创建收入记录
- * @param {Object} data 收入数据
+ * 创建财务记录
+ * @param {Object} data 记录数据
  */
-export function createIncome(data) {
+export function createFinancialRecord(data) {
   return request({
-    url: '/api/Finance/income',
+    url: '/resource/financial-records',
     method: 'post',
     data
   })
 }
 
 /**
- * 更新收入记录
+ * 获取单个财务记录详情
+ * @param {string} id 记录ID
+ */
+export function getFinancialRecordById(id) {
+    return request({
+        url: `/resource/financial-records/${id}`,
+        method: 'get'
+    });
+}
+
+
+/**
+ * 更新财务记录
  * @param {string} id 记录ID
  * @param {Object} data 更新数据
  */
-export function updateIncome(id, data) {
+export function updateFinancialRecord(id, data) {
   return request({
-    url: `/api/Finance/income/${id}`,
+    url: `/resource/financial-records/${id}`,
     method: 'put',
     data
   })
 }
 
 /**
- * 删除收入记录
+ * 删除财务记录
  * @param {string} id 记录ID
  */
-export function deleteIncome(id) {
+export function deleteFinancialRecord(id) {
   return request({
-    url: `/api/Finance/income/${id}`,
+    url: `/resource/financial-records/${id}`,
     method: 'delete'
   })
 }
 
-
-// ----------------- 支出管理 -----------------
+// ----------------- 财务报表 (Financial Reports) -----------------
 
 /**
- * 获取支出列表
- * @param {Object} params 查询参数
+ * 获取财务总览
+ * @param {Object} params 查询参数, e.g., { startDate, endDate }
  */
-export function getExpenses(params) {
+export function getFinanceOverview(params) {
   return request({
-    url: '/api/Finance/expenses',
+    url: '/resource/financial-records/overview',
     method: 'get',
     params
   })
 }
 
 /**
- * 创建支出记录
- * @param {Object} data 支出数据
+ * 获取分组统计数据
+ * @param {Object} params 查询参数, e.g., { startDate, endDate }
  */
-export function createExpense(data) {
+export function getFinanceGroupedStats(params) {
   return request({
-    url: '/api/Finance/expenses',
-    method: 'post',
-    data
-  })
-}
-
-/**
- * 更新支出记录
- * @param {string} id 记录ID
- * @param {Object} data 更新数据
- */
-export function updateExpense(id, data) {
-  return request({
-    url: `/api/Finance/expenses/${id}`,
-    method: 'put',
-    data
-  })
-}
-
-/**
- * 删除支出记录
- * @param {string} id 记录ID
- */
-export function deleteExpense(id) {
-  return request({
-    url: `/api/Finance/expenses/${id}`,
-    method: 'delete'
-  })
-}
-
-
-// ----------------- 消费记录 -----------------
-
-/**
- * 获取消费记录列表
- * @param {Object} params 查询参数
- */
-export function getConsumptionRecords(params) {
-  return request({
-    url: '/api/Finance/records',
+    url: '/resource/financial-records/stats/grouped',
     method: 'get',
     params
   })
 }
 
-
-// ----------------- 财务报表 -----------------
-
 /**
- * 获取财务总览统计
+ * 获取时间序列统计数据 (例如按月统计)
+ * @param {Object} params 查询参数, e.g., { startDate, endDate, granularity: 'month' }
  */
-export function getFinanceSummary() {
+export function getFinanceStats(params) {
   return request({
-    url: '/api/Finance/summary',
-    method: 'get'
-  })
-}
-
-/**
- * 按类别获取财务统计
- */
-export function getFinanceGroupedByType() {
-  return request({
-    url: '/api/Finance/grouped-by-type',
-    method: 'get'
-  })
-}
-
-/**
- * 按时间段获取财务统计
- * @param {Object} params 查询参数，如 startDate, endDate, interval
- */
-export function getFinanceOverTime(params) {
-  return request({
-    url: '/api/Finance/over-time',
+    url: '/resource/financial-records/stats',
     method: 'get',
     params
   })
+}
+
+/**
+ * 按类型获取财务记录详情列表
+ * @param {string} transactionType 交易类型
+ * @param {Object} params 查询参数, e.g., { startDate, endDate }
+ */
+export function getRecordsByType(transactionType, params) {
+    return request({
+        url: `/resource/financial-records/by-type/${transactionType}`,
+        method: 'get',
+        params
+    });
 }
