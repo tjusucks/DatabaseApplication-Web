@@ -29,6 +29,16 @@ export const useFinanceStore = defineStore('finance', () => {
   const stats = ref({})
   const groupedStats = ref([])
 
+  // --- 新增：消费记录相关状态 ---
+  const consumptionRecords = ref([])
+  const consumptionPagination = ref({
+    total: 0,
+    currentPage: 1,
+    pageSize: 10
+  })
+  const lastConsumptionParams = ref({})
+
+
   // --- 通用 Actions ---
 
   const fetchRecords = async (transactionType, params) => {
@@ -57,6 +67,33 @@ export const useFinanceStore = defineStore('finance', () => {
       ElMessage.error(error.message || `获取${typeName}列表失败`)
       list.value = []
       pagination.value.total = 0
+      throw error
+    }
+  }
+
+  // --- 新增：获取消费记录 ---
+  const fetchConsumptionRecords = async (params) => {
+    if (params) {
+      if (params.page) consumptionPagination.value.currentPage = params.page
+      if (params.pageSize) consumptionPagination.value.pageSize = params.pageSize
+      lastConsumptionParams.value = { ...lastConsumptionParams.value, ...params }
+    }
+
+    try {
+      const query = {
+        ...lastConsumptionParams.value,
+        page: consumptionPagination.value.currentPage,
+        pageSize: consumptionPagination.value.pageSize
+      }
+      // 注意：这里我们假设 searchFinancialRecords 也能用于查询广义的消费记录
+      // 如果有专门的API，需要替换成 getConsumptionRecords(query)
+      const response = await searchFinancialRecords(query) 
+      consumptionRecords.value = response.financialRecords // 假设返回结构一致
+      consumptionPagination.value.total = response.totalCount
+    } catch (error) {
+      ElMessage.error(error.message || `获取消费记录列表失败`)
+      consumptionRecords.value = []
+      consumptionPagination.value.total = 0
       throw error
     }
   }
@@ -222,6 +259,10 @@ export const useFinanceStore = defineStore('finance', () => {
     fetchOverview,
     fetchStats,
     fetchGroupedStats,
-    fetchTrendDataByDay
+    fetchTrendDataByDay,
+    // --- 新增：暴露消费记录相关 ---
+    consumptionRecords,
+    consumptionPagination,
+    fetchConsumptionRecords
   }
 })
