@@ -42,7 +42,7 @@ service.interceptors.request.use(
     appStore.setGlobalLoading(false)
     console.error('请求错误:', error)
     return Promise.reject(error)
-  },
+  }
 )
 
 // 响应拦截器
@@ -62,8 +62,8 @@ service.interceptors.response.use(
     }
 
     // 成功响应
-    if (status >= 200 && status < 300) {
-      return data
+    if (status === 200) {
+      return response.data
     }
 
     // 其他状态码处理
@@ -119,7 +119,7 @@ service.interceptors.response.use(
     }
 
     return Promise.reject(error)
-  },
+  }
 )
 
 // 封装常用请求方法

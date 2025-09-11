@@ -18,31 +18,45 @@
   </PageTemplate>
 </template>
 
-<script setup>
-import { ref, onMounted } from "vue";
-import { useTicketStore } from "@/stores/tickets.js";
-import { storeToRefs } from "pinia";
-import PageTemplate from "@/components/PageTemplate.vue";
+// /src/views/tickets/TicketStatistics.vue
 
+<script setup>
+import { ref, onMounted } from 'vue'
+import { useTicketStore } from '@/stores/tickets.js' // 确保路径正确
+import { storeToRefs } from 'pinia'
+import PageTemplate from '@/components/PageTemplate.vue'
+
+// 1. 初始化 store
 const ticketStore = useTicketStore()
+
+// 2. 解构 state (这是正确的)
 const { statistics } = storeToRefs(ticketStore)
-const { fetchStatistics } = ticketStore
+
+// 3. [已删除] 错误地解构 action
+// const { fetchStatistics } = ticketStore;
+
+// 4. 本地状态
 const loading = ref(false)
 
+// 5. 生命周期钩子
 onMounted(async () => {
-  loading.value = true;
-  await fetchStatistics();
-  // 模拟数据
-  if (!statistics.value) {
-    statistics.value = {
-      totalRevenue: 125000,
-      totalTicketsSold: 850,
-      totalRefundAmount: 3200,
-      totalRefunds: 15,
-    };
-  }
-  loading.value = false;
-});
+  loading.value = true
+
+  // [最终修正] 直接通过 store 实例调用 action
+  await ticketStore.fetchStatistics()
+
+  // // 模拟数据部分应移至 store 中，但为保持功能暂时保留
+  // if (!statistics.value) {
+  //   statistics.value = {
+  //     totalRevenue: 125000,
+  //     totalTicketsSold: 850,
+  //     totalRefundAmount: 3200,
+  //     totalRefunds: 15,
+  //   };
+  // }
+
+  loading.value = false
+})
 </script>
 
 <style scoped>
