@@ -87,60 +87,70 @@ export const useReservationStore = defineStore("reservation", {
   },
 });
 
+// /src/stores/ticket.js
+
 // --- 退票管理 Store ---
-// 负责：退票列表、退票审批
 export const useRefundStore = defineStore("refund", {
   state: () => ({
-    allRefunds: {
+    refunds: {
       list: [],
       total: 0,
-    }, // 用于 RefundList.vue
-    pendingRefunds: {
-      list: [],
-      total: 0,
-    }, // 用于 RefundManagement.vue
+    },
+    currentRefundDetail: null,
   }),
   actions: {
     /**
-     * @description (对应 RefundList.vue) 获取所有退票记录
+     * @description 搜索退票记录
+     * @param {object} params - 查询参数
      */
-    async fetchAllRefunds(params) {
+    async fetchRefunds(params) {
       try {
-        const response = await ticketApi.getAllRefunds(params);
-        this.allRefunds.list = response.data.items || [];
-        this.allRefunds.total = response.data.total || 0;
+        const response = await ticketApi.searchRefunds(params);
+        // 假设后端返回 { records: [...], totalCount: ... }
+        this.refunds.list = response.data.records || [];
+        this.refunds.total = response.data.totalCount || 0;
       } catch (error) {
         ElMessage.error("获取退票记录失败");
       }
     },
+
     /**
-     * @description (对应 RefundManagement.vue) 获取待处理的退票申请
+     * @description 提交退票申请
+     * @param {object} refundData
      */
-    async fetchPendingRefunds(params) {
+    async createRefundRequest(refundData) {
       try {
-        const response = await ticketApi.getPendingRefunds(params);
-        this.pendingRefunds.list = response.data.items || [];
-        this.pendingRefunds.total = response.data.total || 0;
+        await ticketApi.requestRefund(refundData);
+        ElMessage.success("退票申请提交成功！");
+        return true;
       } catch (error) {
-        ElMessage.error("获取待处理退票失败");
+        ElMessage.error(
+          "退票申请失败：" + (error.response?.data?.message || "未知错误")
+        );
+        return false;
       }
     },
+
     /**
-     * @description (对应 RefundManagement.vue) 处理退票申请
-     * @param {object} processData - { refundId, approved, reason }
+     * @description 处理退票申请
+     * @param {object} processData
      */
-    async processRefund(processData) {
+    async processRefundRequest(processData) {
       try {
         await ticketApi.processRefund(processData);
-        ElMessage.success("处理成功");
-        await this.fetchPendingRefunds(); // 成功后刷新待处理列表
+        ElMessage.success("处理成功！");
+        // 刷新当前列表
+        await this.fetchRefunds({});
+        return true;
       } catch (error) {
-        ElMessage.error("处理失败");
+        ElMessage.error(
+          "处理失败：" + (error.response?.data?.message || "未知错误")
+        );
+        return false;
       }
     },
   },
 });
-
 // --- 促销管理 Store ---
 // 负责：促销活动列表、创建活动
 export const usePromotionStore = defineStore("promotion", {

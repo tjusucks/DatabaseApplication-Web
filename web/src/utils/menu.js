@@ -125,7 +125,7 @@ const fullMenuList = [
         roles: ['super_admin', 'ticket_manager'],
       },
       {
-        path: '/refunds/management',
+        path: '/refunds/request',
         title: '退票管理',
         icon: 'Setting',
         roles: ['super_admin', 'ticket_manager'],
