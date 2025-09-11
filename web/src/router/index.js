@@ -25,8 +25,9 @@ const ReservationDetail = () =>
 const PromotionList = () => import("@/views/promotions/PromotionList.vue");
 const PromotionCreate = () => import("@/views/promotions/PromotionCreate.vue");
 const RefundList = () => import("@/views/refunds/RefundList.vue");
-const RefundManagement = () => import("@/views/refunds/RefundManagement.vue");
-const TicketTypeDetail = () => import("@/views/promotions/PromotionDetail.vue");
+const RefundRequest = () => import("@/views/refunds/RefundRequest.vue");
+const PromotionDetail = () => import("@/views/promotions/PromotionDetail.vue");
+const TicketTypeDetail = () => import("@/views/tickets/TicketTypeDetail.vue");
 
 // 权限管理模块
 const TeamManagement = () => import("@/views/auth/TeamManagement.vue");
@@ -196,7 +197,7 @@ const routes = [
         meta: {
           title: "价格规则管理",
           roles: ["super_admin", "ticket_manager"],
-          hidden: true, // 不在侧边栏显示
+          //hidden: true, // 不在侧边栏显示
         },
       },
     ],
@@ -227,28 +228,27 @@ const routes = [
       },
     ],
   },
+
   // 退票管理路由
   {
     path: "/refunds",
     component: Layout,
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true, title: "退票管理", icon: "RefreshLeft" },
+    redirect: "/refunds/list",
     children: [
       {
         path: "list",
         name: "RefundList",
         component: RefundList,
-        meta: {
-          title: "退票列表",
-          roles: ["super_admin", "ticket_manager"],
-        },
+        meta: { title: "退票列表", roles: ["super_admin", "ticket_manager"] },
       },
       {
-        path: "management",
-        name: "RefundManagement",
-        component: RefundManagement,
+        path: "request",
+        name: "RefundRequest",
+        component: RefundRequest,
         meta: {
-          title: "退票管理",
-          roles: ["super_admin", "ticket_manager"],
+          title: "申请退票",
+          roles: ["super_admin", "ticket_manager", "customer_service"],
         },
       },
     ],
@@ -259,6 +259,7 @@ const routes = [
     path: "/promotions",
     component: Layout,
     meta: { requiresAuth: true },
+    redirect: "/promotions/list",
     children: [
       {
         path: "list",
@@ -273,11 +274,11 @@ const routes = [
       {
         path: `detail/:id`,
         name: "PromotionDetail",
-        component: () => import("@/views/promotions/PromotionDetail.vue"),
+        component: PromotionDetail,
         meta: {
           title: "活动详情管理",
           roles: ["super_admin", "ticket_manager"],
-          hidden: true, // 不在侧边栏显示
+          //hidden: true, // 不在侧边栏显示
         },
       },
       {
@@ -304,23 +305,6 @@ const routes = [
         meta: {
           title: "设施列表",
           roles: ["super_admin", "operations_manager"],
-        },
-      },
-      {
-        path: "list",
-        name: "PromotionList",
-        component: () => import("@/views/promotions/PromotionList.vue"),
-        meta: { title: "优惠活动", roles: ["super_admin", "ticket_manager"] },
-      },
-      // [新增详情页路由]
-      {
-        path: "detail/:id",
-        name: "PromotionDetail",
-        component: () => import("@/views/promotions/PromotionDetail.vue"),
-        meta: {
-          title: "活动详情管理",
-          roles: ["super_admin", "ticket_manager"],
-          hidden: true, // 不在侧边栏显示
         },
       },
       {
