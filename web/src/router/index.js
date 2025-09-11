@@ -458,11 +458,12 @@ const routes = [
         component: FinanceReportDetail,
         meta: {
           title: '报表详情',
-          roles: ['super_admin', 'finance_manager']
+          roles: ['super_admin', 'finance_manager'],
+          hidden: true // 不在菜单中显示
         }
       },
       {
-        path: 'records',
+        path: 'consumption-records',
         name: 'ConsumptionRecords',
         component: ConsumptionRecords,
         meta: {
