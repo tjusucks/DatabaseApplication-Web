@@ -19,7 +19,7 @@ export const useTicketStore = defineStore("ticket", {
     async fetchTicketTypes() {
       try {
         const response = await ticketApi.getTicketTypes();
-        this.ticketTypes = response.data || [];
+        this.ticketTypes = response || [];
       } catch (error) {
         ElMessage.error("获取票种列表失败");
       }
@@ -68,31 +68,41 @@ export const useTicketStore = defineStore("ticket", {
     },
     async fetchPricingRules() {
       try {
-        // 1. 先获取所有票种
         const ticketTypesResponse = await ticketApi.getTicketTypes();
-        const ticketTypes = ticketTypesResponse.data || [];
+        // [修正] 从 ticketTypesResponse 中正确提取数组
+        const ticketTypes = ticketTypesResponse || [];
 
-        // 2. 为每个票种创建一个获取其价格规则的 Promise
         const priceRulePromises = ticketTypes.map(async (type) => {
-          const rulesResponse = await ticketApi.getPriceRulesForTicketType(
+          // [最终修正] 正确解析 getPriceRulesForTicketType 的响应
+          const priceRulesResponse = await ticketApi.getPriceRulesForTicketType(
             type.ticketTypeId
           );
-          const rules = rulesResponse.data || [];
-          // 3. 为每条规则添加票种名称
+
+          // 假设后端返回的是一个数组，如果不是，需要在这里解构
+          // 例如：const rules = priceRulesResponse.rules || [];
+          // 为了健壮性，我们先假设它可能直接返回数组
+          const rules = Array.isArray(priceRulesResponse)
+            ? priceRulesResponse
+            : [];
+
           return rules.map((rule) => ({
             ...rule,
             ticketTypeName: type.typeName,
           }));
         });
 
-        // 4. 等待所有 Promise 完成
         const results = await Promise.all(priceRulePromises);
-
-        // 5. 将二维数组拍平为一维数组，并更新 state
         this.pricingRules = results.flat();
+
+        if (this.pricingRules.length === 0) {
+          console.log(
+            "价格规则为空，可能是数据库中没有数据，或者 getPriceRulesForTicketType API 返回的结构不正确。"
+          );
+        }
       } catch (error) {
         ElMessage.error("获取价格规则失败");
-        this.pricingRules = []; // 出错时清空
+        console.error("fetchPricingRules failed:", error); // 打印详细错误
+        this.pricingRules = [];
       }
     },
     async fetchStatistics() {
