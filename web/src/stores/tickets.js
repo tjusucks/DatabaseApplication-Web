@@ -13,6 +13,7 @@ export const useTicketStore = defineStore("ticket", {
     priceRulesForType: [],
     ticketTypeDetail: null,
     statistics: null,
+    pricingRules: [], // 用于价格管理概览页
   }),
   actions: {
     async fetchTicketTypes() {
@@ -51,6 +52,47 @@ export const useTicketStore = defineStore("ticket", {
         this.priceRulesForType = response.data || [];
       } catch (error) {
         ElMessage.error("获取价格规则失败");
+      }
+    },
+    async createPriceRule(ruleData) {
+      try {
+        await ticketApi.createPriceRule(ruleData);
+        ElMessage.success("新增价格规则成功！");
+        return true;
+      } catch (error) {
+        ElMessage.error(
+          "新增价格规则失败：" + (error.response?.data?.message || "未知错误")
+        );
+        return false;
+      }
+    },
+    async fetchPricingRules() {
+      try {
+        // 1. 先获取所有票种
+        const ticketTypesResponse = await ticketApi.getTicketTypes();
+        const ticketTypes = ticketTypesResponse.data || [];
+
+        // 2. 为每个票种创建一个获取其价格规则的 Promise
+        const priceRulePromises = ticketTypes.map(async (type) => {
+          const rulesResponse = await ticketApi.getPriceRulesForTicketType(
+            type.ticketTypeId
+          );
+          const rules = rulesResponse.data || [];
+          // 3. 为每条规则添加票种名称
+          return rules.map((rule) => ({
+            ...rule,
+            ticketTypeName: type.typeName,
+          }));
+        });
+
+        // 4. 等待所有 Promise 完成
+        const results = await Promise.all(priceRulePromises);
+
+        // 5. 将二维数组拍平为一维数组，并更新 state
+        this.pricingRules = results.flat();
+      } catch (error) {
+        ElMessage.error("获取价格规则失败");
+        this.pricingRules = []; // 出错时清空
       }
     },
     async fetchStatistics() {
