@@ -1,4 +1,4 @@
-import request from '@/utils/request'
+import request from "@/utils/request";
 
 // 人力资源管理 API
 
@@ -10,10 +10,10 @@ import request from '@/utils/request'
  */
 export function createAttendance(data) {
   return request({
-    url: '/api/attendance',
-    method: 'post',
-    data
-  })
+    url: "/api/attendance",
+    method: "post",
+    data,
+  });
 }
 
 /**
@@ -24,9 +24,9 @@ export function createAttendance(data) {
 export function updateAttendance(id, data) {
   return request({
     url: `/api/attendance/${id}`,
-    method: 'put',
-    data
-  })
+    method: "put",
+    data,
+  });
 }
 
 /**
@@ -36,8 +36,8 @@ export function updateAttendance(id, data) {
 export function deleteAttendance(id) {
   return request({
     url: `/api/attendance/${id}`,
-    method: 'delete'
-  })
+    method: "delete",
+  });
 }
 
 /**
@@ -46,10 +46,10 @@ export function deleteAttendance(id) {
  */
 export function checkIn(data) {
   return request({
-    url: '/api/attendance/checkin',
-    method: 'post',
-    data
-  })
+    url: "/api/attendance/checkin",
+    method: "post",
+    data,
+  });
 }
 
 /**
@@ -58,10 +58,10 @@ export function checkIn(data) {
  */
 export function checkOut(data) {
   return request({
-    url: '/api/attendance/checkout',
-    method: 'post',
-    data
-  })
+    url: "/api/attendance/checkout",
+    method: "post",
+    data,
+  });
 }
 
 /**
@@ -70,10 +70,10 @@ export function checkOut(data) {
  */
 export function applyLeave(data) {
   return request({
-    url: '/api/attendance/leave',
-    method: 'post',
-    data
-  })
+    url: "/api/attendance/leave",
+    method: "post",
+    data,
+  });
 }
 
 /**
@@ -84,9 +84,9 @@ export function applyLeave(data) {
 export function updateAttendanceStatus(id, data) {
   return request({
     url: `/api/attendance/status/${id}`,
-    method: 'put',
-    data
-  })
+    method: "put",
+    data,
+  });
 }
 
 /**
@@ -95,10 +95,10 @@ export function updateAttendanceStatus(id, data) {
  */
 export function queryAttendance(data) {
   return request({
-    url: '/api/attendance/query',
-    method: 'post',
-    data
-  })
+    url: "/api/attendance/query",
+    method: "post",
+    data,
+  });
 }
 
 // ========== 员工管理 ==========
@@ -109,10 +109,10 @@ export function queryAttendance(data) {
  */
 export function createEmployee(data) {
   return request({
-    url: '/api/employees',
-    method: 'post',
-    data
-  })
+    url: "/api/employees",
+    method: "post",
+    data,
+  });
 }
 
 /**
@@ -122,8 +122,8 @@ export function createEmployee(data) {
 export function getEmployeeById(id) {
   return request({
     url: `/api/employees/${id}`,
-    method: 'get'
-  })
+    method: "get",
+  });
 }
 
 /**
@@ -134,9 +134,9 @@ export function getEmployeeById(id) {
 export function updateEmployee(id, data) {
   return request({
     url: `/api/employees/${id}`,
-    method: 'put',
-    data
-  })
+    method: "put",
+    data,
+  });
 }
 
 /**
@@ -146,8 +146,8 @@ export function updateEmployee(id, data) {
 export function deleteEmployee(id) {
   return request({
     url: `/api/employees/${id}`,
-    method: 'delete'
-  })
+    method: "delete",
+  });
 }
 
 /**
@@ -156,10 +156,10 @@ export function deleteEmployee(id) {
  */
 export function getEmployees(params) {
   return request({
-    url: '/api/employees',
-    method: 'get',
-    params
-  })
+    url: "/api/employees",
+    method: "get",
+    params,
+  });
 }
 
 // ========== 员工绩效评估 ==========
@@ -170,10 +170,10 @@ export function getEmployees(params) {
  */
 export function createEmployeeReview(data) {
   return request({
-    url: '/api/employeereviews',
-    method: 'post',
-    data
-  })
+    url: "/api/employeereviews",
+    method: "post",
+    data,
+  });
 }
 
 /**
@@ -184,9 +184,9 @@ export function createEmployeeReview(data) {
 export function updateEmployeeReview(id, data) {
   return request({
     url: `/api/employeereviews/${id}`,
-    method: 'put',
-    data
-  })
+    method: "put",
+    data,
+  });
 }
 
 /**
@@ -196,8 +196,8 @@ export function updateEmployeeReview(id, data) {
 export function deleteEmployeeReview(id) {
   return request({
     url: `/api/employeereviews/${id}`,
-    method: 'delete'
-  })
+    method: "delete",
+  });
 }
 
 /**
@@ -207,8 +207,8 @@ export function deleteEmployeeReview(id) {
 export function getEmployeeReviewById(id) {
   return request({
     url: `/api/employeereviews/${id}`,
-    method: 'get'
-  })
+    method: "get",
+  });
 }
 
 /**
@@ -217,10 +217,10 @@ export function getEmployeeReviewById(id) {
  */
 export function getEmployeeReviews(params) {
   return request({
-    url: '/api/employeereviews',
-    method: 'get',
-    params
-  })
+    url: "/api/employeereviews",
+    method: "get",
+    params,
+  });
 }
 
 /**
@@ -229,8 +229,8 @@ export function getEmployeeReviews(params) {
  */
 export function createAttendanceDeduction(data) {
   return request({
-    url: '/api/employeereviews/attendance-deduction',
-    method: 'post',
-    data
-  })
+    url: "/api/employeereviews/attendance-deduction",
+    method: "post",
+    data,
+  });
 }
