@@ -57,21 +57,20 @@ service.interceptors.response.use(
     // 2. 关闭全局加载状态
     appStore.setGlobalLoading(false)
 
-    // 3. 优先处理特殊情况：文件下载
-    // 检查响应头中的 'content-type'
-    const contentType = response.headers['content-type'] || ''
-    if (
-      contentType.includes('application/octet-stream') ||
-      contentType.includes('application/vnd.ms-excel')
-    ) {
-      // 对于文件下载，我们需要返回完整的 response 对象，
-      // 以便在 API 调用层可以访问到文件名等 headers 信息。
-      return response
+    const { data, status } = response
+
+    // 检查状态码是否在 2xx 成功范围内
+    if (status >= 200 && status < 300) {
+      // 对于 DELETE 请求或返回 204 No Content 的情况，data 可能为空，直接返回 response
+      if (status === 204 || response.config.method.toLowerCase() === 'delete') {
+        return response;
+      }
+      return data;
     }
 
-    // 4. 对于所有其他成功的 API 请求，直接返回后端响应体中的数据 (response.data)
-    // 这是核心的简化，确保了 store 或组件中拿到的都是纯粹的业务数据。
-    return response.data
+    // 对于不在 2xx 范围内的响应，统一作为错误处理
+    ElMessage.error(data.message || `请求失败，状态码: ${status}`);
+    return Promise.reject(new Error(data.message || `请求失败，状态码: ${status}`));
   },
 
   /**

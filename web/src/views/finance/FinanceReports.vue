@@ -131,11 +131,11 @@ const initCharts = () => {
     groupedChartInstance.on('click', (params) => {
       // 用户点击了柱状图
       if (params.componentType === 'series') {
-        const type = params.name // 'name' 对应 x 轴的类目
+        const description = params.name // 'name' 对应 x 轴的类目，现在是 description
         router.push({
           name: 'FinanceReportDetail',
           query: {
-            type: type,
+            description: description, // 使用 description 进行查询
             startDate: timeRange.value?.[0],
             endDate: timeRange.value?.[1]
           }
@@ -157,13 +157,19 @@ const updateGroupedChart = (data) => {
     return;
   }
 
-  // 模拟数据可能包含income和expense，真实API可能返回不同结构
-  // 我们将它们统一处理为收入和支出两个系列
-  const chartData = data.map(item => ({
-    type: item.type,
-    income: item.income || item.amount || 0, // 兼容 'amount' 字段
-    expense: item.expense || 0
-  }));
+  // API 返回的数据结构是 { description, totalAmount, transactionType }
+  // 我们需要将其转换为 ECharts 需要的格式，区分收入和支出
+  const types = [...new Set(data.map(item => item.description))]; // 获取所有唯一的 description
+  const chartData = types.map(desc => {
+    const incomeItem = data.find(d => d.description === desc && d.transactionType === 0);
+    const expenseItem = data.find(d => d.description === desc && d.transactionType === 1);
+    return {
+      type: desc, // X轴标签
+      income: incomeItem ? incomeItem.totalAmount : 0,
+      expense: expenseItem ? expenseItem.totalAmount : 0,
+    };
+  });
+
 
   const option = {
     tooltip: {
@@ -274,64 +280,73 @@ const updateMonthlyChart = (data) => {
 }
 
 // 获取数据
-const fetchGroupedData = async () => {
-  const params = {
-    startDate: timeRange.value?.[0] || undefined,
-    endDate: timeRange.value?.[1] || undefined,
-  };
-  await financeStore.fetchFinanceGroupedByType(params);
-  // 移除 nextTick 和 updateGroupedChart 调用，交由 watch 处理
-}
-
-const fetchMonthlyData = async () => {
-  const params = {
-    startDate: timeRange.value?.[0] || undefined,
-    endDate: timeRange.value?.[1] || undefined,
-  }
-  await financeStore.fetchFinanceByMonth(params)
-  // 移除 nextTick 和 updateMonthlyChart 调用，交由 watch 处理
-}
-
-// 当日期范围变化时，更新所有图表
-const handleTimeRangeChange = async () => {
+const fetchAllData = async () => {
   loading.value = true;
   try {
     const params = {
       startDate: timeRange.value?.[0] || undefined,
       endDate: timeRange.value?.[1] || undefined,
     };
-    // handleTimeRangeChange 统一负责所有数据获取
+    // 并行获取所有数据
     await Promise.all([
-      financeStore.fetchFinanceSummary(params), // 确保总览数据也使用时间范围
-      fetchGroupedData(), 
-      fetchMonthlyData()
+      financeStore.fetchSummary(params),
+      financeStore.fetchGroupedStats(params),
+      financeStore.fetchMonthlyStats(params)
     ]);
+  } catch (error) {
+    console.error("获取报表数据失败:", error);
   } finally {
     loading.value = false;
   }
 }
 
-onMounted(async () => {
-  initCharts()
-  await handleTimeRangeChange(); // 统一调用 handleTimeRangeChange 获取所有初始数据
-  
-  window.addEventListener('resize', () => {
-    groupedChartInstance?.resize()
-    monthlyChartInstance?.resize()
-  })
-})
 
+// 当日期范围变化时，更新所有图表
+const handleTimeRangeChange = () => {
+  fetchAllData();
+}
+
+// 监听 store 中数据的变化，并更新图表
 watch(() => financeStore.summary, (newSummary) => {
   summary.value = newSummary;
-})
+}, { deep: true, immediate: true });
 
-watch(() => financeStore.groupedStats, (newData) => {
-  updateGroupedChart(newData)
-})
+watch(() => financeStore.groupedStats, (newStats) => {
+  nextTick(() => {
+    updateGroupedChart(newStats);
+  });
+}, { deep: true });
 
-watch(() => financeStore.monthlyStats, (newData) => {
-  updateMonthlyChart(newData)
-})
+watch(() => financeStore.monthlyStats, (newStats) => {
+  nextTick(() => {
+    updateMonthlyChart(newStats);
+  });
+}, { deep: true });
+
+
+onMounted(() => {
+  initCharts();
+  fetchAllData(); // 初始加载数据
+
+  // 添加窗口大小调整监听器
+  window.addEventListener('resize', () => {
+    groupedChartInstance?.resize();
+    monthlyChartInstance?.resize();
+  });
+});
+
+// 在组件卸载前移除监听器
+import { onBeforeUnmount } from 'vue';
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', () => {
+    groupedChartInstance?.resize();
+    monthlyChartInstance?.resize();
+  });
+  // 销毁 ECharts 实例
+  groupedChartInstance?.dispose();
+  monthlyChartInstance?.dispose();
+});
+
 </script>
 
 <style scoped>
