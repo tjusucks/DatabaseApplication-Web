@@ -1,4 +1,4 @@
-import request from '@/utils/request'
+import request from "@/utils/request";
 
 // 基础用户管理 API
 
@@ -8,10 +8,10 @@ import request from '@/utils/request'
  */
 export function createUser(data) {
   return request({
-    url: '/api/Users',
-    method: 'post',
+    url: "/api/Users",
+    method: "post",
     data,
-  })
+  });
 }
 
 /**
@@ -21,8 +21,8 @@ export function createUser(data) {
 export function getUserById(id) {
   return request({
     url: `/api/Users/${id}`,
-    method: 'get',
-  })
+    method: "get",
+  });
 }
 
 /**
@@ -33,9 +33,9 @@ export function getUserById(id) {
 export function updateUser(id, data) {
   return request({
     url: `/api/Users/${id}`,
-    method: 'put',
+    method: "put",
     data,
-  })
+  });
 }
 
 /**
@@ -45,8 +45,8 @@ export function updateUser(id, data) {
 export function deleteUser(id) {
   return request({
     url: `/api/Users/${id}`,
-    method: 'delete',
-  })
+    method: "delete",
+  });
 }
 
 /**
@@ -55,8 +55,8 @@ export function deleteUser(id) {
  */
 export function getAllUsers(params) {
   return request({
-    url: '/api/Users',
-    method: 'get',
+    url: "/api/Users",
+    method: "get",
     params,
-  })
+  });
 }

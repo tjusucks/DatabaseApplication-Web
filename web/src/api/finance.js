@@ -1,4 +1,4 @@
-import request from '@/utils/request'
+import request from "@/utils/request";
 
 // ----------------- 财务记录 (Financial Records) -----------------
 
@@ -8,10 +8,10 @@ import request from '@/utils/request'
  */
 export function searchFinancialRecords(params) {
   return request({
-    url: '/resource/financial-records/search',
-    method: 'get',
-    params
-  })
+    url: "/resource/financial-records/search",
+    method: "get",
+    params,
+  });
 }
 
 /**
@@ -20,10 +20,10 @@ export function searchFinancialRecords(params) {
  */
 export function createFinancialRecord(data) {
   return request({
-    url: '/resource/financial-records',
-    method: 'post',
-    data
-  })
+    url: "/resource/financial-records",
+    method: "post",
+    data,
+  });
 }
 
 /**
@@ -31,12 +31,11 @@ export function createFinancialRecord(data) {
  * @param {string} id 记录ID
  */
 export function getFinancialRecordById(id) {
-    return request({
-        url: `/resource/financial-records/${id}`,
-        method: 'get'
-    });
+  return request({
+    url: `/resource/financial-records/${id}`,
+    method: "get",
+  });
 }
-
 
 /**
  * 更新财务记录
@@ -46,9 +45,9 @@ export function getFinancialRecordById(id) {
 export function updateFinancialRecord(id, data) {
   return request({
     url: `/resource/financial-records/${id}`,
-    method: 'put',
-    data
-  })
+    method: "put",
+    data,
+  });
 }
 
 /**
@@ -58,8 +57,8 @@ export function updateFinancialRecord(id, data) {
 export function deleteFinancialRecord(id) {
   return request({
     url: `/resource/financial-records/${id}`,
-    method: 'delete'
-  })
+    method: "delete",
+  });
 }
 
 // ----------------- 财务报表 (Financial Reports) -----------------
@@ -70,10 +69,10 @@ export function deleteFinancialRecord(id) {
  */
 export function getFinanceOverview(params) {
   return request({
-    url: '/resource/financial-records/overview',
-    method: 'get',
-    params
-  })
+    url: "/resource/financial-records/overview",
+    method: "get",
+    params,
+  });
 }
 
 /**
@@ -82,10 +81,10 @@ export function getFinanceOverview(params) {
  */
 export function getFinanceGroupedStats(params) {
   return request({
-    url: '/resource/financial-records/stats/grouped',
-    method: 'get',
-    params
-  })
+    url: "/resource/financial-records/stats/grouped",
+    method: "get",
+    params,
+  });
 }
 
 /**
@@ -94,10 +93,10 @@ export function getFinanceGroupedStats(params) {
  */
 export function getFinanceStats(params) {
   return request({
-    url: '/resource/financial-records/stats',
-    method: 'get',
-    params
-  })
+    url: "/resource/financial-records/stats",
+    method: "get",
+    params,
+  });
 }
 
 /**
@@ -106,9 +105,9 @@ export function getFinanceStats(params) {
  * @param {Object} params 查询参数, e.g., { startDate, endDate }
  */
 export function getRecordsByType(transactionType, params) {
-    return request({
-        url: `/resource/financial-records/by-type/${transactionType}`,
-        method: 'get',
-        params
-    });
+  return request({
+    url: `/resource/financial-records/by-type/${transactionType}`,
+    method: "get",
+    params,
+  });
 }

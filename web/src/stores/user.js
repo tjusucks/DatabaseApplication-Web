@@ -305,11 +305,13 @@ import { ref, computed } from 'vue'
 import { ElMessage } from 'element-plus'
 // import { login as loginApi } from '@/api/auth' // 暂时注释掉真实API
 
-export const useUserStore = defineStore('user', () => {
+export const useUserStore = defineStore("user", () => {
   // 状态
-  const token = ref(localStorage.getItem('token') || '')
-  const userInfo = ref(JSON.parse(localStorage.getItem('userInfo') || '{}'))
-  const permissions = ref(JSON.parse(localStorage.getItem('permissions') || '[]'))
+  const token = ref(localStorage.getItem("token") || "");
+  const userInfo = ref(JSON.parse(localStorage.getItem("userInfo") || "{}"));
+  const permissions = ref(
+    JSON.parse(localStorage.getItem("permissions") || "[]"),
+  );
 
   // 计算属性
   const isLoggedIn = computed(() => !!token.value)
@@ -342,8 +344,8 @@ export const useUserStore = defineStore('user', () => {
       ElMessage.success('登录成功')
       return realData
     } catch (error) {
-      ElMessage.error('登录失败：' + (error.message || '未知错误'))
-      throw error
+      ElMessage.error("登录失败：" + (error.message || "未知错误"));
+      throw error;
     }
 
     // // --- 开发环境模拟登录 (立即生效) ---

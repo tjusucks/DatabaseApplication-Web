@@ -1,20 +1,20 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import { useUserStore } from '@/stores/user'
+import { createRouter, createWebHistory } from "vue-router";
+import { useUserStore } from "@/stores/user";
 
 // 导入页面组件
-const Login = () => import('@/views/auth/Login.vue')
-const Layout = () => import('@/layout/index.vue')
-const Dashboard = () => import('@/views/dashboard/index.vue')
-const NotFound = () => import('@/views/error/404.vue')
+const Login = () => import("@/views/auth/Login.vue");
+const Layout = () => import("@/layout/index.vue");
+const Dashboard = () => import("@/views/dashboard/index.vue");
+const NotFound = () => import("@/views/error/404.vue");
 
 // 游客管理模块
-const VisitorList = () => import('@/views/visitors/VisitorList.vue')
-const VisitorCreate = () => import('@/views/visitors/VisitorCreate.vue')
-const VisitorEdit = () => import('@/views/visitors/VisitorEdit.vue')
-const VisitorDetail = () => import('@/views/visitors/VisitorDetail.vue')
-const VisitorRecords = () => import('@/views/visitors/VisitorRecords.vue')
-const VisitorBlacklist = () => import('@/views/visitors/VisitorBlacklist.vue')
-const MemberManagement = () => import('@/views/visitors/MemberManagement.vue')
+const VisitorList = () => import("@/views/visitors/VisitorList.vue");
+const VisitorCreate = () => import("@/views/visitors/VisitorCreate.vue");
+const VisitorEdit = () => import("@/views/visitors/VisitorEdit.vue");
+const VisitorDetail = () => import("@/views/visitors/VisitorDetail.vue");
+const VisitorRecords = () => import("@/views/visitors/VisitorRecords.vue");
+const VisitorBlacklist = () => import("@/views/visitors/VisitorBlacklist.vue");
+const MemberManagement = () => import("@/views/visitors/MemberManagement.vue");
 
 // 票务管理模块
 const TicketTypes = () => import('@/views/tickets/TicketTypes.vue')
@@ -31,24 +31,30 @@ const PromotionDetail = () => import('@/views/promotions/PromotionDetail.vue')
 const TicketTypeDetail = () => import('@/views/tickets/TicketTypeDetail.vue')
 
 // 权限管理模块
-const TeamManagement = () => import('@/views/auth/TeamManagement.vue')
-const RolePermissions = () => import('@/views/auth/RolePermissions.vue')
+const TeamManagement = () => import("@/views/auth/TeamManagement.vue");
+const RolePermissions = () => import("@/views/auth/RolePermissions.vue");
 
 // 设施管理模块
-const FacilityList = () => import('@/views/facilities/FacilityList.vue')
-const FacilityDetail = () => import('@/views/facilities/FacilityDetail.vue')
-const FacilityMonitoring = () => import('@/views/facilities/FacilityMonitoring.vue')
-const MaintenanceRecords = () => import('@/views/maintenance/MaintenanceRecords.vue')
-const MaintenanceSchedule = () => import('@/views/maintenance/MaintenanceSchedule.vue')
-const SafetyInspections = () => import('@/views/safety/SafetyInspections.vue')
-const OperationsAnalytics = () => import('@/views/operations/OperationsAnalytics.vue')
+const FacilityList = () => import("@/views/facilities/FacilityList.vue");
+const FacilityDetail = () => import("@/views/facilities/FacilityDetail.vue");
+const FacilityMonitoring = () =>
+  import("@/views/facilities/FacilityMonitoring.vue");
+const MaintenanceRecords = () =>
+  import("@/views/maintenance/MaintenanceRecords.vue");
+const MaintenanceSchedule = () =>
+  import("@/views/maintenance/MaintenanceSchedule.vue");
+const SafetyInspections = () => import("@/views/safety/SafetyInspections.vue");
+const OperationsAnalytics = () =>
+  import("@/views/operations/OperationsAnalytics.vue");
 
 // 财务管理模块
-const FinanceIncome = () => import('@/views/finance/FinanceIncome.vue')
-const FinanceExpenses = () => import('@/views/finance/FinanceExpenses.vue')
-const FinanceReports = () => import('@/views/finance/FinanceReports.vue')
-const FinanceReportDetail = () => import('@/views/finance/FinanceReportDetail.vue') // 新增报表详情页
-const ConsumptionRecords = () => import('@/views/finance/ConsumptionRecords.vue')
+const FinanceIncome = () => import("@/views/finance/FinanceIncome.vue");
+const FinanceExpenses = () => import("@/views/finance/FinanceExpenses.vue");
+const FinanceReports = () => import("@/views/finance/FinanceReports.vue");
+const FinanceReportDetail = () =>
+  import("@/views/finance/FinanceReportDetail.vue"); // 新增报表详情页
+const ConsumptionRecords = () =>
+  import("@/views/finance/ConsumptionRecords.vue");
 
 // 人力资源模块
 const EmployeeList = () => import('@/views/hr/employees/EmployeeList.vue')
@@ -62,8 +68,8 @@ const PerformanceReports = () => import('@/views/hr/performance/PerformanceRepor
 
 const routes = [
   {
-    path: '/login',
-    name: 'Login',
+    path: "/login",
+    name: "Login",
     component: Login,
     meta: {
       title: '登录',
@@ -71,14 +77,14 @@ const routes = [
     },
   },
   {
-    path: '/',
+    path: "/",
     component: Layout,
-    redirect: '/dashboard',
+    redirect: "/dashboard",
     meta: { requiresAuth: true },
     children: [
       {
-        path: 'dashboard',
-        name: 'Dashboard',
+        path: "dashboard",
+        name: "Dashboard",
         component: Dashboard,
         meta: {
           title: '仪表板',
@@ -98,13 +104,13 @@ const routes = [
   },
   // 游客管理路由
   {
-    path: '/visitors',
+    path: "/visitors",
     component: Layout,
     meta: { requiresAuth: true },
     children: [
       {
-        path: 'list',
-        name: 'VisitorList',
+        path: "list",
+        name: "VisitorList",
         component: VisitorList,
         meta: {
           title: '游客列表',
@@ -112,8 +118,8 @@ const routes = [
         },
       },
       {
-        path: 'records',
-        name: 'VisitorRecords',
+        path: "records",
+        name: "VisitorRecords",
         component: VisitorRecords,
         meta: {
           title: '进出记录',
@@ -121,44 +127,44 @@ const routes = [
         },
       },
       {
-        path: 'members',
-        name: 'MemberManagement',
+        path: "members",
+        name: "MemberManagement",
         component: MemberManagement,
         meta: {
-          title: '会员管理',
-          roles: ['super_admin', 'customer_service']
-        }
+          title: "会员管理",
+          roles: ["super_admin", "customer_service"],
+        },
       },
       {
-        path: 'create',
-        name: 'VisitorCreate',
+        path: "create",
+        name: "VisitorCreate",
         component: VisitorCreate,
         meta: {
-          title: '新增游客',
-          roles: ['super_admin', 'customer_service']
-        }
+          title: "新增游客",
+          roles: ["super_admin", "customer_service"],
+        },
       },
       {
-        path: ':id/edit',
-        name: 'VisitorEdit',
+        path: ":id/edit",
+        name: "VisitorEdit",
         component: VisitorEdit,
         meta: {
-          title: '编辑游客',
-          roles: ['super_admin', 'customer_service']
-        }
+          title: "编辑游客",
+          roles: ["super_admin", "customer_service"],
+        },
       },
       {
-        path: ':id',
-        name: 'VisitorDetail',
+        path: ":id",
+        name: "VisitorDetail",
         component: VisitorDetail,
         meta: {
-          title: '游客详情',
-          roles: ['super_admin', 'customer_service']
-        }
+          title: "游客详情",
+          roles: ["super_admin", "customer_service"],
+        },
       },
       {
-        path: 'blacklist',
-        name: 'VisitorBlacklist',
+        path: "blacklist",
+        name: "VisitorBlacklist",
         component: VisitorBlacklist,
         meta: {
           title: '黑名单管理',
@@ -169,13 +175,13 @@ const routes = [
   },
   // 票务管理路由
   {
-    path: '/tickets',
+    path: "/tickets",
     component: Layout,
     meta: { requiresAuth: true },
     children: [
       {
-        path: 'types',
-        name: 'TicketTypes',
+        path: "types",
+        name: "TicketTypes",
         component: TicketTypes,
         meta: {
           title: '票种管理',
@@ -192,8 +198,8 @@ const routes = [
         },
       },
       {
-        path: 'pricing',
-        name: 'TicketPricing',
+        path: "pricing",
+        name: "TicketPricing",
         component: TicketPricing,
         meta: {
           title: '价格管理',
@@ -201,8 +207,8 @@ const routes = [
         },
       },
       {
-        path: 'sales',
-        name: 'TicketSales',
+        path: "sales",
+        name: "TicketSales",
         component: TicketSales,
         meta: {
           title: '门票销售',
@@ -210,8 +216,8 @@ const routes = [
         },
       },
       {
-        path: 'statistics',
-        name: 'TicketStatistics',
+        path: "statistics",
+        name: "TicketStatistics",
         component: TicketStatistics,
         meta: {
           title: '销售统计',
@@ -233,13 +239,13 @@ const routes = [
   },
   // 预订管理路由
   {
-    path: '/reservations',
+    path: "/reservations",
     component: Layout,
     meta: { requiresAuth: true },
     children: [
       {
-        path: 'list',
-        name: 'ReservationList',
+        path: "list",
+        name: "ReservationList",
         component: ReservationList,
         meta: {
           title: '预订列表',
@@ -247,8 +253,8 @@ const routes = [
         },
       },
       {
-        path: ':id',
-        name: 'ReservationDetail',
+        path: ":id",
+        name: "ReservationDetail",
         component: ReservationDetail,
         meta: {
           title: '预订详情',
@@ -260,14 +266,14 @@ const routes = [
 
   // 退票管理路由
   {
-    path: '/refunds',
+    path: "/refunds",
     component: Layout,
     meta: { requiresAuth: true, title: '退票管理', icon: 'RefreshLeft' },
     redirect: '/refunds/list',
     children: [
       {
-        path: 'list',
-        name: 'RefundList',
+        path: "list",
+        name: "RefundList",
         component: RefundList,
         meta: { title: '退票列表', roles: ['super_admin', 'ticket_manager'] },
       },
@@ -285,14 +291,14 @@ const routes = [
 
   // 营销管理路由
   {
-    path: '/promotions',
+    path: "/promotions",
     component: Layout,
     meta: { requiresAuth: true },
     redirect: '/promotions/list',
     children: [
       {
-        path: 'list',
-        name: 'PromotionList',
+        path: "list",
+        name: "PromotionList",
         component: PromotionList,
         meta: {
           title: '优惠活动',
@@ -311,8 +317,8 @@ const routes = [
         },
       },
       {
-        path: 'create',
-        name: 'PromotionCreate',
+        path: "create",
+        name: "PromotionCreate",
         component: PromotionCreate,
         meta: {
           title: '创建活动',
@@ -323,13 +329,13 @@ const routes = [
   },
   // 设施管理路由
   {
-    path: '/facilities',
+    path: "/facilities",
     component: Layout,
     meta: { requiresAuth: true },
     children: [
       {
-        path: 'list',
-        name: 'FacilityList',
+        path: "list",
+        name: "FacilityList",
         component: FacilityList,
         meta: {
           title: '设施列表',
@@ -337,8 +343,8 @@ const routes = [
         },
       },
       {
-        path: ':id',
-        name: 'FacilityDetail',
+        path: ":id",
+        name: "FacilityDetail",
         component: FacilityDetail,
         meta: {
           title: '设施详情',
@@ -346,8 +352,8 @@ const routes = [
         },
       },
       {
-        path: 'monitoring',
-        name: 'FacilityMonitoring',
+        path: "monitoring",
+        name: "FacilityMonitoring",
         component: FacilityMonitoring,
         meta: {
           title: '设施监控',
@@ -358,13 +364,13 @@ const routes = [
   },
   // 维护管理路由
   {
-    path: '/maintenance',
+    path: "/maintenance",
     component: Layout,
     meta: { requiresAuth: true },
     children: [
       {
-        path: 'records',
-        name: 'MaintenanceRecords',
+        path: "records",
+        name: "MaintenanceRecords",
         component: MaintenanceRecords,
         meta: {
           title: '维护记录',
@@ -372,8 +378,8 @@ const routes = [
         },
       },
       {
-        path: 'schedule',
-        name: 'MaintenanceSchedule',
+        path: "schedule",
+        name: "MaintenanceSchedule",
         component: MaintenanceSchedule,
         meta: {
           title: '维护计划',
@@ -384,13 +390,13 @@ const routes = [
   },
   // 安全检查路由
   {
-    path: '/safety',
+    path: "/safety",
     component: Layout,
     meta: { requiresAuth: true },
     children: [
       {
-        path: 'inspections',
-        name: 'SafetyInspections',
+        path: "inspections",
+        name: "SafetyInspections",
         component: SafetyInspections,
         meta: {
           title: '安全检查',
@@ -418,7 +424,7 @@ const routes = [
   },
   // 财务管理路由
   {
-    path: '/finance',
+    path: "/finance",
     component: Layout,
     meta: {
       requiresAuth: true,
@@ -426,8 +432,8 @@ const routes = [
     },
     children: [
       {
-        path: 'income',
-        name: 'FinanceIncome',
+        path: "income",
+        name: "FinanceIncome",
         component: FinanceIncome,
         meta: {
           title: '收入管理',
@@ -435,8 +441,8 @@ const routes = [
         },
       },
       {
-        path: 'expenses',
-        name: 'FinanceExpenses',
+        path: "expenses",
+        name: "FinanceExpenses",
         component: FinanceExpenses,
         meta: {
           title: '支出管理',
@@ -444,8 +450,8 @@ const routes = [
         },
       },
       {
-        path: 'reports',
-        name: 'FinanceReports',
+        path: "reports",
+        name: "FinanceReports",
         component: FinanceReports,
         meta: {
           title: '财务报表',
@@ -453,75 +459,75 @@ const routes = [
         },
       },
       {
-        path: 'reports/:id',
-        name: 'FinanceReportDetail',
+        path: "reports/:id",
+        name: "FinanceReportDetail",
         component: FinanceReportDetail,
         meta: {
-          title: '报表详情',
-          roles: ['super_admin', 'finance_manager'],
-          hidden: true // 不在菜单中显示
-        }
+          title: "报表详情",
+          roles: ["super_admin", "finance_manager"],
+          hidden: true, // 不在菜单中显示
+        },
       },
       {
-        path: 'consumption-records',
-        name: 'ConsumptionRecords',
+        path: "consumption-records",
+        name: "ConsumptionRecords",
         component: ConsumptionRecords,
         meta: {
-          title: '消费记录',
-          roles: ['super_admin', 'finance_manager']
-        }
-      }
-    ]
+          title: "消费记录",
+          roles: ["super_admin", "finance_manager"],
+        },
+      },
+    ],
   },
   // 人力资源路由
   {
-    path: '/hr',
+    path: "/hr",
     component: Layout,
     meta: { requiresAuth: true },
     children: [
       {
-        path: 'employees/list',
-        name: 'EmployeeList',
+        path: "employees/list",
+        name: "EmployeeList",
         component: EmployeeList,
         meta: {
-          title: '员工列表',
-          roles: ['super_admin', 'hr_manager'],
+          title: "员工列表",
+          roles: ["super_admin", "hr_manager"],
         },
       },
       {
-        path: 'employees/:id',
-        name: 'EmployeeDetail',
+        path: "employees/:id",
+        name: "EmployeeDetail",
         component: EmployeeDetail,
         meta: {
-          title: '员工详情',
-          roles: ['super_admin', 'hr_manager'],
+          title: "员工详情",
+          roles: ["super_admin", "hr_manager"],
         },
       },
       {
-        path: 'payroll/generate',
-        name: 'PayrollGenerate',
+        path: "payroll/generate",
+        name: "PayrollGenerate",
         component: PayrollGenerate,
         meta: {
-          title: '工资单生成',
-          roles: ['super_admin', 'hr_manager'],
+          title: "工资单生成",
+          roles: ["super_admin", "hr_manager"],
         },
       },
       {
-        path: 'payroll/records',
-        name: 'PayrollRecords',
+        path: "payroll/records",
+        name: "PayrollRecords",
         component: PayrollRecords,
         meta: {
-          title: '工资记录',
-          roles: ['super_admin', 'hr_manager'],
+          title: "工资记录",
+          roles: ["super_admin", "hr_manager"],
         },
       },
       {
-        path: 'attendance/records',
-        name: 'AttendanceRecords',
+        path: "attendance/records",
+        name: "AttendanceRecords",
         component: AttendanceRecords,
         meta: {
-          title: '考勤记录',
-          roles: ['super_admin', 'hr_manager'],
+          title: "考勤记录",
+          roles: ["super_admin", "hr_manager"],
         },
       },
       {
@@ -582,8 +588,8 @@ const routes = [
 
   // 404 页面
   {
-    path: '/:pathMatch(.*)*',
-    name: 'NotFound',
+    path: "/:pathMatch(.*)*",
+    name: "NotFound",
     component: NotFound,
     meta: { title: '页面未找到' },
   },
@@ -605,23 +611,23 @@ router.beforeEach((to, from, next) => {
 
   // 检查是否需要登录
   if (to.meta.requiresAuth && !userStore.isLoggedIn) {
-    next('/login')
-    return
+    next("/login");
+    return;
   }
 
   // 检查角色权限
   if (to.meta.roles && !userStore.hasAnyRole(to.meta.roles)) {
-    next('/404')
-    return
+    next("/404");
+    return;
   }
 
   // 已登录用户访问登录页面，重定向到首页
-  if (to.path === '/login' && userStore.isLoggedIn) {
-    next('/')
-    return
+  if (to.path === "/login" && userStore.isLoggedIn) {
+    next("/");
+    return;
   }
 
   next()
 })
 
-export default router
+export default router;
