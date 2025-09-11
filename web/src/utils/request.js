@@ -9,75 +9,77 @@ const service = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
   timeout: 15000,
   headers: {
-    'Content-Type': 'application/json'
-  }
+    'Content-Type': 'application/json',
+  },
 })
 
 // 请求拦截器
 service.interceptors.request.use(
-  config => {
+  (config) => {
     const userStore = useUserStore()
     const appStore = useAppStore()
-    
+
     // 显示全局加载状态
     appStore.setGlobalLoading(true)
-    
+
     // 添加认证 token
     if (userStore.token) {
       config.headers.Authorization = `Bearer ${userStore.token}`
     }
-    
+
     // 添加请求时间戳，防止缓存
     if (config.method === 'get') {
       config.params = {
         ...config.params,
-        _t: Date.now()
+        _t: Date.now(),
       }
     }
-    
+
     return config
   },
-  error => {
+  (error) => {
     const appStore = useAppStore()
     appStore.setGlobalLoading(false)
     console.error('请求错误:', error)
     return Promise.reject(error)
-  }
+  },
 )
 
 // 响应拦截器
 service.interceptors.response.use(
-  response => {
+  (response) => {
     const appStore = useAppStore()
     appStore.setGlobalLoading(false)
-    
+
     const { data, status } = response
-    
+
     // 处理文件下载
-    if (response.headers['content-type']?.includes('application/octet-stream') ||
-        response.headers['content-type']?.includes('application/vnd.ms-excel')) {
+    if (
+      response.headers['content-type']?.includes('application/octet-stream') ||
+      response.headers['content-type']?.includes('application/vnd.ms-excel')
+    ) {
       return response
     }
-    
+
     // 成功响应
-    if (status === 200) {
+    if (status >= 200 && status < 300) {
       return data
     }
-    
+
     // 其他状态码处理
     ElMessage.error(data.message || '请求失败')
     return Promise.reject(new Error(data.message || '请求失败'))
   },
-  error => {
+  (error) => {
     const appStore = useAppStore()
     const userStore = useUserStore()
     appStore.setGlobalLoading(false)
-    
+
     const { response, message } = error
-    
+
     if (response) {
       const { status, data } = response
-      
+
       switch (status) {
         case 400:
           ElMessage.error(data.message || '请求参数错误')
@@ -115,9 +117,9 @@ service.interceptors.response.use(
     } else {
       ElMessage.error('请求失败，请稍后重试')
     }
-    
+
     return Promise.reject(error)
-  }
+  },
 )
 
 // 封装常用请求方法
@@ -125,48 +127,50 @@ export const request = {
   get(url, params = {}, config = {}) {
     return service.get(url, { params, ...config })
   },
-  
+
   post(url, data = {}, config = {}) {
     return service.post(url, data, config)
   },
-  
+
   put(url, data = {}, config = {}) {
     return service.put(url, data, config)
   },
-  
+
   delete(url, config = {}) {
     return service.delete(url, config)
   },
-  
+
   patch(url, data = {}, config = {}) {
     return service.patch(url, data, config)
   },
-  
+
   upload(url, formData, config = {}) {
     return service.post(url, formData, {
       headers: {
-        'Content-Type': 'multipart/form-data'
+        'Content-Type': 'multipart/form-data',
       },
-      ...config
+      ...config,
     })
   },
-  
+
   download(url, params = {}, filename = '') {
-    return service.get(url, {
-      params,
-      responseType: 'blob'
-    }).then(response => {
-      const blob = new Blob([response.data])
-      const downloadUrl = window.URL.createObjectURL(blob)
-      const link = document.createElement('a')
-      link.href = downloadUrl
-      link.download = filename || 'download'
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-      window.URL.revokeObjectURL(downloadUrl)
-    })
-  }
+    return service
+      .get(url, {
+        params,
+        responseType: 'blob',
+      })
+      .then((response) => {
+        const blob = new Blob([response.data])
+        const downloadUrl = window.URL.createObjectURL(blob)
+        const link = document.createElement('a')
+        link.href = downloadUrl
+        link.download = filename || 'download'
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        window.URL.revokeObjectURL(downloadUrl)
+      })
+  },
 }
 
 export default service
