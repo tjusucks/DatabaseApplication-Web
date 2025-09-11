@@ -45,15 +45,15 @@ onMounted(async () => {
   // [最终修正] 直接通过 store 实例调用 action
   await ticketStore.fetchStatistics()
 
-  // // 模拟数据部分应移至 store 中，但为保持功能暂时保留
-  // if (!statistics.value) {
-  //   statistics.value = {
-  //     totalRevenue: 125000,
-  //     totalTicketsSold: 850,
-  //     totalRefundAmount: 3200,
-  //     totalRefunds: 15,
-  //   };
-  // }
+  // 模拟数据部分应移至 store 中，但为保持功能暂时保留
+  if (!statistics.value) {
+    statistics.value = {
+      totalRevenue: 125000,
+      totalTicketsSold: 850,
+      totalRefundAmount: 3200,
+      totalRefunds: 15,
+    };
+  }
 
   loading.value = false
 })
