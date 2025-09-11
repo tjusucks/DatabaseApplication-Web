@@ -4,7 +4,8 @@ import { useUserStore } from '@/stores/user'
 // 导入页面组件
 const Login = () => import('@/views/auth/Login.vue')
 const Register = () => import('@/views/auth/Register.vue')
-const TestMSW = () => import('@/views/auth/TestMSW.vue')
+const ResetPassword = () => import('@/views/auth/ResetPassword.vue')
+const Profile = () => import('@/views/auth/Profile.vue')
 const Layout = () => import('@/layout/index.vue')
 const Dashboard = () => import('@/views/dashboard/index.vue')
 const NotFound = () => import('@/views/error/404.vue')
@@ -78,14 +79,15 @@ const routes = [
     }
   },
   {
-    path: '/test-msw',
-    name: 'TestMSW',
-    component: TestMSW,
+    path: '/reset-password',
+    name: 'ResetPassword',
+    component: ResetPassword,
     meta: {
-      title: 'MSW 测试',
+      title: '重置密码',
       requiresAuth: false
     }
   },
+
   {
     path: '/',
     component: Layout,
@@ -96,9 +98,19 @@ const routes = [
         path: 'dashboard',
         name: 'Dashboard',
         component: Dashboard,
-        meta: { 
+        meta: {
           title: '仪表板',
           icon: 'House',
+          roles: ['super_admin', 'finance_manager', 'hr_manager', 'operations_manager', 'ticket_manager', 'customer_service', 'employee']
+        }
+      },
+      {
+        path: 'profile',
+        name: 'Profile',
+        component: Profile,
+        meta: {
+          title: '个人资料',
+          icon: 'User',
           roles: ['super_admin', 'finance_manager', 'hr_manager', 'operations_manager', 'ticket_manager', 'customer_service', 'employee']
         }
       }
@@ -530,7 +542,7 @@ const router = createRouter({
 })
 
 // 路由守卫
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, _, next) => {
   const userStore = useUserStore()
 
   // 设置页面标题
