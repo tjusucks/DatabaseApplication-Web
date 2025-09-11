@@ -10,7 +10,7 @@ export function createEntryRecord(data) {
   return request({
     url: '/api/user/entries',
     method: 'post',
-    data
+    data,
   })
 }
 
@@ -22,7 +22,7 @@ export function getAllEntryRecords(params) {
   return request({
     url: '/api/user/entries',
     method: 'get',
-    params
+    params,
   })
 }
 
@@ -33,7 +33,7 @@ export function getAllEntryRecords(params) {
 export function getEntryRecordById(id) {
   return request({
     url: `/api/user/entries/${id}`,
-    method: 'get'
+    method: 'get',
   })
 }
 
@@ -46,7 +46,7 @@ export function updateEntryRecord(id, data) {
   return request({
     url: `/api/user/entries/${id}`,
     method: 'put',
-    data
+    data,
   })
 }
 
@@ -57,7 +57,7 @@ export function updateEntryRecord(id, data) {
 export function deleteEntryRecord(id) {
   return request({
     url: `/api/user/entries/${id}`,
-    method: 'delete'
+    method: 'delete',
   })
 }
 
@@ -69,7 +69,7 @@ export function searchEntryRecords(params) {
   return request({
     url: '/api/user/entries/search',
     method: 'get',
-    params
+    params,
   })
 }
 
@@ -81,7 +81,7 @@ export function getEntryRecordStats(params) {
   return request({
     url: '/api/user/entries/stats',
     method: 'get',
-    params
+    params,
   })
 }
 
@@ -93,7 +93,7 @@ export function getGroupedEntryRecordStats(params) {
   return request({
     url: '/api/user/entries/stats/grouped',
     method: 'get',
-    params
+    params,
   })
 }
 
@@ -106,7 +106,7 @@ export function getGroupedEntryRecordStats(params) {
 export function registerEntry(data) {
   return createEntryRecord({
     ...data,
-    entryTime: new Date().toISOString()
+    entryTime: new Date().toISOString(),
   })
 }
 
@@ -117,7 +117,7 @@ export function registerEntry(data) {
 export function registerExit(data) {
   return updateEntryRecord(data.entryRecordId, {
     exitTime: new Date().toISOString(),
-    exitGate: data.exitGate
+    exitGate: data.exitGate,
   })
 }
 
@@ -135,7 +135,7 @@ export function getEntryRecordsByVisitor(visitorId) {
 export function getCurrentVisitors() {
   return searchEntryRecords({
     isCurrentlyInPark: true,
-    includeVisitorInfo: true
+    includeVisitorInfo: true,
   })
 }
 
@@ -144,7 +144,7 @@ export function getCurrentVisitors() {
  */
 export function getCurrentVisitorCount() {
   return getEntryRecordStats({
-    statType: 'currentCount'
+    statType: 'currentCount',
   })
 }
 
@@ -155,7 +155,7 @@ export function getCurrentVisitorCount() {
 export function getEntryRecordsByDateRange(params) {
   return searchEntryRecords({
     startDate: params.startDate,
-    endDate: params.endDate
+    endDate: params.endDate,
   })
 }
 
@@ -166,7 +166,7 @@ export function getEntryRecordsByDateRange(params) {
 export function getDailyStatistics(params) {
   return getGroupedEntryRecordStats({
     groupBy: 'date',
-    ...params
+    ...params,
   })
 }
 
@@ -186,6 +186,6 @@ export function getActiveEntryRecord(visitorId) {
   return searchEntryRecords({
     visitorId,
     isCurrentlyInPark: true,
-    limit: 1
+    limit: 1,
   })
 }

@@ -3,7 +3,9 @@
     <div class="page-header">
       <div class="header-left">
         <h2>游客详情</h2>
-        <p v-if="visitorData">{{ visitorData.user?.displayName || `游客 ${visitorData.visitorId}` }}</p>
+        <p v-if="visitorData">
+          {{ visitorData.user?.displayName || `游客 ${visitorData.visitorId}` }}
+        </p>
       </div>
       <div class="header-actions">
         <el-button @click="handleEdit" type="primary" v-if="visitorData">
@@ -200,12 +202,7 @@
     >
       <el-form :model="pointsForm" label-width="80px">
         <el-form-item label="积分数量" required>
-          <el-input-number
-            v-model="pointsForm.points"
-            :min="1"
-            :max="10000"
-            style="width: 100%"
-          />
+          <el-input-number v-model="pointsForm.points" :min="1" :max="10000" style="width: 100%" />
         </el-form-item>
         <el-form-item label="操作原因">
           <el-input
@@ -231,12 +228,7 @@
 import { ref, reactive, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import {
-  getVisitorById,
-  addPoints,
-  deductPoints,
-  updateVisitor
-} from '@/api/visitors'
+import { getVisitorById, addPoints, deductPoints, updateVisitor } from '@/api/visitors'
 import { searchEntryRecords } from '@/api/entryRecords'
 
 const route = useRoute()
@@ -253,7 +245,7 @@ const operationRecords = ref([])
 const entryPagination = reactive({
   currentPage: 1,
   pageSize: 10,
-  total: 0
+  total: 0,
 })
 
 // 积分操作
@@ -262,10 +254,8 @@ const pointsOperation = ref('add') // 'add' or 'deduct'
 const pointsSubmitting = ref(false)
 const pointsForm = reactive({
   points: 100,
-  reason: ''
+  reason: '',
 })
-
-
 
 // 获取游客ID
 const visitorId = computed(() => route.params.id)
@@ -281,7 +271,7 @@ const formatGender = (gender) => {
   const genderMap = {
     0: '男',
     1: '女',
-    2: '其他'
+    2: '其他',
   }
   return genderMap[gender] || '-'
 }
@@ -289,10 +279,10 @@ const formatGender = (gender) => {
 // 格式化会员等级
 const formatMemberLevel = (level) => {
   const levelMap = {
-    'Bronze': '青铜',
-    'Silver': '白银',
-    'Gold': '黄金',
-    'Platinum': '铂金'
+    Bronze: '青铜',
+    Silver: '白银',
+    Gold: '黄金',
+    Platinum: '铂金',
   }
   return levelMap[level] || level
 }
@@ -300,10 +290,10 @@ const formatMemberLevel = (level) => {
 // 获取会员等级标签类型
 const getMemberLevelType = (level) => {
   const typeMap = {
-    'Bronze': '',
-    'Silver': 'info',
-    'Gold': 'warning',
-    'Platinum': 'success'
+    Bronze: '',
+    Silver: 'info',
+    Gold: 'warning',
+    Platinum: 'success',
   }
   return typeMap[level] || ''
 }
@@ -329,12 +319,12 @@ const calculateDuration = (entryTime, exitTime) => {
 // 获取操作类型
 const getOperationType = (type) => {
   const typeMap = {
-    'create': 'primary',
-    'update': 'info',
-    'blacklist': 'danger',
-    'unblacklist': 'success',
-    'member': 'warning',
-    'points': 'success'
+    create: 'primary',
+    update: 'info',
+    blacklist: 'danger',
+    unblacklist: 'success',
+    member: 'warning',
+    points: 'success',
   }
   return typeMap[type] || 'info'
 }
@@ -356,8 +346,8 @@ const loadVisitorData = async () => {
         id: 1,
         type: 'create',
         description: '游客注册',
-        timestamp: visitorData.value.user?.createdAt
-      }
+        timestamp: visitorData.value.user?.createdAt,
+      },
     ]
 
     if (visitorData.value.memberSince) {
@@ -365,10 +355,9 @@ const loadVisitorData = async () => {
         id: 2,
         type: 'member',
         description: '升级为会员',
-        timestamp: visitorData.value.memberSince
+        timestamp: visitorData.value.memberSince,
       })
     }
-
   } catch (error) {
     console.error('加载游客数据失败:', error)
     ElMessage.error('加载游客数据失败：' + error.message)
@@ -384,7 +373,7 @@ const loadEntryRecords = async () => {
     const response = await searchEntryRecords({
       visitorId: visitorId.value,
       page: entryPagination.currentPage,
-      pageSize: entryPagination.pageSize
+      pageSize: entryPagination.pageSize,
     })
 
     if (response) {
@@ -431,7 +420,7 @@ const handlePointsSubmit = async () => {
 
     const data = {
       points: pointsForm.points,
-      reason: pointsForm.reason
+      reason: pointsForm.reason,
     }
 
     if (pointsOperation.value === 'add') {
@@ -444,15 +433,12 @@ const handlePointsSubmit = async () => {
 
     pointsDialogVisible.value = false
     await loadVisitorData() // 重新加载数据
-
   } catch (error) {
     ElMessage.error('积分操作失败：' + error.message)
   } finally {
     pointsSubmitting.value = false
   }
 }
-
-
 
 // 组件挂载时加载数据
 onMounted(() => {
@@ -552,8 +538,6 @@ onMounted(() => {
   justify-content: center;
   margin-top: 16px;
 }
-
-
 
 /* 响应式设计 */
 @media (max-width: 768px) {

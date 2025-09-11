@@ -10,7 +10,7 @@ export function createVisitor(data) {
   return request({
     url: '/api/user/visitors',
     method: 'post',
-    data
+    data,
   })
 }
 
@@ -22,7 +22,7 @@ export function getVisitors(params) {
   return request({
     url: '/api/user/visitors',
     method: 'get',
-    params
+    params,
   })
 }
 
@@ -33,7 +33,7 @@ export function getVisitors(params) {
 export function getVisitorById(id) {
   return request({
     url: `/api/user/visitors/${id}`,
-    method: 'get'
+    method: 'get',
   })
 }
 
@@ -46,7 +46,7 @@ export function updateVisitor(id, data) {
   return request({
     url: `/api/user/visitors/${id}`,
     method: 'put',
-    data
+    data,
   })
 }
 
@@ -59,7 +59,7 @@ export function updateVisitorContact(id, data) {
   return request({
     url: `/api/user/visitors/${id}/contact`,
     method: 'put',
-    data
+    data,
   })
 }
 
@@ -70,7 +70,7 @@ export function updateVisitorContact(id, data) {
 export function deleteVisitor(id) {
   return request({
     url: `/api/user/visitors/${id}`,
-    method: 'delete'
+    method: 'delete',
   })
 }
 
@@ -83,7 +83,7 @@ export function deleteVisitor(id) {
 export function upgradeToMember(id) {
   return request({
     url: `/api/user/visitors/${id}/membership`,
-    method: 'post'
+    method: 'post',
   })
 }
 
@@ -94,7 +94,7 @@ export function upgradeToMember(id) {
 export function removeMembership(id) {
   return request({
     url: `/api/user/visitors/${id}/membership`,
-    method: 'delete'
+    method: 'delete',
   })
 }
 
@@ -107,7 +107,7 @@ export function addPoints(id, data) {
   return request({
     url: `/api/user/visitors/${id}/points/add`,
     method: 'post',
-    data
+    data,
   })
 }
 
@@ -120,7 +120,7 @@ export function deductPoints(id, data) {
   return request({
     url: `/api/user/visitors/${id}/points/deduct`,
     method: 'post',
-    data
+    data,
   })
 }
 
@@ -132,7 +132,7 @@ export function addPointsByContact(data) {
   return request({
     url: `/api/user/visitors/points/add-by-contact`,
     method: 'post',
-    data
+    data,
   })
 }
 
@@ -144,7 +144,7 @@ export function deductPointsByContact(data) {
   return request({
     url: `/api/user/visitors/points/deduct-by-contact`,
     method: 'post',
-    data
+    data,
   })
 }
 
@@ -156,7 +156,7 @@ export function searchVisitors(params) {
   return request({
     url: '/api/user/visitors/search',
     method: 'get',
-    params
+    params,
   })
 }
 
@@ -168,7 +168,7 @@ export function getVisitorStats(params) {
   return request({
     url: '/api/user/visitors/stats',
     method: 'get',
-    params
+    params,
   })
 }
 
@@ -180,7 +180,7 @@ export function getGroupedVisitorStats(params) {
   return request({
     url: '/api/user/visitors/stats/grouped',
     method: 'get',
-    params
+    params,
   })
 }
 
@@ -195,8 +195,8 @@ export function blacklistVisitor(id, data) {
     method: 'post',
     data: {
       visitorId: parseInt(id),
-      reason: data.reason || '违规行为'
-    }
+      reason: data.reason || '违规行为',
+    },
   })
 }
 
@@ -207,11 +207,9 @@ export function blacklistVisitor(id, data) {
 export function unblacklistVisitor(id) {
   return request({
     url: `/api/user/visitors/${id}/blacklist`,
-    method: 'delete'
+    method: 'delete',
   })
 }
-
-
 
 // 兼容性函数 - 保持向后兼容
 export function searchVisitorsByName(name) {

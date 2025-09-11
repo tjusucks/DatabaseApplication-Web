@@ -10,12 +10,12 @@
     <el-card class="filter-card">
       <el-form :model="filterForm" inline class="filter-form">
         <el-form-item label="统计时间">
-          <el-date-picker 
-            v-model="filterForm.dateRange" 
-            type="daterange" 
-            range-separator="至" 
+          <el-date-picker
+            v-model="filterForm.dateRange"
+            type="daterange"
+            range-separator="至"
             start-placeholder="开始日期"
-            end-placeholder="结束日期" 
+            end-placeholder="结束日期"
             style="width: 300px"
             @change="handleDateRangeChange"
           />
@@ -202,7 +202,7 @@
           </el-button>
         </div>
       </template>
-      
+
       <el-table :data="statisticsTable" v-loading="tableLoading" stripe border>
         <el-table-column prop="date" label="日期" width="120" />
         <el-table-column prop="totalVisitors" label="总游客数" width="100" />
@@ -215,9 +215,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="revenue" label="相关收入" width="120">
-          <template #default="{ row }">
-            ¥{{ row.revenue.toLocaleString() }}
-          </template>
+          <template #default="{ row }"> ¥{{ row.revenue.toLocaleString() }} </template>
         </el-table-column>
         <el-table-column prop="satisfaction" label="满意度" width="100">
           <template #default="{ row }">
@@ -225,7 +223,7 @@
           </template>
         </el-table-column>
       </el-table>
-      
+
       <div class="pagination-container">
         <el-pagination
           :current-page="tablePagination.currentPage"
@@ -244,14 +242,8 @@
 <script setup>
 import { ref, reactive, onMounted, computed } from 'vue'
 import { ElMessage } from 'element-plus'
-import {
-  getVisitorStats,
-  getGroupedVisitorStats
-} from '@/api/visitors'
-import {
-  getEntryRecordStats,
-  getGroupedEntryRecordStats
-} from '@/api/entryRecords'
+import { getVisitorStats, getGroupedVisitorStats } from '@/api/visitors'
+import { getEntryRecordStats, getGroupedEntryRecordStats } from '@/api/entryRecords'
 
 // 加载状态
 const loading = ref(false)
@@ -260,7 +252,7 @@ const tableLoading = ref(false)
 // 筛选表单
 const filterForm = reactive({
   dateRange: [],
-  quickSelect: 'month'
+  quickSelect: 'month',
 })
 
 // 趋势类型
@@ -275,22 +267,22 @@ const metrics = reactive({
   visitorChange: 0,
   memberChange: 0,
   entryChange: 0,
-  stayTimeChange: 0
+  stayTimeChange: 0,
 })
 
 // 图表数据
 const chartData = reactive({
   visitorTypes: {
     regular: 0,
-    member: 0
+    member: 0,
   },
   memberLevels: {
     bronze: 0,
     silver: 0,
     gold: 0,
-    platinum: 0
+    platinum: 0,
   },
-  trendData: []
+  trendData: [],
 })
 
 // 统计表格数据
@@ -298,7 +290,7 @@ const statisticsTable = ref([])
 const tablePagination = reactive({
   currentPage: 1,
   pageSize: 20,
-  total: 0
+  total: 0,
 })
 
 // 图表引用
@@ -343,7 +335,8 @@ const handleDateRangeChange = (dateRange) => {
 // 快速选择变化
 const handleQuickSelectChange = (value) => {
   const now = new Date()
-  let startDate, endDate = new Date()
+  let startDate,
+    endDate = new Date()
 
   switch (value) {
     case 'today':
@@ -407,7 +400,7 @@ const loadMetrics = async () => {
 
     const [visitorStatsResponse, entryStatsResponse] = await Promise.all([
       getVisitorStats({ ...params, includeChanges: true }),
-      getEntryRecordStats({ ...params, includeChanges: true })
+      getEntryRecordStats({ ...params, includeChanges: true }),
     ])
 
     if (visitorStatsResponse) {
@@ -423,7 +416,6 @@ const loadMetrics = async () => {
       metrics.entryChange = entryStatsResponse.entryChange || 0
       metrics.stayTimeChange = entryStatsResponse.stayTimeChange || 0
     }
-
   } catch (error) {
     console.error('加载核心指标失败:', error)
     // 使用模拟数据
@@ -449,7 +441,7 @@ const loadChartData = async () => {
 
     const [visitorGroupedResponse, entryGroupedResponse] = await Promise.all([
       getGroupedVisitorStats({ ...params, groupBy: 'type' }),
-      getGroupedEntryRecordStats({ ...params, groupBy: trendType.value })
+      getGroupedEntryRecordStats({ ...params, groupBy: trendType.value }),
     ])
 
     if (visitorGroupedResponse) {
@@ -468,7 +460,6 @@ const loadChartData = async () => {
     if (entryGroupedResponse) {
       chartData.trendData = entryGroupedResponse.items || []
     }
-
   } catch (error) {
     console.error('加载图表数据失败:', error)
     // 使用模拟数据
@@ -502,16 +493,15 @@ const loadStatisticsTable = async () => {
         totalEntries: Math.floor(Math.random() * 150) + 80,
         avgStayTime: Math.floor(Math.random() * 120) + 120,
         revenue: Math.floor(Math.random() * 50000) + 20000,
-        satisfaction: (Math.random() * 2 + 3).toFixed(1)
+        satisfaction: (Math.random() * 2 + 3).toFixed(1),
       })
     }
 
     statisticsTable.value = mockData.slice(
       (tablePagination.currentPage - 1) * tablePagination.pageSize,
-      tablePagination.currentPage * tablePagination.pageSize
+      tablePagination.currentPage * tablePagination.pageSize,
     )
     tablePagination.total = mockData.length
-
   } catch (error) {
     console.error('加载统计表格失败:', error)
     ElMessage.error('加载统计表格失败：' + error.message)
@@ -524,11 +514,7 @@ const loadStatisticsTable = async () => {
 const loadAllData = async () => {
   try {
     loading.value = true
-    await Promise.all([
-      loadMetrics(),
-      loadChartData(),
-      loadStatisticsTable()
-    ])
+    await Promise.all([loadMetrics(), loadChartData(), loadStatisticsTable()])
   } catch (error) {
     console.error('加载数据失败:', error)
     ElMessage.error('加载数据失败：' + error.message)

@@ -23,7 +23,7 @@ export const useUserStore = defineStore('user', () => {
   // 检查是否有任意一个角色
   const hasAnyRole = (roles) => {
     if (!roles || roles.length === 0) return true
-    return roles.some(role => hasRole(role))
+    return roles.some((role) => hasRole(role))
   }
 
   // 检查是否有权限
@@ -36,7 +36,7 @@ export const useUserStore = defineStore('user', () => {
     try {
       // 模拟登录 API 调用
       // const response = await loginApi(loginForm)
-      
+
       // 模拟数据 - 实际项目中应该从 API 获取
       const mockResponse = {
         token: 'mock-jwt-token-' + Date.now(),
@@ -47,11 +47,9 @@ export const useUserStore = defineStore('user', () => {
           role: loginForm.username === 'admin' ? 'super_admin' : 'employee',
           avatar: '',
           email: loginForm.username + '@example.com',
-          phone: '13800138000'
+          phone: '13800138000',
         },
-        permissions: loginForm.username === 'admin' 
-          ? ['*'] 
-          : ['visitor:read', 'ticket:read']
+        permissions: loginForm.username === 'admin' ? ['*'] : ['visitor:read', 'ticket:read'],
       }
 
       // 保存到状态和本地存储
@@ -75,7 +73,7 @@ export const useUserStore = defineStore('user', () => {
   const logout = async () => {
     try {
       // await logoutApi()
-      
+
       // 清除状态和本地存储
       token.value = ''
       userInfo.value = {}
@@ -100,11 +98,11 @@ export const useUserStore = defineStore('user', () => {
   const fetchUserInfo = async () => {
     try {
       if (!token.value) return null
-      
+
       // const response = await getUserInfo()
       // userInfo.value = response.data
       // permissions.value = response.permissions
-      
+
       return userInfo.value
     } catch (error) {
       console.error('获取用户信息失败:', error)
@@ -124,13 +122,13 @@ export const useUserStore = defineStore('user', () => {
     token,
     userInfo,
     permissions,
-    
+
     // 计算属性
     isLoggedIn,
     userName,
     userRole,
     avatar,
-    
+
     // 方法
     hasRole,
     hasAnyRole,
@@ -138,6 +136,6 @@ export const useUserStore = defineStore('user', () => {
     login,
     logout,
     fetchUserInfo,
-    updateUserInfo
+    updateUserInfo,
   }
 })

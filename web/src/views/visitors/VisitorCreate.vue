@@ -29,7 +29,11 @@
         <el-row :gutter="24">
           <el-col :span="12">
             <el-form-item label="姓名" prop="displayName">
-              <el-input v-model="form.displayName" placeholder="请输入游客姓名" @blur="generateUsername" />
+              <el-input
+                v-model="form.displayName"
+                placeholder="请输入游客姓名"
+                @blur="generateUsername"
+              />
             </el-form-item>
             <el-form-item label="用户名" prop="username">
               <el-input v-model="form.username" placeholder="系统自动生成" readonly />
@@ -38,10 +42,18 @@
               </template>
             </el-form-item>
             <el-form-item label="邮箱" prop="email">
-              <el-input v-model="form.email" placeholder="请输入邮箱（可选）" @blur="validateMemberContact" />
+              <el-input
+                v-model="form.email"
+                placeholder="请输入邮箱（可选）"
+                @blur="validateMemberContact"
+              />
             </el-form-item>
             <el-form-item label="电话" prop="phoneNumber">
-              <el-input v-model="form.phoneNumber" placeholder="请输入电话号码（可选）" @blur="validateMemberContact" />
+              <el-input
+                v-model="form.phoneNumber"
+                placeholder="请输入电话号码（可选）"
+                @blur="validateMemberContact"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -71,7 +83,11 @@
               />
             </el-form-item>
             <el-form-item label="游客类型" prop="visitorType">
-              <el-select v-model="form.visitorType" placeholder="请选择游客类型" style="width: 100%">
+              <el-select
+                v-model="form.visitorType"
+                placeholder="请选择游客类型"
+                style="width: 100%"
+              >
                 <el-option label="普通游客" value="Regular" />
                 <el-option label="会员" value="Member" />
               </el-select>
@@ -113,14 +129,14 @@ const form = reactive({
   gender: 0,
   birthDate: '',
   height: 170,
-  visitorType: 'Regular'
+  visitorType: 'Regular',
 })
 
 // 生成UUID（简化版）
 const generateUUID = () => {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-    const r = Math.random() * 16 | 0
-    const v = c == 'x' ? r : (r & 0x3 | 0x8)
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+    const r = (Math.random() * 16) | 0
+    const v = c == 'x' ? r : (r & 0x3) | 0x8
     return v.toString(16)
   })
 }
@@ -168,29 +184,23 @@ const validateMemberContact = () => {
 const formRules = {
   username: [
     { required: true, message: '用户名不能为空', trigger: 'blur' },
-    { min: 3, max: 50, message: '用户名长度在 3 到 50 个字符', trigger: 'blur' }
+    { min: 3, max: 50, message: '用户名长度在 3 到 50 个字符', trigger: 'blur' },
   ],
   displayName: [
     { required: true, message: '请输入姓名', trigger: 'blur' },
-    { min: 2, max: 50, message: '姓名长度在 2 到 50 个字符', trigger: 'blur' }
+    { min: 2, max: 50, message: '姓名长度在 2 到 50 个字符', trigger: 'blur' },
   ],
-  email: [
-    { type: 'email', message: '请输入正确的邮箱格式', trigger: 'blur' }
-  ],
-  phoneNumber: [
-    { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号码', trigger: 'blur' }
-  ],
-  gender: [
-    { required: true, message: '请选择性别', trigger: 'change' }
-  ],
+  email: [{ type: 'email', message: '请输入正确的邮箱格式', trigger: 'blur' }],
+  phoneNumber: [{ pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号码', trigger: 'blur' }],
+  gender: [{ required: true, message: '请选择性别', trigger: 'change' }],
   height: [
     { required: true, message: '请输入身高', trigger: 'blur' },
-    { type: 'number', min: 50, max: 250, message: '身高应在 50-250cm 之间', trigger: 'blur' }
+    { type: 'number', min: 50, max: 250, message: '身高应在 50-250cm 之间', trigger: 'blur' },
   ],
   visitorType: [
     { required: true, message: '请选择游客类型', trigger: 'change' },
-    { validator: validateMemberType, trigger: 'change' }
-  ]
+    { validator: validateMemberType, trigger: 'change' },
+  ],
 }
 
 // 禁用未来日期
@@ -210,7 +220,7 @@ const handleReset = () => {
     gender: 0,
     birthDate: '',
     height: 170,
-    visitorType: 'Regular'
+    visitorType: 'Regular',
   })
 }
 
@@ -232,7 +242,7 @@ const handleSubmit = async () => {
       birthDate: form.birthDate || null,
       gender: form.gender,
       height: form.height,
-      visitorType: form.visitorType
+      visitorType: form.visitorType,
     }
 
     const response = await createVisitor(submitData)
@@ -245,14 +255,15 @@ const handleSubmit = async () => {
     } else {
       throw new Error('创建响应异常')
     }
-
   } catch (error) {
     console.error('创建游客失败:', error)
 
     // 检查是否是用户名重复错误
-    if (error.response?.data?.message?.includes('username') ||
-        error.message?.includes('username') ||
-        error.response?.data?.message?.includes('唯一约束')) {
+    if (
+      error.response?.data?.message?.includes('username') ||
+      error.message?.includes('username') ||
+      error.response?.data?.message?.includes('唯一约束')
+    ) {
       ElMessage.error('用户名已存在，请重新生成用户名')
       // 自动重新生成用户名
       generateUsername()
@@ -267,8 +278,6 @@ const handleSubmit = async () => {
     submitting.value = false
   }
 }
-
-
 </script>
 
 <style scoped>

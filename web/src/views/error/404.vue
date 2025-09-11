@@ -57,7 +57,7 @@ const goBack = () => {
 .error-title {
   font-size: 72px;
   font-weight: 600;
-  color: #409EFF;
+  color: #409eff;
   margin: 0 0 20px 0;
 }
 
@@ -77,11 +77,11 @@ const goBack = () => {
   .error-title {
     font-size: 48px;
   }
-  
+
   .error-message {
     font-size: 16px;
   }
-  
+
   .error-actions {
     flex-direction: column;
     align-items: center;

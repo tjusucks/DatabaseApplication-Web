@@ -5,11 +5,7 @@
       <h2>入园/出园实时监控</h2>
       <p>实时监控游客入园出园动态，查看各门口流量统计</p>
       <div class="header-actions">
-        <el-switch
-          v-model="autoRefresh"
-          active-text="自动刷新"
-          @change="handleAutoRefreshChange"
-        />
+        <el-switch v-model="autoRefresh" active-text="自动刷新" @change="handleAutoRefreshChange" />
         <el-button @click="handleManualRefresh" :loading="refreshing">
           <el-icon><Refresh /></el-icon>
           手动刷新
@@ -83,7 +79,7 @@
               <el-tag type="success">实时更新</el-tag>
             </div>
           </template>
-          
+
           <div class="gate-stats">
             <div v-for="gate in gateStats" :key="gate.name" class="gate-item">
               <div class="gate-info">
@@ -111,7 +107,7 @@
           </div>
         </el-card>
       </el-col>
-      
+
       <el-col :span="12">
         <el-card class="activity-card">
           <template #header>
@@ -123,11 +119,11 @@
               </el-button>
             </div>
           </template>
-          
+
           <div class="activity-log" ref="activityLogRef">
-            <div 
-              v-for="activity in activityLog" 
-              :key="activity.id" 
+            <div
+              v-for="activity in activityLog"
+              :key="activity.id"
               class="activity-item"
               :class="activity.type"
             >
@@ -141,7 +137,7 @@
                 <span>{{ activity.message }}</span>
               </div>
             </div>
-            
+
             <div v-if="activityLog.length === 0" class="no-activity">
               <el-icon><Clock /></el-icon>
               <span>暂无活动记录</span>
@@ -165,7 +161,7 @@
               </el-radio-group>
             </div>
           </template>
-          
+
           <div class="chart-container" ref="chartRef">
             <!-- 这里可以集成 ECharts 或其他图表库 -->
             <div class="chart-placeholder">
@@ -201,7 +197,7 @@
           </div>
         </div>
       </template>
-      
+
       <el-table :data="filteredCurrentVisitors" v-loading="currentVisitorsLoading" stripe>
         <el-table-column prop="visitorId" label="游客ID" width="100" />
         <el-table-column label="姓名" width="120">
@@ -238,7 +234,7 @@
           </template>
         </el-table-column>
       </el-table>
-      
+
       <div class="pagination-container" v-if="currentVisitors.length > 10">
         <el-pagination
           :current-page="currentVisitorPage"
@@ -256,11 +252,7 @@
 import { ref, reactive, onMounted, onUnmounted, computed, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import {
-  getCurrentVisitors,
-  getCurrentVisitorCount,
-  getEntryRecordStats
-} from '@/api/entryRecords'
+import { getCurrentVisitors, getCurrentVisitorCount, getEntryRecordStats } from '@/api/entryRecords'
 import { updateEntryRecord } from '@/api/entryRecords'
 
 const router = useRouter()
@@ -278,7 +270,7 @@ const realtimeStats = reactive({
   avgStayTime: 0,
   parkTrend: 0,
   recentEntries: 0,
-  recentExits: 0
+  recentExits: 0,
 })
 
 // 门口统计数据
@@ -288,29 +280,29 @@ const gateStats = ref([
     status: 'normal',
     todayEntries: 0,
     todayExits: 0,
-    currentFlow: 0
+    currentFlow: 0,
   },
   {
     name: '东门',
     status: 'normal',
     todayEntries: 0,
     todayExits: 0,
-    currentFlow: 0
+    currentFlow: 0,
   },
   {
     name: '西门',
     status: 'busy',
     todayEntries: 0,
     todayExits: 0,
-    currentFlow: 0
+    currentFlow: 0,
   },
   {
     name: '南门',
     status: 'normal',
     todayEntries: 0,
     todayExits: 0,
-    currentFlow: 0
-  }
+    currentFlow: 0,
+  },
 ])
 
 // 活动日志
@@ -330,14 +322,18 @@ const currentVisitorPage = ref(1)
 // 过滤后的当前游客
 const filteredCurrentVisitors = computed(() => {
   if (!visitorSearchKeyword.value) {
-    return currentVisitors.value.slice((currentVisitorPage.value - 1) * 10, currentVisitorPage.value * 10)
+    return currentVisitors.value.slice(
+      (currentVisitorPage.value - 1) * 10,
+      currentVisitorPage.value * 10,
+    )
   }
 
-  const filtered = currentVisitors.value.filter(visitor => {
+  const filtered = currentVisitors.value.filter((visitor) => {
     const keyword = visitorSearchKeyword.value.toLowerCase()
     return (
       visitor.visitorId.toString().includes(keyword) ||
-      (visitor.visitor?.user?.displayName && visitor.visitor.user.displayName.toLowerCase().includes(keyword))
+      (visitor.visitor?.user?.displayName &&
+        visitor.visitor.user.displayName.toLowerCase().includes(keyword))
     )
   })
 
@@ -395,9 +391,9 @@ const getTrendClass = (trend) => {
 // 获取门口状态文本
 const getGateStatusText = (status) => {
   const statusMap = {
-    'normal': '正常',
-    'busy': '繁忙',
-    'closed': '关闭'
+    normal: '正常',
+    busy: '繁忙',
+    closed: '关闭',
   }
   return statusMap[status] || '未知'
 }
@@ -435,7 +431,7 @@ const handleManualExit = async (row) => {
   try {
     await updateEntryRecord(row.entryRecordId, {
       exitTime: new Date().toISOString(),
-      exitGate: row.entryGate // 默认使用入园门作为出园门
+      exitGate: row.entryGate, // 默认使用入园门作为出园门
     })
 
     ElMessage.success('出园记录已更新')
@@ -444,7 +440,6 @@ const handleManualExit = async (row) => {
 
     // 添加活动日志
     addActivityLog('exit', `游客 ${row.visitorId} 手动出园`)
-
   } catch (error) {
     ElMessage.error('出园操作失败：' + error.message)
   }
@@ -461,7 +456,7 @@ const addActivityLog = (type, message) => {
     id: Date.now(),
     type,
     message,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   }
 
   activityLog.value.unshift(activity)
@@ -505,8 +500,8 @@ const loadRealtimeStats = async () => {
         includeCurrentCount: true,
         includeTodayStats: true,
         includeAvgDuration: true,
-        includeTrends: true
-      })
+        includeTrends: true,
+      }),
     ])
 
     if (countResponse) {
@@ -516,7 +511,6 @@ const loadRealtimeStats = async () => {
     if (statsResponse) {
       Object.assign(realtimeStats, statsResponse)
     }
-
   } catch (error) {
     console.error('加载实时统计数据失败:', error)
     // 使用模拟数据
@@ -541,29 +535,29 @@ const loadGateStats = async () => {
         status: 'normal',
         todayEntries: 45,
         todayExits: 23,
-        currentFlow: 3
+        currentFlow: 3,
       },
       {
         name: '东门',
         status: 'normal',
         todayEntries: 38,
         todayExits: 19,
-        currentFlow: 2
+        currentFlow: 2,
       },
       {
         name: '西门',
         status: 'busy',
         todayEntries: 52,
         todayExits: 18,
-        currentFlow: 8
+        currentFlow: 8,
       },
       {
         name: '南门',
         status: 'normal',
         todayEntries: 21,
         todayExits: 7,
-        currentFlow: 1
-      }
+        currentFlow: 1,
+      },
     ]
   } catch (error) {
     console.error('加载门口统计数据失败:', error)
@@ -596,11 +590,12 @@ const simulateRealtimeActivity = () => {
     { type: 'entry', message: '游客 1001 从主门入园' },
     { type: 'exit', message: '游客 1002 从东门出园' },
     { type: 'entry', message: '游客 1003 从西门入园' },
-    { type: 'alert', message: '西门流量较大，请注意疏导' }
+    { type: 'alert', message: '西门流量较大，请注意疏导' },
   ]
 
   // 随机添加活动
-  if (Math.random() < 0.3) { // 30% 概率
+  if (Math.random() < 0.3) {
+    // 30% 概率
     const activity = activities[Math.floor(Math.random() * activities.length)]
     addActivityLog(activity.type, activity.message)
   }
@@ -608,11 +603,7 @@ const simulateRealtimeActivity = () => {
 
 // 加载所有数据
 const loadAllData = async () => {
-  await Promise.all([
-    loadRealtimeStats(),
-    loadGateStats(),
-    loadCurrentVisitors()
-  ])
+  await Promise.all([loadRealtimeStats(), loadGateStats(), loadCurrentVisitors()])
 
   // 模拟实时活动
   simulateRealtimeActivity()
