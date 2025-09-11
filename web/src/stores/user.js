@@ -151,9 +151,9 @@
 
 // /src/stores/user.js
 
-import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
-import { ElMessage } from 'element-plus'
+// import { defineStore } from 'pinia'
+// import { ref, computed } from 'vue'
+// import { ElMessage } from 'element-plus'
 // import { login as loginApi } from '@/api/auth' // 暂时注释掉真实API
 
 export const useUserStore = defineStore('user', () => {
