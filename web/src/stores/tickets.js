@@ -125,8 +125,8 @@ export const useReservationStore = defineStore("reservation", {
       try {
         const response = await ticketApi.getReservations(params);
         // [最终修正] 匹配后端返回的数据结构
-        this.reservations.list = response.data.reservations || [];
-        this.reservations.total = response.data.totalCount || 0;
+        this.reservations.list = response.reservations ?? [];
+        this.reservations.total = response.totalCount ?? 0;
       } catch (error) {
         ElMessage.error("获取预订列表失败");
       }
@@ -167,8 +167,8 @@ export const useRefundStore = defineStore("refund", {
       try {
         const response = await ticketApi.searchRefunds(params);
         // 假设后端返回 { records: [...], totalCount: ... }
-        this.refunds.list = response.data.records || [];
-        this.refunds.total = response.data.totalCount || 0;
+        this.refunds.list = response.records ?? [];
+        this.refunds.total = response.totalCount ?? 0;
       } catch (error) {
         ElMessage.error("获取退票记录失败");
       }
@@ -226,11 +226,22 @@ export const usePromotionStore = defineStore("promotion", {
      */
     async fetchPromotions(params) {
       try {
+        // [最终修正] 经过拦截器后，response 直接就是后端的业务数据
         const response = await ticketApi.getPromotions(params);
-        this.promotions.list = response.data.items || [];
-        this.promotions.total = response.data.total || 0;
+
+        // 判断后端返回的是否是一个数组
+        if (Array.isArray(response)) {
+          // 如果是数组，直接赋值
+          this.promotions.list = response;
+          this.promotions.total = response.length;
+        } else {
+          // 如果是分页对象（为了兼容性），则按对象解析
+          this.promotions.list = response.items || [];
+          this.promotions.total = response.totalCount || 0;
+        }
       } catch (error) {
         ElMessage.error("获取活动列表失败");
+        console.error("fetchPromotions failed:", error);
       }
     },
     /**
