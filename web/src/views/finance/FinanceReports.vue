@@ -1,381 +1,306 @@
 <template>
-  <FinancePageTemplate title="财务报表" description="查看和分析公园的财务数据" icon="DataAnalysis">
+  <FinancePageTemplate title="财务报表" description="分析和可视化财务数据" icon="DataAnalysis">
+    <template #header>
+      <div class="header-controls">
+        <el-form :inline="true" :model="filterForm" class="search-form">
+          <el-form-item label="日期范围">
+            <el-date-picker
+              v-model="filterForm.dateRange"
+              type="daterange"
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              clearable
+              style="width: 240px;"
+              :shortcuts="dateShortcuts"
+            />
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="handleFilter" :icon="Search">查询</el-button>
+            <el-button @click="resetFilter">重置</el-button>
+          </el-form-item>
+        </el-form>
+      </div>
+    </template>
+
     <!-- 财务总览 -->
-    <el-row :gutter="20" class="summary-cards">
-      <el-col :span="8">
-        <el-card shadow="hover" class="summary-card">
-          <div class="card-content">
-            <div class="icon-wrapper" style="background-color: #e7f4ff;">
-              <el-icon :size="32" color="#409EFF"><Coin /></el-icon>
-            </div>
-            <div class="text-wrapper">
-              <p class="label">总收入</p>
-              <h3 class="value">{{ summary.totalIncome?.toFixed(2) || '0.00' }} 元</h3>
-            </div>
-          </div>
+    <el-row :gutter="20" class="overview-cards" v-loading="overviewLoading">
+      <el-col :span="6">
+        <el-card shadow="hover">
+          <el-statistic title="总收入 (元)" :value="overviewData.totalIncome || 0" :precision="2"></el-statistic>
         </el-card>
       </el-col>
-      <el-col :span="8">
-        <el-card shadow="hover" class="summary-card">
-          <div class="card-content">
-            <div class="icon-wrapper" style="background-color: #fff0f0;">
-              <el-icon :size="32" color="#F56C6C"><Collection /></el-icon>
-            </div>
-            <div class="text-wrapper">
-              <p class="label">总支出</p>
-              <h3 class="value">{{ summary.totalExpenses?.toFixed(2) || '0.00' }} 元</h3>
-            </div>
-          </div>
+      <el-col :span="6">
+        <el-card shadow="hover">
+          <el-statistic title="总支出 (元)" :value="overviewData.totalExpense || 0" :precision="2"></el-statistic>
         </el-card>
       </el-col>
-      <el-col :span="8">
-        <el-card shadow="hover" class="summary-card">
-          <div class="card-content">
-            <div class="icon-wrapper" style="background-color: #e9fbf4;">
-              <el-icon :size="32" color="#67C23A"><DataLine /></el-icon>
-            </div>
-            <div class="text-wrapper">
-              <p class="label">净利润</p>
-              <h3 class="value">{{ summary.netProfit?.toFixed(2) || '0.00' }} 元</h3>
-            </div>
-          </div>
+      <el-col :span="6">
+        <el-card shadow="hover">
+          <el-statistic title="净利润 (元)" :value="overviewData.netProfit || 0" :precision="2"></el-statistic>
+        </el-card>
+      </el-col>
+      <el-col :span="6">
+        <el-card shadow="hover">
+          <el-statistic title="利润率 (%)" :value="overviewData.profitMargin || 0" :precision="2">
+             <template #suffix>%</template>
+          </el-statistic>
         </el-card>
       </el-col>
     </el-row>
 
-    <!-- 筛选器 -->
-    <el-card style="margin-top: 20px;">
-      <el-form :inline="true" class="filter-form">
-        <el-form-item label="日期范围">
-          <el-date-picker
-            v-model="timeRange"
-            type="daterange"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-            @change="handleTimeRangeChange"
-            style="width: 250px;"
-            value-format="YYYY-MM-DD"
-          />
-        </el-form-item>
-      </el-form>
-    </el-card>
-
-    <!-- 图表区域 -->
+    <!-- 图表 -->
     <el-row :gutter="20" style="margin-top: 20px;">
-      <el-col :span="12">
-        <el-card>
-          <template #header>按类型分组的财务统计</template>
-          <div v-loading="loading" style="height: 400px;">
-            <div ref="groupedChart" style="height: 100%; width: 100%;"></div>
-            <el-empty v-if="!loading && groupedStatsEmpty" description="暂无数据" />
-          </div>
+      <el-col :span="16">
+        <el-card shadow="never">
+          <template #header>收支趋势</template>
+          <div ref="trendChart" style="height: 400px;" v-loading="trendLoading"></div>
         </el-card>
       </el-col>
-      <el-col :span="12">
-        <el-card>
-          <template #header>月度收支趋势</template>
-          <div v-loading="loading" style="height: 400px;">
-            <div ref="monthlyChart" style="height: 100%; width: 100%;"></div>
-            <el-empty v-if="!loading && monthlyStatsEmpty" description="暂无数据" />
-          </div>
+      <el-col :span="8">
+        <el-card shadow="never">
+          <template #header>收支构成</template>
+          <div ref="compositionChart" style="height: 400px;" v-loading="overviewLoading"></div>
         </el-card>
       </el-col>
     </el-row>
+
   </FinancePageTemplate>
 </template>
 
 <script setup>
-import { ref, onMounted, watch, nextTick, computed } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, onMounted, onBeforeUnmount, reactive, nextTick } from 'vue'
 import FinancePageTemplate from '@/views/finance/components/FinancePageTemplate.vue'
 import { useFinanceStore } from '@/stores/finance'
+import { Search } from '@element-plus/icons-vue'
 import * as echarts from 'echarts'
-import { Coin, Collection, DataLine } from '@element-plus/icons-vue'
 
-const router = useRouter()
 const financeStore = useFinanceStore()
-const summary = ref({})
 
-// 设置默认时间范围为最近一年
-const getOneYearAgoDate = () => {
-  const today = new Date();
-  const oneYearAgo = new Date(today.setFullYear(today.getFullYear() - 1));
-  // 格式化为 YYYY-MM-DD
-  const pad = (n) => n < 10 ? '0' + n : n;
-  return `${oneYearAgo.getFullYear()}-${pad(oneYearAgo.getMonth() + 1)}-${pad(oneYearAgo.getDate())}`;
+const filterForm = reactive({
+  dateRange: []
+})
+
+const overviewLoading = ref(false)
+const trendLoading = ref(false)
+
+const overviewData = ref({})
+const trendChart = ref(null)
+const compositionChart = ref(null)
+
+let trendChartInstance = null
+let compositionChartInstance = null
+
+const dateShortcuts = [
+  { text: '最近一周', value: () => { const end = new Date(); const start = new Date(); start.setTime(start.getTime() - 3600 * 1000 * 24 * 7); return [start, end] } },
+  { text: '最近一个月', value: () => { const end = new Date(); const start = new Date(); start.setMonth(start.getMonth() - 1); return [start, end] } },
+  { text: '最近三个月', value: () => { const end = new Date(); const start = new Date(); start.setMonth(start.getMonth() - 3); return [start, end] } }
+]
+
+// 辅助函数：将 Date 对象格式化为 'YYYY-MM-DD' 字符串，忽略时区
+const formatDateToYYYYMMDD = (date) => {
+  if (!date) return undefined
+  const d = new Date(date)
+  const year = d.getFullYear()
+  const month = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
 }
-const getCurrentDate = () => {
-    const today = new Date();
-    const pad = (n) => n < 10 ? '0' + n : n;
-    return `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}`;
-}
 
-const timeRange = ref([getOneYearAgoDate(), getCurrentDate()])
-const loading = ref(false)
-
-// 计算属性
-const groupedStatsEmpty = computed(() => !financeStore.groupedStats || financeStore.groupedStats.length === 0)
-const monthlyStatsEmpty = computed(() => !financeStore.monthlyStats || financeStore.monthlyStats.length === 0)
-
-// ECharts 实例
-const groupedChart = ref(null)
-const monthlyChart = ref(null)
-let groupedChartInstance = null
-let monthlyChartInstance = null
-
-// 初始化 ECharts
-const initCharts = () => {
-  if (groupedChart.value) {
-    groupedChartInstance = echarts.init(groupedChart.value)
-    groupedChartInstance.on('click', (params) => {
-      // 用户点击了柱状图
-      if (params.componentType === 'series') {
-        const description = params.name // 'name' 对应 x 轴的类目，现在是 description
-        router.push({
-          name: 'FinanceReportDetail',
-          query: {
-            description: description, // 使用 description 进行查询
-            startDate: timeRange.value?.[0],
-            endDate: timeRange.value?.[1]
-          }
-        })
-      }
-    })
+const getQueryParams = () => {
+  let startDate, endDate
+  if (filterForm.dateRange && filterForm.dateRange.length === 2) {
+    startDate = filterForm.dateRange[0]
+    endDate = new Date(filterForm.dateRange[1])
+    // 注意：这里不再需要 setHours，因为我们只关心日期部分
   }
-  if (monthlyChart.value) {
-    monthlyChartInstance = echarts.init(monthlyChart.value)
+  return {
+    startDate: formatDateToYYYYMMDD(startDate),
+    endDate: formatDateToYYYYMMDD(endDate)
   }
 }
 
-// 更新分组统计图表
-const updateGroupedChart = (data) => {
-  if (!groupedChartInstance) return;
-
-  if (!data || data.length === 0) {
-    groupedChartInstance.clear(); // 清除旧图表
-    return;
-  }
-
-  // API 返回的数据结构是 { description, totalAmount, transactionType }
-  // 我们需要将其转换为 ECharts 需要的格式，区分收入和支出
-  const types = [...new Set(data.map(item => item.description))]; // 获取所有唯一的 description
-  const chartData = types.map(desc => {
-    const incomeItem = data.find(d => d.description === desc && d.transactionType === 0);
-    const expenseItem = data.find(d => d.description === desc && d.transactionType === 1);
-    return {
-      type: desc, // X轴标签
-      income: incomeItem ? incomeItem.totalAmount : 0,
-      expense: expenseItem ? expenseItem.totalAmount : 0,
-    };
-  });
-
-
-  const option = {
-    tooltip: {
-      trigger: 'axis',
-      axisPointer: {
-        type: 'shadow'
-      },
-      valueFormatter: (value) => `${(value || 0).toFixed(2)} 元`
-    },
-    legend: {
-      data: ['收入', '支出'],
-      top: '5%', // 将图例下移
-    },
-    grid: {
-      left: '3%',
-      right: '4%',
-      bottom: '3%',
-      containLabel: true
-    },
-    xAxis: {
-      type: 'category',
-      data: chartData.map(item => item.type)
-    },
-    yAxis: {
-      type: 'value'
-    },
-    series: [
-      {
-        name: '收入',
-        type: 'bar',
-        stack: 'total',
-        label: {
-          show: true,
-          formatter: (p) => p.value > 0 ? p.value.toFixed(2) : '' // 仅当数值大于 0 时显示标签
-        },
-        emphasis: {
-          focus: 'series'
-        },
-        data: chartData.map(item => item.income)
-      },
-      {
-        name: '支出',
-        type: 'bar',
-        stack: 'total',
-        label: {
-          show: true,
-          formatter: (p) => p.value > 0 ? p.value.toFixed(2) : ''
-        },
-        emphasis: {
-          focus: 'series'
-        },
-        data: chartData.map(item => item.expense)
-      }
-    ]
-  };
-  groupedChartInstance.setOption(option);
-}
-
-// 更新月度统计图表
-const updateMonthlyChart = (data) => {
-  if (!monthlyChartInstance) return;
-
-  if (!data || data.length === 0) {
-    monthlyChartInstance.clear(); // 清除旧图表
-    return;
-  }
-
-  const option = {
-    tooltip: {
-      trigger: 'axis',
-      valueFormatter: (value) => `${(value || 0).toFixed(2)} 元`
-    },
-    legend: {
-      data: ['收入', '支出'],
-      top: '5%', // 将图例下移
-    },
-    grid: {
-      left: '3%',
-      right: '4%',
-      bottom: '15%', // 增加底部边距
-      containLabel: true
-    },
-    xAxis: {
-      type: 'category',
-      data: data.map(item => item.month)
-    },
-    yAxis: { type: 'value' },
-    dataZoom: [ // 添加 dataZoom 组件
-      { type: 'slider', start: 0, end: 100, bottom: 10 },
-      { type: 'inside', start: 0, end: 100 }
-    ],
-    series: [
-      {
-        name: '收入',
-        type: 'line',
-        data: data.map(item => item.income),
-        smooth: true
-      },
-      {
-        name: '支出',
-        type: 'line',
-        data: data.map(item => item.expense),
-        smooth: true
-      }
-    ]
-  };
-  monthlyChartInstance.setOption(option);
-}
-
-// 获取数据
-const fetchAllData = async () => {
-  loading.value = true;
+const handleFilter = async () => {
+  // 使用 Promise.all 并行获取数据，并统一处理 loading 状态
+  overviewLoading.value = true
+  trendLoading.value = true
   try {
-    const params = {
-      startDate: timeRange.value?.[0] || undefined,
-      endDate: timeRange.value?.[1] || undefined,
-    };
-    // 并行获取所有数据
-    await Promise.all([
-      financeStore.fetchSummary(params),
-      financeStore.fetchGroupedStats(params),
-      financeStore.fetchMonthlyStats(params)
-    ]);
+    // fetchOverviewData 和 fetchTrendData 内部会分别设置自己的 loading 为 false
+    await Promise.all([fetchOverviewData(), fetchTrendData()])
   } catch (error) {
-    console.error("获取报表数据失败:", error);
+    // 如果任何一个请求失败，确保 loading 状态被重置
+    console.error('查询财务数据时出错:', error)
+    overviewLoading.value = false
+    trendLoading.value = false
+  }
+}
+
+const fetchOverviewData = async () => {
+  overviewLoading.value = true
+  try {
+    const params = getQueryParams()
+    const data = await financeStore.fetchOverview(params)
+    overviewData.value = data
+    updateCompositionChart()
+  } catch (error) {
+    console.error('获取财务概览失败:', error)
+    overviewData.value = {} // 清空数据
+    updateCompositionChart() // 更新图表以显示“无数据”
   } finally {
-    loading.value = false;
+    overviewLoading.value = false
+  }
+}
+
+const fetchTrendData = async () => {
+  trendLoading.value = true
+  try {
+    const queryParams = getQueryParams()
+    // 即使没有日期范围，也尝试获取，让后端处理
+    const data = await financeStore.fetchTrendDataByDay(queryParams)
+    updateTrendChart(data)
+  } catch (error) {
+    console.error('获取趋势数据失败:', error)
+    updateTrendChart([]) // 出错时清空图表
+  } finally {
+    trendLoading.value = false
+  }
+}
+
+const initCharts = () => {
+  if (trendChart.value) {
+    trendChartInstance = echarts.init(trendChart.value)
+  }
+  if (compositionChart.value) {
+    compositionChartInstance = echarts.init(compositionChart.value)
   }
 }
 
 
-// 当日期范围变化时，更新所有图表
-const handleTimeRangeChange = () => {
-  fetchAllData();
+const updateTrendChart = (data = []) => {
+  if (!trendChartInstance) return
+
+  if (!data || data.length === 0) {
+    trendChartInstance.setOption({
+      title: { text: '暂无数据', left: 'center', top: 'center', textStyle: { color: '#909399' } },
+      xAxis: { show: false },
+      yAxis: { show: false },
+      series: [],
+      tooltip: { show: false },
+      legend: { show: false }
+    }, true) // `true` 清除旧的配置
+    return
+  }
+
+  const dates = data.map(item => item.date)
+  const incomes = data.map(item => item.totalIncome)
+  const expenses = data.map(item => item.totalExpense)
+
+  const option = {
+    title: { show: false }, // 确保清除“暂无数据”的标题
+    tooltip: { trigger: 'axis' },
+    legend: { data: ['收入', '支出'], top: 'bottom' },
+    grid: { left: '3%', right: '4%', bottom: '10%', containLabel: true },
+    xAxis: { type: 'category', boundaryGap: false, data: dates },
+    yAxis: { type: 'value', axisLabel: { formatter: '{value} 元' } },
+    series: [
+      { name: '收入', type: 'line', smooth: true, data: incomes, itemStyle: { color: '#67C23A' } },
+      { name: '支出', type: 'line', smooth: true, data: expenses, itemStyle: { color: '#F56C6C' } }
+    ]
+  }
+  trendChartInstance.setOption(option, true) // `true` 清除旧的配置
 }
 
-// 监听 store 中数据的变化，并更新图表
-watch(() => financeStore.summary, (newSummary) => {
-  summary.value = newSummary;
-}, { deep: true, immediate: true });
+const updateCompositionChart = () => {
+  if (!compositionChartInstance) return
 
-watch(() => financeStore.groupedStats, (newStats) => {
-  nextTick(() => {
-    updateGroupedChart(newStats);
-  });
-}, { deep: true });
+  const totalIncome = overviewData.value.totalIncome || 0
+  const totalExpense = overviewData.value.totalExpense || 0
 
-watch(() => financeStore.monthlyStats, (newStats) => {
-  nextTick(() => {
-    updateMonthlyChart(newStats);
-  });
-}, { deep: true });
+  if (totalIncome === 0 && totalExpense === 0) {
+    compositionChartInstance.setOption({
+      title: { text: '暂无数据', left: 'center', top: 'center', textStyle: { color: '#909399' } },
+      series: [],
+      tooltip: { show: false },
+      legend: { show: false }
+    }, true) // `true` 清除旧的配置
+    return
+  }
 
+  const option = {
+    title: { show: false }, // 确保清除“暂无数据”的标题
+    tooltip: { trigger: 'item', formatter: '{a} <br/>{b}: {c}元 ({d}%)' },
+    legend: { top: 'bottom' },
+    series: [
+      {
+        name: '收支构成',
+        type: 'pie',
+        radius: ['50%', '70%'],
+        avoidLabelOverlap: false,
+        label: { show: false, position: 'center' },
+        emphasis: { label: { show: true, fontSize: '20', fontWeight: 'bold' } },
+        labelLine: { show: false },
+        data: [
+          { value: totalIncome, name: '总收入', itemStyle: { color: '#67C23A' } },
+          { value: totalExpense, name: '总支出', itemStyle: { color: '#F56C6C' } }
+        ]
+      }
+    ]
+  }
+  compositionChartInstance.setOption(option, true) // `true` 清除旧的配置
+}
+
+const resetFilter = () => {
+  filterForm.dateRange = []
+  handleFilter()
+}
+
+const resizeCharts = () => {
+  trendChartInstance?.resize()
+  compositionChartInstance?.resize()
+}
 
 onMounted(() => {
-  initCharts();
-  fetchAllData(); // 初始加载数据
+  // 设置默认查询最近一个月
+  const end = new Date()
+  const start = new Date()
+  start.setMonth(start.getMonth() - 1)
+  filterForm.dateRange = [start, end]
 
-  // 添加窗口大小调整监听器
-  window.addEventListener('resize', () => {
-    groupedChartInstance?.resize();
-    monthlyChartInstance?.resize();
-  });
-});
+  // 初始化时立即显示加载状态
+  overviewLoading.value = true
+  trendLoading.value = true
 
-// 在组件卸载前移除监听器
-import { onBeforeUnmount } from 'vue';
+  nextTick(() => {
+    initCharts()
+    handleFilter()
+  })
+
+  window.addEventListener('resize', resizeCharts)
+})
+
 onBeforeUnmount(() => {
-  window.removeEventListener('resize', () => {
-    groupedChartInstance?.resize();
-    monthlyChartInstance?.resize();
-  });
-  // 销毁 ECharts 实例
-  groupedChartInstance?.dispose();
-  monthlyChartInstance?.dispose();
-});
+  window.removeEventListener('resize', resizeCharts)
+  trendChartInstance?.dispose()
+  compositionChartInstance?.dispose()
+})
 
 </script>
 
 <style scoped>
-.summary-cards .summary-card {
-  border-radius: 10px;
-  transition: all 0.3s ease;
-}
-.summary-cards .summary-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-}
-.card-content {
+.header-controls {
   display: flex;
+  justify-content: space-between;
   align-items: center;
+  margin-bottom: 20px;
 }
-.icon-wrapper {
-  padding: 15px;
-  border-radius: 50%;
-  margin-right: 20px;
-}
-.text-wrapper .label {
-  margin: 0;
-  color: #909399;
-}
-.text-wrapper .value {
-  margin: 5px 0 0;
-  font-size: 24px;
-}
-.filter-form .el-form-item {
+.search-form .el-form-item {
   margin-bottom: 0;
+}
+.overview-cards .el-card {
+  text-align: center;
+}
+.overview-cards .el-statistic {
+  --el-statistic-title-font-size: 16px;
+  --el-statistic-content-font-size: 28px;
 }
 </style>

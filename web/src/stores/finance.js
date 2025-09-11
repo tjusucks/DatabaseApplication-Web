@@ -1,390 +1,227 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import {
+  searchFinancialRecords,
+  createFinancialRecord,
+  updateFinancialRecord,
+  deleteFinancialRecord,
+  getFinancialRecordById,
+  getFinanceOverview, // 修正导入的函数名
+  getFinanceStats,      // 修正导入的函数名
+  getFinanceGroupedStats // 修正导入的函数名
+} from '@/api/finance'
 import { ElMessage } from 'element-plus'
-import * as financeApi from '@/api/finance'
 
 export const useFinanceStore = defineStore('finance', () => {
-  // 状态
+  // 统一的状态管理
   const incomes = ref([])
   const expenses = ref([])
-  const summary = ref({})
-  const groupedStats = ref([])
-  const timeStats = ref([])
-  const monthlyStats = ref([]) // 月度统计数据
-  const detailRecords = ref([]) // 用于详情页的数据
   const pagination = ref({
     total: 0,
     currentPage: 1,
     pageSize: 10
   })
-  const lastIncomeParams = ref({}) // 保存上次收入查询参数
-  const lastExpenseParams = ref({}) // 保存上次支出查询参数
+  const lastIncomeParams = ref({})
+  const lastExpenseParams = ref({})
 
-  // --- Actions ---
+  // 报表数据
+  const overview = ref({})
+  const stats = ref({})
+  const groupedStats = ref([])
 
-  // 获取单条财务记录
-  const fetchFinancialRecordById = async (id) => {
-    try {
-      const response = await financeApi.getFinancialRecordById(id);
-      return response.data;
-    } catch (error) {
-      const status = error.response?.status || '未知'
-      ElMessage.error(`获取财务记录详情失败！错误码: ${status}`);
-      throw error;
-    }
-  }
+  // --- 通用 Actions ---
 
-  // Helper to format date to YYYY-MM-DD
-  const formatDate = (date) => {
-    // 增加健壮性，如果date无效，则返回null
-    if (!date || isNaN(new Date(date).getTime())) return null;
-    const d = new Date(date);
-    const year = d.getFullYear();
-    const month = (d.getMonth() + 1).toString().padStart(2, '0');
-    const day = d.getDate().toString().padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  }
+  const fetchRecords = async (transactionType, params) => {
+    const isIncome = transactionType === 0
+    const lastParams = isIncome ? lastIncomeParams : lastExpenseParams
+    const list = isIncome ? incomes : expenses
 
-  // 获取收入列表
-  const fetchIncomes = async (params) => {
-    // 如果传入了新的 params，则更新 lastIncomeParams。
-    // 如果没有传入（例如，在增删改后刷新），则使用 lastIncomeParams。
     if (params) {
-      // 当用户改变分页时，params 会是 { page, pageSize }，需要与之前的搜索条件合并
-      if (params.page) {
-        pagination.value.currentPage = params.page
-      }
-      if (params.pageSize) {
-        pagination.value.pageSize = params.pageSize
-      }
-      // 合并新的搜索/筛选条件，而不是完全替换
-      lastIncomeParams.value = { ...lastIncomeParams.value, ...params }
+      if (params.page) pagination.value.currentPage = params.page
+      if (params.pageSize) pagination.value.pageSize = params.pageSize
+      lastParams.value = { ...lastParams.value, ...params }
     }
 
     try {
       const query = {
-        ...lastIncomeParams.value,
-        transactionType: 0, // 使用数字枚举值
+        ...lastParams.value,
+        transactionType,
         page: pagination.value.currentPage,
         pageSize: pagination.value.pageSize
       }
-      const response = await financeApi.searchFinancialRecords(query)
-      incomes.value = response.financialRecords // 修正：API返回的数组在 financialRecords 属性中
-      pagination.value.total = response.totalCount // 修正：API返回的总数在 totalCount 属性中
-      return response
+      const response = await searchFinancialRecords(query)
+      list.value = response.financialRecords
+      pagination.value.total = response.totalCount
     } catch (error) {
-      const status = error.response?.status;
-      const message = error.message || `获取收入列表失败！`;
-      ElMessage.error(status ? `${message} 错误码: ${status}` : message);
-      incomes.value = []
+      const typeName = isIncome ? '收入' : '支出'
+      ElMessage.error(error.message || `获取${typeName}列表失败`)
+      list.value = []
       pagination.value.total = 0
-      // 重置分页和参数，避免无效状态
-      pagination.value.currentPage = 1
-      lastIncomeParams.value = {}
       throw error
     }
   }
 
-  // 新增收入
-  const addIncome = async (income) => {
+  const addRecord = async (payload) => {
     try {
-      const payload = {
-        ...income,
-        transactionType: 0, // 确保 transactionType 正确
-        transactionDate: formatDate(income.transactionDate),
-        paymentMethod: income.paymentMethod, // 直接使用，如果为 null 则发送 null
-        // responsibleEmployeeId 和 approvedById 不再由前端发送
-      };
-      // 后端不需要 id 和 type 字段
-      delete payload.recordId; // 确保不发送 recordId
-      delete payload.type; // 移除 type 字段
-      delete payload.responsibleEmployeeId;
-      delete payload.approvedById;
-      
-      const response = await financeApi.createFinancialRecord(payload);
-      ElMessage.success('新增收入成功！');
-      await fetchIncomes(); // 刷新列表，将使用 lastIncomeParams
-      return response;
+      await createFinancialRecord(payload)
+      ElMessage.success('新增成功！')
+      await (payload.transactionType === 0 ? fetchIncomes() : fetchExpenses())
     } catch (error) {
-      const status = error.response?.status;
-      const message = error.message || `新增收入失败！`;
-      ElMessage.error(status ? `${message} 错误码: ${status}` : message);
-      throw error;
-    }
-  }
-
-  // 更新收入
-  const updateIncome = async (id, income) => {
-    try {
-      const payload = {
-        ...income,
-        transactionDate: formatDate(income.transactionDate),
-        paymentMethod: income.paymentMethod, // 直接使用
-        // responsibleEmployeeId 和 approvedById 不再由前端发送
-      };
-      // 后端不需要 date 和 type 字段
-      delete payload.date;
-      delete payload.type; // 移除 type 字段
-      delete payload.responsibleEmployeeId;
-      delete payload.approvedById;
-
-      const response = await financeApi.updateFinancialRecord(id, payload);
-      ElMessage.success('更新收入成功！');
-      await fetchIncomes(); // 刷新列表，将使用 lastIncomeParams
-      return response;
-    } catch (error) {
-      const status = error.response?.status;
-      const message = error.message || `更新收入失败！`;
-      ElMessage.error(status ? `${message} 错误码: ${status}` : message);
-      throw error;
-    }
-  }
-
-  // 删除收入
-  const deleteIncome = async (id) => {
-    try {
-      await financeApi.deleteFinancialRecord(id);
-      ElMessage.success('删除收入成功！');
-      await fetchIncomes(); // 刷新列表，将使用 lastIncomeParams
-    } catch (error) {
-      const status = error.response?.status;
-      const message = error.message || `删除收入失败！`;
-      ElMessage.error(status ? `${message} 错误码: ${status}` : message);
-      throw error;
-    }
-  }
-
-  // 获取支出列表
-  const fetchExpenses = async (params) => {
-    // 如果传入了新的 params，则更新 lastExpenseParams。
-    // 如果没有传入（例如，在增删改后刷新），则使用 lastExpenseParams。
-    if (params) {
-      if (params.page) {
-        pagination.value.currentPage = params.page
-      }
-      if (params.pageSize) {
-        pagination.value.pageSize = params.pageSize
-      }
-      lastExpenseParams.value = { ...lastExpenseParams.value, ...params }
-    }
-
-    try {
-      const query = {
-        ...lastExpenseParams.value,
-        transactionType: 1, // 使用数字枚举值
-        page: pagination.value.currentPage,
-        pageSize: pagination.value.pageSize
-      }
-      const response = await financeApi.searchFinancialRecords(query)
-      expenses.value = response.financialRecords // 修正：API返回的数组在 financialRecords 属性中
-      pagination.value.total = response.totalCount // 修正：API返回的总数在 totalCount 属性中
-      return response
-    } catch (error) {
-      const status = error.response?.status;
-      const message = error.message || `获取支出列表失败！`;
-      ElMessage.error(status ? `${message} 错误码: ${status}` : message);
-      expenses.value = []
-      pagination.value.total = 0
-      // 重置分页和参数，避免无效状态
-      pagination.value.currentPage = 1
-      lastExpenseParams.value = {}
+      ElMessage.error(error.message || '新增失败')
+      // 即使失败也刷新，应对后端返回500但实际成功的情况
+      await (payload.transactionType === 0 ? fetchIncomes() : fetchExpenses())
       throw error
     }
   }
 
-  // 新增支出
-  const addExpense = async (expense) => {
+  const updateRecord = async (id, payload) => {
     try {
-      const payload = {
-        ...expense,
-        transactionType: 1, // 确保 transactionType 正确
-        transactionDate: formatDate(expense.transactionDate),
-        paymentMethod: expense.paymentMethod, // 直接使用
-        // responsibleEmployeeId 和 approvedById 不再由前端发送
-      };
-      // 后端不需要 id 和 type 字段
-      delete payload.recordId; // 确保不发送 recordId
-      delete payload.type; // 移除 type 字段
-      delete payload.responsibleEmployeeId;
-      delete payload.approvedById;
-
-      const response = await financeApi.createFinancialRecord(payload);
-      ElMessage.success('新增支出成功！');
-      await fetchExpenses(); // 刷新列表，将使用 lastExpenseParams
-      return response;
+      await updateFinancialRecord(id, payload)
+      ElMessage.success('更新成功！')
+      await (payload.transactionType === 0 ? fetchIncomes() : fetchExpenses())
     } catch (error) {
-      const status = error.response?.status;
-      const message = error.message || `新增支出失败！`;
-      ElMessage.error(status ? `${message} 错误码: ${status}` : message);
-      // 临时措施：即使后端返回500错误，也尝试刷新列表
-      if (status === 500) {
-        ElMessage.info('尝试刷新列表以显示可能已添加的数据...');
-        await fetchExpenses(); // 刷新列表，将使用 lastExpenseParams
-      }
-      throw error;
+      ElMessage.error(error.message || '更新失败')
+      throw error
     }
   }
 
-  // 更新支出
-  const updateExpense = async (id, expense) => {
+  const deleteRecord = async (id, transactionType) => {
     try {
-      const payload = {
-        ...expense,
-        transactionDate: formatDate(expense.transactionDate),
-        paymentMethod: expense.paymentMethod, // 直接使用
-        // responsibleEmployeeId 和 approvedById 不再由前端发送
-      };
-      // 后端不需要 date 和 type 字段
-      delete payload.date;
-      delete payload.type; // 移除 type 字段
-      delete payload.responsibleEmployeeId;
-      delete payload.approvedById;
-
-      const response = await financeApi.updateFinancialRecord(id, payload);
-      ElMessage.success('更新支出成功！');
-      await fetchExpenses(); // 刷新列表，将使用 lastExpenseParams
-      return response;
+      await deleteFinancialRecord(id)
+      ElMessage.success('删除成功！')
+      await (transactionType === 0 ? fetchIncomes() : fetchExpenses())
     } catch (error) {
-      const status = error.response?.status;
-      const message = error.message || `更新支出失败！`;
-      ElMessage.error(status ? `${message} 错误码: ${status}` : message);
-      throw error;
+      ElMessage.error(error.message || '删除失败')
+      throw error
     }
   }
 
-  // 删除支出
-  const deleteExpense = async (id) => {
+  // --- 具体 Actions ---
+
+  const fetchIncomes = (params) => fetchRecords(0, params)
+  const fetchExpenses = (params) => fetchRecords(1, params)
+  const addIncome = (payload) => addRecord({ ...payload, transactionType: 0 })
+  const addExpense = (payload) => addRecord({ ...payload, transactionType: 1 })
+  const updateIncome = (id, payload) => updateRecord(id, { ...payload, transactionType: 0 })
+  const updateExpense = (id, payload) => updateRecord(id, { ...payload, transactionType: 1 })
+  const deleteIncome = (id) => deleteRecord(id, 0)
+  const deleteExpense = (id) => deleteRecord(id, 1)
+  const fetchFinancialRecordByIdAction = async (id) => {
     try {
-      await financeApi.deleteFinancialRecord(id);
-      ElMessage.success('删除支出成功！');
-      await fetchExpenses(); // 刷新列表，将使用 lastExpenseParams
+      return await getFinancialRecordById(id)
     } catch (error) {
-      const status = error.response?.status;
-      const message = error.message || `删除支出失败！`;
-      ElMessage.error(status ? `${message} 错误码: ${status}` : message);
-      throw error;
+      ElMessage.error(`获取财务记录详情失败！`)
+      throw error
     }
   }
 
-  // 获取财务概览
-  const fetchSummary = async (params) => {
+  // --- 报表 Actions ---
+
+  const fetchOverview = async (params) => {
     try {
-      const response = await financeApi.getFinanceOverview(params)
-      summary.value = response.data
+      const response = await getFinanceOverview(params) // 使用修正后的函数名
+      overview.value = response
       return response
     } catch (error) {
-      const status = error.response?.status;
-      const message = error.message || `获取财务总览失败！`;
-      ElMessage.error(status ? `${message} 错误码: ${status}` : message);
-      throw error;
+      ElMessage.error('获取财务概览失败')
+      console.error('获取财务概览失败:', error)
+      throw error
     }
   }
 
-  // 按类型分组获取财务统计
+  const fetchStats = async (params) => {
+    try {
+      const response = await getFinanceStats(params) // 使用修正后的函数名
+      stats.value = response
+      return response
+    } catch (error) {
+      console.error('获取财务统计失败:', error)
+      throw error
+    }
+  }
+
   const fetchGroupedStats = async (params) => {
     try {
-      const response = await financeApi.getGroupedFinancialStats(params);
-      groupedStats.value = response; // API 直接返回数组
-      return response;
+      const response = await getFinanceGroupedStats(params) // 使用修正后的函数名
+      groupedStats.value = response
+      return response
     } catch (error) {
-      const status = error.response?.status;
-      const message = error.message || `获取分组统计失败！`;
-      ElMessage.error(status ? `${message} 错误码: ${status}` : message);
-      throw error;
+      console.error('获取分组统计失败:', error)
+      // ElMessage.error('获取分组财务统计失败')
+      return null // 返回null表示失败
     }
   }
 
-  // 获取时间序列财务统计
-  const fetchTimeStats = async (params) => {
+  /**
+   * 按天获取财务概览数据以构建趋势图。
+   * 这是一个前端的临时解决方案，因为后端的 /stats/grouped 接口目前返回的聚合值不正确（始终为0）。
+   * 此方法通过循环遍历指定日期范围内的每一天，并为每一天调用 getFinanceOverview 接口来手动聚合数据。
+   * 虽然这会产生更多的API请求，但它确保了趋势图数据的准确性。
+   * @param {object} { startDate, endDate } - 查询的开始和结束日期。
+   * @returns {Promise<Array>} 包含每日收入和支出的数组。
+   */
+  const fetchTrendDataByDay = async ({ startDate, endDate }) => {
+    // 这个 action 的 loading 状态由组件自己管理，所以这里不设置 this.loading
     try {
-      const response = await financeApi.getTimeSeriesFinancialStats(params);
-      timeStats.value = response.data;
-      return response;
-    } catch (error) {
-      const status = error.response?.status;
-      const message = error.message || `获取时间序列统计失败！`;
-      ElMessage.error(status ? `${message} 错误码: ${status}` : message);
-      throw error;
-    }
-  }
-
-  // 获取月度财务统计
-  const fetchMonthlyStats = async (params) => {
-    try {
-      const response = await financeApi.getMonthlyFinancialSummary(params);
-      monthlyStats.value = response; // API 直接返回数组
-      return response;
-    } catch (error) {
-      const status = error.response?.status;
-      const message = error.message || `获取月度统计失败！`;
-      ElMessage.error(status ? `${message} 错误码: ${status}` : message);
-      throw error;
-    }
-  }
-
-  // 获取特定类型财务记录 (用于报表详情)
-  const fetchRecordsByType = async (params) => {
-    try {
-      const query = {
-        ...params,
-        page: pagination.value.currentPage,
-        pageSize: pagination.value.pageSize
+      const trendData = []
+      if (!startDate || !endDate) {
+        return []
       }
-      const response = await financeApi.searchFinancialRecords(query);
-      detailRecords.value = response.financialRecords; // 修正：API返回的数组在 financialRecords 属性中
-      pagination.value.total = response.totalCount; // 修正：API返回的总数在 totalCount 属性中
-      return response;
+      
+      let currentDate = new Date(startDate + 'T00:00:00') // 确保从当天的开始计算，避免时区问题
+      const end = new Date(endDate + 'T00:00:00')
+
+      while (currentDate <= end) {
+        // --- 关键修复 ---
+        // 直接从 currentDate 对象中获取年、月、日，避免 .toISOString() 带来的时区转换问题
+        const year = currentDate.getFullYear()
+        const month = String(currentDate.getMonth() + 1).padStart(2, '0')
+        const day = String(currentDate.getDate()).padStart(2, '0')
+        const dateStr = `${year}-${month}-${day}`
+        
+        const dailyOverview = await getFinanceOverview({ startDate: dateStr, endDate: dateStr })
+        trendData.push({
+          date: dateStr,
+          totalIncome: dailyOverview.totalIncome || 0,
+          totalExpense: dailyOverview.totalExpense || 0
+        })
+        // 在UTC日期上增加一天
+        currentDate.setDate(currentDate.getDate() + 1)
+      }
+      return trendData
     } catch (error) {
-      const status = error.response?.status;
-      const message = error.message || `获取特定类型记录失败！`;
-      ElMessage.error(status ? `${message} 错误码: ${status}` : message);
-      throw error;
+      console.error('按天获取趋势数据时出错:', error)
+      ElMessage.error('获取趋势图数据失败')
+      return [] // 出错时返回空数组
     }
   }
 
-  // 重置/清空状态的方法
-  const resetFinanceState = () => {
-    incomes.value = []
-    expenses.value = []
-    summary.value = {}
-    groupedStats.value = []
-    timeStats.value = []
-    monthlyStats.value = []
-    detailRecords.value = []
-    pagination.value = {
-      total: 0,
-      currentPage: 1,
-      pageSize: 10
-    }
-    lastIncomeParams.value = {}
-    lastExpenseParams.value = {}
-  }
-
+  // 返回所有 state 和 actions
   return {
     incomes,
     expenses,
-    summary,
-    groupedStats,
-    timeStats,
-    monthlyStats,
-    detailRecords,
     pagination,
     lastIncomeParams,
     lastExpenseParams,
-    fetchFinancialRecordById,
+    overview,
+    stats,
+    groupedStats,
+    fetchRecords,
+    addRecord,
+    updateRecord,
+    deleteRecord,
     fetchIncomes,
-    addIncome,
-    updateIncome,
-    deleteIncome,
     fetchExpenses,
+    addIncome,
     addExpense,
+    updateIncome,
     updateExpense,
+    deleteIncome,
     deleteExpense,
-    fetchSummary,
+    fetchFinancialRecordByIdAction,
+    fetchOverview,
+    fetchStats,
     fetchGroupedStats,
-    fetchTimeStats,
-    fetchMonthlyStats,
-    fetchRecordsByType,
-    resetFinanceState
+    fetchTrendDataByDay
   }
 })
