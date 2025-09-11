@@ -197,34 +197,34 @@ const fullMenuList = [
   {
     path: '/finance',
     title: '财务管理',
-    icon: 'Wallet',
+    icon: 'Money',
     roles: ['super_admin', 'finance_manager'],
     children: [
       {
         path: '/finance/income',
         title: '收入管理',
-        icon: 'TrendCharts',
-        roles: ['super_admin', 'finance_manager'],
+        icon: 'Coin',
+        roles: ['super_admin', 'finance_manager']
       },
       {
         path: '/finance/expenses',
         title: '支出管理',
-        icon: 'Minus',
-        roles: ['super_admin', 'finance_manager'],
+        icon: 'Collection',
+        roles: ['super_admin', 'finance_manager']
       },
       {
         path: '/finance/reports',
         title: '财务报表',
-        icon: 'Document',
-        roles: ['super_admin', 'finance_manager'],
+        icon: 'DataAnalysis',
+        roles: ['super_admin', 'finance_manager']
       },
       {
-        path: '/finance/consumption',
+        path: '/finance/records',
         title: '消费记录',
-        icon: 'List',
-        roles: ['super_admin', 'finance_manager', 'customer_service'],
-      },
-    ],
+        icon: 'Tickets',
+        roles: ['super_admin', 'finance_manager']
+      }
+    ]
   },
   {
     path: '/hr',

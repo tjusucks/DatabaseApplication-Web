@@ -1,15 +1,13 @@
 <template>
-  <PageTemplate title="消费记录" description="查询园区内所有的消费流水记录" icon="List">
+  <PageTemplate title="消费记录" description="查看所有游客和内部消费的详细记录" icon="Tickets">
     <template #header>
-      <el-form :inline="true" :model="searchForm" class="demo-form-inline">
-        <el-form-item label="记录类型">
-          <el-select v-model="searchForm.transactionType" placeholder="选择类型" clearable>
-            <el-option label="收入" value="income" />
-            <el-option label="支出" value="expense" />
+      <el-form :inline="true" :model="searchForm" class="search-form">
+        <el-form-item label="消费类型">
+          <el-select v-model="searchForm.type" placeholder="请选择消费类型" clearable>
+            <el-option label="门票" value="ticket"></el-option>
+            <el-option label="商品" value="merchandise"></el-option>
+            <el-option label="餐饮" value="food"></el-option>
           </el-select>
-        </el-form-item>
-        <el-form-item label="来源/用途">
-          <el-input v-model="searchForm.source" placeholder="输入来源或用途" clearable />
         </el-form-item>
         <el-form-item label="日期范围">
           <el-date-picker
@@ -22,71 +20,85 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="handleSearch">查询</el-button>
+          <el-button @click="resetSearch">重置</el-button>
         </el-form-item>
       </el-form>
     </template>
 
-    <el-table v-loading="financeStore.loading" :data="financeStore.records" style="width: 100%">
-      <el-table-column prop="transactionDate" label="日期" width="180" />
-      <el-table-column prop="transactionType" label="类型" width="100">
-        <template #default="{ row }">
-          <el-tag :type="row.transactionType === 'income' ? 'success' : 'warning'">
-            {{ row.transactionType === 'income' ? '收入' : '支出' }}
-          </el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column prop="amount" label="金额" width="150" />
-      <el-table-column prop="source" label="来源/用途" />
-      <el-table-column prop="description" label="描述" />
+    <el-table :data="financeStore.consumptionRecords" v-loading="loading" stripe>
+      <el-table-column prop="id" label="记录ID" width="80"></el-table-column>
+      <el-table-column prop="consumerName" label="消费者" width="150"></el-table-column>
+      <el-table-column prop="type" label="消费类型" width="120"></el-table-column>
+      <el-table-column prop="itemName" label="项目名称"></el-table-column>
+      <el-table-column prop="amount" label="金额 (元)" width="120"></el-table-column>
+      <el-table-column prop="quantity" label="数量" width="80"></el-table-column>
+      <el-table-column prop="totalAmount" label="总金额 (元)" width="120"></el-table-column>
+      <el-table-column prop="transactionDate" label="交易日期" width="180"></el-table-column>
     </el-table>
 
-    <template #footer>
-      <el-pagination
-        background
-        layout="prev, pager, next, total"
-        :total="financeStore.pagination.total"
-        :page-size="financeStore.pagination.pageSize"
-        :current-page="financeStore.pagination.page"
-        @current-change="handlePageChange"
-      />
-    </template>
+    <el-pagination
+      background
+      layout="prev, pager, next, total"
+      :total="financeStore.pagination.total"
+      :current-page.sync="financeStore.pagination.currentPage"
+      :page-size="financeStore.pagination.pageSize"
+      @current-change="handlePageChange"
+      class="pagination-container"
+    ></el-pagination>
   </PageTemplate>
 </template>
 
 <script setup>
-import { reactive, onMounted } from 'vue'
+import { ref, onMounted, reactive } from 'vue'
 import PageTemplate from '@/components/PageTemplate.vue'
 import { useFinanceStore } from '@/stores/finance'
 
 const financeStore = useFinanceStore()
-
+const loading = ref(false)
 const searchForm = reactive({
-  transactionType: '',
-  source: '',
-  dateRange: [],
+  type: '',
+  dateRange: []
 })
 
-const fetchAllRecords = (page = 1) => {
+onMounted(() => {
+  fetchData()
+})
+
+const fetchData = async () => {
+  loading.value = true
   const params = {
-    page,
-    pageSize: financeStore.pagination.pageSize,
-    transactionType: searchForm.transactionType || undefined,
-    source: searchForm.source || undefined,
+    type: searchForm.type || undefined,
     startDate: searchForm.dateRange?.[0] || undefined,
     endDate: searchForm.dateRange?.[1] || undefined,
   }
-  financeStore.fetchRecords(params)
+  await financeStore.fetchConsumptionRecords(params)
+  loading.value = false
 }
 
-onMounted(() => {
-  fetchAllRecords()
-})
-
 const handleSearch = () => {
-  fetchAllRecords(1)
+  financeStore.pagination.currentPage = 1
+  fetchData()
+}
+
+const resetSearch = () => {
+  searchForm.type = ''
+  searchForm.dateRange = []
+  handleSearch()
 }
 
 const handlePageChange = (page) => {
-  fetchAllRecords(page)
+  financeStore.pagination.currentPage = page
+  fetchData()
 }
 </script>
+
+<style scoped>
+.search-form .el-form-item {
+  margin-bottom: 0;
+}
+.pagination-container {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+}
+</style>

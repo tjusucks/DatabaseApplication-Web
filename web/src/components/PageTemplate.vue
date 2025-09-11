@@ -25,24 +25,23 @@
 </template>
 
 <script setup>
-import { defineProps } from 'vue'
-
+import { defineProps } from "vue";
 // 接收父组件传递的属性
 defineProps({
   title: {
     type: String,
     required: true,
-    default: '页面标题',
+    default: "页面标题",
   },
   description: {
     type: String,
-    default: '',
+    default: "",
   },
   icon: {
     type: String,
-    default: '',
+    default: "Document",
   },
-})
+});
 </script>
 
 <style scoped>
@@ -67,9 +66,10 @@ defineProps({
   font-size: 20px;
   font-weight: 600;
 }
+
 .description {
   margin: 4px 0 0;
-  color: #909399;
   font-size: 14px;
+  color: #909399;
 }
 </style>
