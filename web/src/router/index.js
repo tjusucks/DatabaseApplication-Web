@@ -8,20 +8,10 @@ const Dashboard = () => import("@/views/dashboard/index.vue");
 const NotFound = () => import("@/views/error/404.vue");
 
 // 游客管理模块
-<<<<<<< HEAD
-const VisitorList = () => import('@/views/visitors/VisitorList.vue')
-const VisitorCreate = () => import('@/views/visitors/VisitorCreate.vue')
-const VisitorEdit = () => import('@/views/visitors/VisitorEdit.vue')
-const VisitorDetail = () => import('@/views/visitors/VisitorDetail.vue')
-const VisitorRecords = () => import('@/views/visitors/VisitorRecords.vue')
-const VisitorBlacklist = () => import('@/views/visitors/VisitorBlacklist.vue')
-const MemberManagement = () => import('@/views/visitors/MemberManagement.vue')
-=======
 const VisitorList = () => import("@/views/visitors/VisitorList.vue");
 const VisitorDetail = () => import("@/views/visitors/VisitorDetail.vue");
 const VisitorRecords = () => import("@/views/visitors/VisitorRecords.vue");
 const VisitorBlacklist = () => import("@/views/visitors/VisitorBlacklist.vue");
->>>>>>> a8cc468 (feat:initial development)
 
 // 票务管理模块
 const TicketTypes = () => import("@/views/tickets/TicketTypes.vue");
@@ -35,8 +25,9 @@ const ReservationDetail = () =>
 const PromotionList = () => import("@/views/promotions/PromotionList.vue");
 const PromotionCreate = () => import("@/views/promotions/PromotionCreate.vue");
 const RefundList = () => import("@/views/refunds/RefundList.vue");
-const RefundManagement = () => import("@/views/refunds/RefundManagement.vue");
-const TicketTypeDetail = () => import("@/views/promotions/PromotionDetail.vue");
+const RefundRequest = () => import("@/views/refunds/RefundRequest.vue");
+const PromotionDetail = () => import("@/views/promotions/PromotionDetail.vue");
+const TicketTypeDetail = () => import("@/views/tickets/TicketTypeDetail.vue");
 
 // 权限管理模块
 const TeamManagement = () => import("@/views/auth/TeamManagement.vue");
@@ -63,16 +54,6 @@ const ConsumptionRecords = () =>
   import("@/views/finance/ConsumptionRecords.vue");
 
 // 人力资源模块
-<<<<<<< HEAD
-const EmployeeList = () => import('@/views/hr/employees/EmployeeList.vue')
-const EmployeeDetail = () => import('@/views/hr/employees/EmployeeDetail.vue')
-const PayrollGenerate = () => import('@/views/hr/payroll/PayrollGenerate.vue')
-const PayrollRecords = () => import('@/views/hr/payroll/PayrollRecords.vue')
-const AttendanceRecords = () => import('@/views/hr/attendance/AttendanceRecords.vue')
-const AttendanceStatistics = () => import('@/views/hr/attendance/AttendanceStatistics.vue')
-const PerformanceEvaluations = () => import('@/views/hr/performance/PerformanceEvaluations.vue')
-const PerformanceReports = () => import('@/views/hr/performance/PerformanceReports.vue')
-=======
 const EmployeeList = () => import("@/views/hr/employees/EmployeeList.vue");
 const EmployeeDetail = () => import("@/views/hr/employees/EmployeeDetail.vue");
 const PayrollGenerate = () => import("@/views/hr/payroll/PayrollGenerate.vue");
@@ -85,7 +66,6 @@ const PerformanceEvaluations = () =>
   import("@/views/hr/performance/PerformanceEvaluations.vue");
 const PerformanceReports = () =>
   import("@/views/hr/performance/PerformanceReports.vue");
->>>>>>> a8cc468 (feat:initial development)
 
 const routes = [
   {
@@ -93,11 +73,7 @@ const routes = [
     name: "Login",
     component: Login,
     meta: {
-<<<<<<< HEAD
-      title: '登录',
-=======
       title: "登录",
->>>>>>> a8cc468 (feat:initial development)
       requiresAuth: false,
     },
   },
@@ -112,18 +88,6 @@ const routes = [
         name: "Dashboard",
         component: Dashboard,
         meta: {
-<<<<<<< HEAD
-          title: '仪表板',
-          icon: 'House',
-          roles: [
-            'super_admin',
-            'finance_manager',
-            'hr_manager',
-            'operations_manager',
-            'ticket_manager',
-            'customer_service',
-            'employee',
-=======
           title: "仪表板",
           icon: "House",
           roles: [
@@ -134,7 +98,6 @@ const routes = [
             "ticket_manager",
             "customer_service",
             "employee",
->>>>>>> a8cc468 (feat:initial development)
           ],
         },
       },
@@ -151,10 +114,6 @@ const routes = [
         name: "VisitorList",
         component: VisitorList,
         meta: {
-<<<<<<< HEAD
-          title: '游客列表',
-          roles: ['super_admin', 'customer_service'],
-=======
           title: "游客列表",
           roles: ["super_admin", "customer_service"],
         },
@@ -166,7 +125,6 @@ const routes = [
         meta: {
           title: "游客详情",
           roles: ["super_admin", "customer_service"],
->>>>>>> a8cc468 (feat:initial development)
         },
       },
       {
@@ -174,49 +132,8 @@ const routes = [
         name: "VisitorRecords",
         component: VisitorRecords,
         meta: {
-<<<<<<< HEAD
-          title: '进出记录',
-          roles: ['super_admin', 'operations_manager', 'customer_service'],
-        },
-      },
-      {
-        path: 'members',
-        name: 'MemberManagement',
-        component: MemberManagement,
-        meta: {
-          title: '会员管理',
-          roles: ['super_admin', 'customer_service'],
-        },
-      },
-      {
-        path: 'create',
-        name: 'VisitorCreate',
-        component: VisitorCreate,
-        meta: {
-          title: '新增游客',
-          roles: ['super_admin', 'customer_service'],
-        },
-      },
-      {
-        path: ':id/edit',
-        name: 'VisitorEdit',
-        component: VisitorEdit,
-        meta: {
-          title: '编辑游客',
-          roles: ['super_admin', 'customer_service'],
-        },
-      },
-      {
-        path: ':id',
-        name: 'VisitorDetail',
-        component: VisitorDetail,
-        meta: {
-          title: '游客详情',
-          roles: ['super_admin', 'customer_service'],
-=======
           title: "进出记录",
           roles: ["super_admin", "operations_manager", "customer_service"],
->>>>>>> a8cc468 (feat:initial development)
         },
       },
       {
@@ -224,13 +141,8 @@ const routes = [
         name: "VisitorBlacklist",
         component: VisitorBlacklist,
         meta: {
-<<<<<<< HEAD
-          title: '黑名单管理',
-          roles: ['super_admin', 'customer_service'],
-=======
           title: "黑名单管理",
           roles: ["super_admin", "customer_service"],
->>>>>>> a8cc468 (feat:initial development)
         },
       },
     ],
@@ -246,13 +158,8 @@ const routes = [
         name: "TicketTypes",
         component: TicketTypes,
         meta: {
-<<<<<<< HEAD
-          title: '票种管理',
-          roles: ['super_admin', 'ticket_manager'],
-=======
           title: "票种管理",
           roles: ["super_admin", "ticket_manager"],
->>>>>>> a8cc468 (feat:initial development)
         },
       },
       {
@@ -260,13 +167,8 @@ const routes = [
         name: "TicketPricing",
         component: TicketPricing,
         meta: {
-<<<<<<< HEAD
-          title: '价格管理',
-          roles: ['super_admin', 'ticket_manager'],
-=======
           title: "价格管理",
           roles: ["super_admin", "ticket_manager"],
->>>>>>> a8cc468 (feat:initial development)
         },
       },
       {
@@ -274,13 +176,8 @@ const routes = [
         name: "TicketSales",
         component: TicketSales,
         meta: {
-<<<<<<< HEAD
-          title: '门票销售',
-          roles: ['super_admin', 'ticket_manager'],
-=======
           title: "门票销售",
           roles: ["super_admin", "ticket_manager"],
->>>>>>> a8cc468 (feat:initial development)
         },
       },
       {
@@ -288,13 +185,8 @@ const routes = [
         name: "TicketStatistics",
         component: TicketStatistics,
         meta: {
-<<<<<<< HEAD
-          title: '销售统计',
-          roles: ['super_admin', 'ticket_manager'],
-=======
           title: "销售统计",
           roles: ["super_admin", "ticket_manager"],
->>>>>>> a8cc468 (feat:initial development)
         },
       },
       // [新增详情页路由]
@@ -305,7 +197,7 @@ const routes = [
         meta: {
           title: "价格规则管理",
           roles: ["super_admin", "ticket_manager"],
-          hidden: true, // 不在侧边栏显示
+          //hidden: true, // 不在侧边栏显示
         },
       },
     ],
@@ -321,13 +213,8 @@ const routes = [
         name: "ReservationList",
         component: ReservationList,
         meta: {
-<<<<<<< HEAD
-          title: '预订列表',
-          roles: ['super_admin', 'ticket_manager'],
-=======
           title: "预订列表",
           roles: ["super_admin", "ticket_manager"],
->>>>>>> a8cc468 (feat:initial development)
         },
       },
       {
@@ -335,49 +222,36 @@ const routes = [
         name: "ReservationDetail",
         component: ReservationDetail,
         meta: {
-<<<<<<< HEAD
-          title: '预订详情',
-          roles: ['super_admin', 'ticket_manager'],
-=======
           title: "预订详情",
           roles: ["super_admin", "ticket_manager"],
->>>>>>> a8cc468 (feat:initial development)
         },
       },
     ],
   },
+
   // 退票管理路由
   {
     path: "/refunds",
     component: Layout,
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true, title: "退票管理", icon: "RefreshLeft" },
+    redirect: "/refunds/list",
     children: [
       {
         path: "list",
         name: "RefundList",
         component: RefundList,
         meta: {
-<<<<<<< HEAD
-          title: '退票列表',
-          roles: ['super_admin', 'ticket_manager'],
-=======
           title: "退票列表",
           roles: ["super_admin", "ticket_manager"],
->>>>>>> a8cc468 (feat:initial development)
         },
       },
       {
-        path: "management",
-        name: "RefundManagement",
-        component: RefundManagement,
+        path: "request",
+        name: "RefundRequest",
+        component: RefundRequest,
         meta: {
-<<<<<<< HEAD
-          title: '退票管理',
-          roles: ['super_admin', 'ticket_manager'],
-=======
           title: "退票管理",
           roles: ["super_admin", "ticket_manager"],
->>>>>>> a8cc468 (feat:initial development)
         },
       },
     ],
@@ -388,30 +262,26 @@ const routes = [
     path: "/promotions",
     component: Layout,
     meta: { requiresAuth: true },
+    redirect: "/promotions/list",
     children: [
       {
         path: "list",
         name: "PromotionList",
         component: PromotionList,
         meta: {
-<<<<<<< HEAD
-          title: '优惠活动',
-          roles: ['super_admin', 'ticket_manager'],
-=======
           title: "优惠活动",
           roles: ["super_admin", "ticket_manager"],
->>>>>>> a8cc468 (feat:initial development)
         },
       },
       // [新增详情页路由]
       {
         path: `detail/:id`,
         name: "PromotionDetail",
-        component: () => import("@/views/promotions/PromotionDetail.vue"),
+        component: PromotionDetail,
         meta: {
           title: "活动详情管理",
           roles: ["super_admin", "ticket_manager"],
-          hidden: true, // 不在侧边栏显示
+          //hidden: true, // 不在侧边栏显示
         },
       },
       {
@@ -438,23 +308,6 @@ const routes = [
         meta: {
           title: "设施列表",
           roles: ["super_admin", "operations_manager"],
-        },
-      },
-      {
-        path: "list",
-        name: "PromotionList",
-        component: () => import("@/views/promotions/PromotionList.vue"),
-        meta: { title: "优惠活动", roles: ["super_admin", "ticket_manager"] },
-      },
-      // [新增详情页路由]
-      {
-        path: "detail/:id",
-        name: "PromotionDetail",
-        component: () => import("@/views/promotions/PromotionDetail.vue"),
-        meta: {
-          title: "活动详情管理",
-          roles: ["super_admin", "ticket_manager"],
-          hidden: true, // 不在侧边栏显示
         },
       },
       {

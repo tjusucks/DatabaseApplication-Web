@@ -21,7 +21,7 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
-import { useTicketStore } from "@/stores/ticket.js";
+import { useTicketStore } from "@/stores/tickets.js";
 import { storeToRefs } from "pinia";
 import PageTemplate from "@/components/PageTemplate.vue";
 
