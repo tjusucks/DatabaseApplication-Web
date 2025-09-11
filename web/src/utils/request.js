@@ -6,8 +6,9 @@ import router from '@/router'
 
 // 创建 axios 实例
 const service = axios.create({
-  baseURL: import.meta.env.VITE_ENABLE_MSW === 'true' ? '' : import.meta.env.VITE_API_BASE_URL,
+  baseURL: import.meta.env.VITE_API_BASE_URL || '/api',
   timeout: 15000,
+  withCredentials: true, // 支持Cookie认证
   headers: {
     'Content-Type': 'application/json'
   }
@@ -16,17 +17,11 @@ const service = axios.create({
 // 请求拦截器
 service.interceptors.request.use(
   config => {
-    const userStore = useUserStore()
     const appStore = useAppStore()
-    
+
     // 显示全局加载状态
     appStore.setGlobalLoading(true)
-    
-    // 添加认证 token
-    if (userStore.token) {
-      config.headers.Authorization = `Bearer ${userStore.token}`
-    }
-    
+
     // 添加请求时间戳，防止缓存
     if (config.method === 'get') {
       config.params = {
@@ -34,7 +29,7 @@ service.interceptors.request.use(
         _t: Date.now()
       }
     }
-    
+
     return config
   },
   error => {
@@ -83,23 +78,9 @@ service.interceptors.response.use(
           ElMessage.error(data.message || '请求参数错误')
           break
         case 401:
-          // 尝试刷新token
-          if (userStore.refreshToken && !response.config._retry) {
-            response.config._retry = true
-            try {
-              await userStore.refreshAccessToken()
-              // 重新发送原请求
-              return service.request(response.config)
-            } catch (refreshError) {
-              ElMessage.error('登录已过期，请重新登录')
-              userStore.logout()
-              router.push('/login')
-            }
-          } else {
-            ElMessage.error('登录已过期，请重新登录')
-            userStore.logout()
-            router.push('/login')
-          }
+          ElMessage.error('登录已过期，请重新登录')
+          userStore.logout()
+          router.push('/login')
           break
         case 403:
           ElMessage.error('没有权限访问该资源')
