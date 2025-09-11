@@ -60,7 +60,7 @@ service.interceptors.response.use(
     }
     
     // 成功响应
-    if (status === 200) {
+    if (status === 200 ||status===201 || status === 204) {
       return data
     }
     

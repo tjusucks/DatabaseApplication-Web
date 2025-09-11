@@ -435,11 +435,29 @@ const routes = [
         }
       },
       {
+        path: 'employees/create',
+        name: 'EmployeeCreate',
+        component: () => import('@/views/hr/employees/EmployeeCreate.vue'),
+        meta: {
+          title: '新增员工',
+          roles: ['super_admin', 'hr_manager']
+        }
+      },
+      {
         path: 'employees/:id',
         name: 'EmployeeDetail',
         component: EmployeeDetail,
         meta: {
           title: '员工详情',
+          roles: ['super_admin', 'hr_manager']
+        }
+      },
+      {
+        path: 'employees/edit/:id',
+        name: 'EmployeeEdit',
+        component: () => import('@/views/hr/employees/EmployeeEdit.vue'),
+        meta: {
+          title: '编辑员工',
           roles: ['super_admin', 'hr_manager']
         }
       },

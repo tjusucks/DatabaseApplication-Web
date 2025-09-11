@@ -116,7 +116,7 @@ export function deleteFinancialRecord(recordId) {
  */
 export function searchSalaryRecords(params) {
   return request({
-    url: '/api/SalaryRecords/search',
+    url: '/api/resource/salary-records/search',
     method: 'get',
     params
   })
@@ -128,7 +128,7 @@ export function searchSalaryRecords(params) {
  */
 export function getSalaryRecordById(salaryRecordId) {
   return request({
-    url: `/api/SalaryRecords/${salaryRecordId}`,
+    url: `/api/resource/salary-records/${salaryRecordId}`,
     method: 'get'
   })
 }
@@ -138,7 +138,7 @@ export function getSalaryRecordById(salaryRecordId) {
  */
 export function getSalaryStats() {
   return request({
-    url: '/api/SalaryRecords/stats',
+    url: '/api/resource/salary-records/stats',
     method: 'get'
   })
 }
@@ -149,7 +149,7 @@ export function getSalaryStats() {
  */
 export function getGroupedSalaryStats(params) {
   return request({
-    url: '/api/SalaryRecords/stats/grouped',
+    url: '/api/resource/salary-records/stats/grouped',
     method: 'get',
     params
   })
@@ -161,7 +161,7 @@ export function getGroupedSalaryStats(params) {
  */
 export function getSalaryRecordsByEmployee(employeeId) {
   return request({
-    url: `/api/SalaryRecords/employee/${employeeId}`,
+    url: `/api/resource/salary-records/employee/${employeeId}`,
     method: 'get'
   })
 }
@@ -172,7 +172,7 @@ export function getSalaryRecordsByEmployee(employeeId) {
  */
 export function getEmployeeSalarySummary(employeeId) {
   return request({
-    url: `/api/SalaryRecords/employee/${employeeId}/summary`,
+    url: `/api/resource/salary-records/employee/${employeeId}/summary`,
     method: 'get'
   })
 }
@@ -183,7 +183,7 @@ export function getEmployeeSalarySummary(employeeId) {
  */
 export function getMonthlySalaryReport(params) {
   return request({
-    url: '/api/SalaryRecords/reports/monthly',
+    url: '/api/resource/salary-records/reports/monthly',
     method: 'get',
     params
   })
@@ -195,7 +195,7 @@ export function getMonthlySalaryReport(params) {
  */
 export function getPayroll(params) {
   return request({
-    url: '/api/SalaryRecords/payroll',
+    url: '/api/resource/salary-records/payroll',
     method: 'get',
     params
   })
@@ -207,7 +207,7 @@ export function getPayroll(params) {
  */
 export function createSalaryRecord(data) {
   return request({
-    url: '/api/SalaryRecords',
+    url: '/api/resource/salary-records',
     method: 'post',
     data
   })
@@ -219,7 +219,7 @@ export function createSalaryRecord(data) {
  */
 export function batchCreateSalaryRecords(data) {
   return request({
-    url: '/api/SalaryRecords/batch',
+    url: '/api/resource/salary-records/batch',
     method: 'post',
     data
   })
@@ -232,7 +232,7 @@ export function batchCreateSalaryRecords(data) {
  */
 export function updateSalaryRecord(salaryRecordId, data) {
   return request({
-    url: `/api/SalaryRecords/${salaryRecordId}`,
+    url: `/api/resource/salary-records/${salaryRecordId}`,
     method: 'put',
     data
   })
@@ -244,7 +244,7 @@ export function updateSalaryRecord(salaryRecordId, data) {
  */
 export function deleteSalaryRecord(salaryRecordId) {
   return request({
-    url: `/api/SalaryRecords/${salaryRecordId}`,
+    url: `/api/resource/salary-records/${salaryRecordId}`,
     method: 'delete'
   })
 }
