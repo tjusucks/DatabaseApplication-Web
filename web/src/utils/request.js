@@ -52,20 +52,18 @@ service.interceptors.response.use(
     
     const { data, status } = response
     
-    // 处理文件下载
-    if (response.headers['content-type']?.includes('application/octet-stream') ||
-        response.headers['content-type']?.includes('application/vnd.ms-excel')) {
-      return response
+    // 检查状态码是否在 2xx 成功范围内
+    if (status >= 200 && status < 300) {
+      // 对于 DELETE 请求或返回 204 No Content 的情况，data 可能为空，直接返回 response
+      if (status === 204 || response.config.method.toLowerCase() === 'delete') {
+        return response;
+      }
+      return data;
     }
     
-    // 成功响应
-    if (status === 200) {
-      return data
-    }
-    
-    // 其他状态码处理
-    ElMessage.error(data.message || '请求失败')
-    return Promise.reject(new Error(data.message || '请求失败'))
+    // 对于不在 2xx 范围内的响应，统一作为错误处理
+    ElMessage.error(data.message || `请求失败，状态码: ${status}`);
+    return Promise.reject(new Error(data.message || `请求失败，状态码: ${status}`));
   },
   error => {
     const appStore = useAppStore()
