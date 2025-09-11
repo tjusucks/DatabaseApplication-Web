@@ -1,49 +1,49 @@
-import axios from 'axios'
-import { ElMessage, ElMessageBox } from 'element-plus'
-import { useUserStore } from '@/stores/user'
-import { useAppStore } from '@/stores/app'
-import router from '@/router'
+import axios from "axios";
+import { ElMessage, ElMessageBox } from "element-plus";
+import { useUserStore } from "@/stores/user";
+import { useAppStore } from "@/stores/app";
+import router from "@/router";
 
 // 创建 axios 实例
 const service = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
   timeout: 15000,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
-})
+});
 
 // 请求拦截器
 service.interceptors.request.use(
   (config) => {
-    const userStore = useUserStore()
-    const appStore = useAppStore()
+    const userStore = useUserStore();
+    const appStore = useAppStore();
 
     // 显示全局加载状态
-    appStore.setGlobalLoading(true)
+    appStore.setGlobalLoading(true);
 
     // 添加认证 token
     if (userStore.token) {
-      config.headers.Authorization = `Bearer ${userStore.token}`
+      config.headers.Authorization = `Bearer ${userStore.token}`;
     }
 
     // 添加请求时间戳，防止缓存
-    if (config.method === 'get') {
+    if (config.method === "get") {
       config.params = {
         ...config.params,
         _t: Date.now(),
-      }
+      };
     }
 
-    return config
+    return config;
   },
   (error) => {
-    const appStore = useAppStore()
-    appStore.setGlobalLoading(false)
-    console.error('请求错误:', error)
-    return Promise.reject(error)
+    const appStore = useAppStore();
+    appStore.setGlobalLoading(false);
+    console.error("请求错误:", error);
+    return Promise.reject(error);
   }
-)
+);
 
 service.interceptors.response.use(
   /**
@@ -103,37 +103,35 @@ service.interceptors.response.use(
           ElMessage.error(errorMsg)
           break
         case 401:
-          ElMessage.error('登录已过期，请重新登录')
-          userStore.logout()
-          router.push('/login')
-          break
+          ElMessage.error("登录已过期，请重新登录");
+          userStore.logout();
+          router.push("/login");
+          break;
         case 403:
-          ElMessage.error('您没有权限访问该资源')
-          break
+          ElMessage.error("没有权限访问该资源");
+          break;
         case 404:
-          ElMessage.error('请求的资源不存在 (404)')
-          break
+          ElMessage.error("请求的资源不存在");
+          break;
         case 500:
-          ElMessage.error('服务器内部错误 (500)')
-          break
+          ElMessage.error("服务器内部错误");
+          break;
         case 502:
-          ElMessage.error('网关错误 (502)')
-          break
+          ElMessage.error("网关错误");
+          break;
         case 503:
-          ElMessage.error('服务不可用 (503)')
-          break
+          ElMessage.error("服务不可用");
+          break;
         case 504:
-          ElMessage.error('网关超时 (504)')
-          break
+          ElMessage.error("网关超时");
+          break;
         default:
-          ElMessage.error(data.message || `请求失败，状态码: ${status}`)
+          ElMessage.error(data.message || `请求失败 (${status})`);
       }
-    } else if (message.includes('timeout')) {
-      // 情况二：请求超时
-      ElMessage.error('请求超时，请检查网络或联系管理员')
-    } else if (message.includes('Network Error')) {
-      // 情况三：网络错误 (如后端服务未启动)
-      ElMessage.error('网络连接失败，请检查您的网络连接')
+    } else if (message.includes("timeout")) {
+      ElMessage.error("请求超时，请稍后重试");
+    } else if (message.includes("Network Error")) {
+      ElMessage.error("网络连接失败，请检查网络");
     } else {
       // 情况四：其他未知错误 (如请求被取消等)
       ElMessage.error(message || '发生未知错误')
@@ -142,57 +140,57 @@ service.interceptors.response.use(
     // 5. 必须将错误继续抛出，以便 API 调用处的 .catch() 可以捕获到
     return Promise.reject(error)
   }
-)
+);
 
 // 封装常用请求方法
 export const request = {
   get(url, params = {}, config = {}) {
-    return service.get(url, { params, ...config })
+    return service.get(url, { params, ...config });
   },
 
   post(url, data = {}, config = {}) {
-    return service.post(url, data, config)
+    return service.post(url, data, config);
   },
 
   put(url, data = {}, config = {}) {
-    return service.put(url, data, config)
+    return service.put(url, data, config);
   },
 
   delete(url, config = {}) {
-    return service.delete(url, config)
+    return service.delete(url, config);
   },
 
   patch(url, data = {}, config = {}) {
-    return service.patch(url, data, config)
+    return service.patch(url, data, config);
   },
 
   upload(url, formData, config = {}) {
     return service.post(url, formData, {
       headers: {
-        'Content-Type': 'multipart/form-data',
+        "Content-Type": "multipart/form-data",
       },
       ...config,
-    })
+    });
   },
 
-  download(url, params = {}, filename = '') {
+  download(url, params = {}, filename = "") {
     return service
       .get(url, {
         params,
-        responseType: 'blob',
+        responseType: "blob",
       })
       .then((response) => {
-        const blob = new Blob([response.data])
-        const downloadUrl = window.URL.createObjectURL(blob)
-        const link = document.createElement('a')
-        link.href = downloadUrl
-        link.download = filename || 'download'
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
-        window.URL.revokeObjectURL(downloadUrl)
-      })
+        const blob = new Blob([response.data]);
+        const downloadUrl = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = downloadUrl;
+        link.download = filename || "download";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(downloadUrl);
+      });
   },
-}
+};
 
-export default service
+export default service;
