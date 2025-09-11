@@ -1,62 +1,62 @@
 import request from '@/utils/request'
 
-// 财务管理 API
-
-// ========== 财务记录管理 ==========
+const BASE_URL = '/resource/financial-records'
 
 /**
  * 搜索财务记录（支持过滤和分页）
  * @param {Object} params 搜索参数
  */
-export function searchFinancialRecords(params) {
-  return request({
-    url: '/api/FinancialRecords/search',
-    method: 'get',
-    params
-  })
+export const getFinancialRecords = (params) => {
+  return request.get(`${BASE_URL}/search`, { params })
 }
 
 /**
  * 根据ID获取财务记录详情
- * @param {string} recordId 记录ID
+ * @param {string} id 记录ID
  */
-export function getFinancialRecordById(recordId) {
-  return request({
-    url: `/api/FinancialRecords/${recordId}`,
-    method: 'get'
-  })
+export const getFinancialRecordById = (id) => {
+  return request.get(`${BASE_URL}/${id}`)
 }
 
 /**
- * 获取财务统计信息
+ * 创建财务记录
+ * @param {Object} data 财务记录数据
  */
-export function getFinancialStats() {
-  return request({
-    url: '/api/FinancialRecords/stats',
-    method: 'get'
-  })
+export const createFinancialRecord = (data) => {
+  return request.post(BASE_URL, data)
+}
+
+/**
+ * 更新现有财务记录
+ * @param {string} id 记录ID
+ * @param {Object} data 更新数据
+ */
+export const updateFinancialRecord = (id, data) => {
+  return request.put(`${BASE_URL}/${id}`, data)
+}
+
+/**
+ * 删除财务记录
+ * @param {string} id 记录ID
+ */
+export const deleteFinancialRecord = (id) => {
+  return request.delete(`${BASE_URL}/${id}`)
+}
+
+/**
+ * 获取财务总览统计
+ * @param {Object} params 查询参数
+ */
+export const getFinancialOverview = (params) => {
+  return request.get(`${BASE_URL}/overview`, { params })
 }
 
 /**
  * 获取分组财务统计
  * @param {Object} params 分组参数
  */
-export function getGroupedFinancialStats(params) {
-  return request({
-    url: '/api/FinancialRecords/stats/grouped',
-    method: 'get',
-    params
-  })
-}
-
-/**
- * 获取收入支出概览
- */
-export function getFinancialOverview() {
-  return request({
-    url: '/api/FinancialRecords/overview',
-    method: 'get'
-  })
+export const getGroupedFinancialStats = (params) => {
+  return request.get(`${BASE_URL}/stats/grouped`, { params })
 }
 
 /**
@@ -64,187 +64,14 @@ export function getFinancialOverview() {
  * @param {string} transactionType 交易类型
  * @param {Object} params 过滤参数
  */
-export function getFinancialRecordsByType(transactionType, params) {
-  return request({
-    url: `/api/FinancialRecords/by-type/${transactionType}`,
-    method: 'get',
-    params
-  })
-}
+export const getFinancialRecordsByType = (transactionType, params) => {
+    return request.get(`${BASE_URL}/by-type/${transactionType}`, { params });
+};
 
 /**
- * 创建新的财务记录
- * @param {Object} data 财务记录数据
+ * 获取财务统计信息
+ * @param {Object} params 查询参数
  */
-export function createFinancialRecord(data) {
-  return request({
-    url: '/api/FinancialRecords',
-    method: 'post',
-    data
-  })
-}
-
-/**
- * 更新现有财务记录
- * @param {string} recordId 记录ID
- * @param {Object} data 更新数据
- */
-export function updateFinancialRecord(recordId, data) {
-  return request({
-    url: `/api/FinancialRecords/${recordId}`,
-    method: 'put',
-    data
-  })
-}
-
-/**
- * 删除财务记录
- * @param {string} recordId 记录ID
- */
-export function deleteFinancialRecord(recordId) {
-  return request({
-    url: `/api/FinancialRecords/${recordId}`,
-    method: 'delete'
-  })
-}
-
-// ========== 薪资记录管理 ==========
-
-/**
- * 搜索薪资记录（支持过滤和分页）
- * @param {Object} params 搜索参数
- */
-export function searchSalaryRecords(params) {
-  return request({
-    url: '/api/SalaryRecords/search',
-    method: 'get',
-    params
-  })
-}
-
-/**
- * 根据ID获取薪资记录详情
- * @param {string} salaryRecordId 薪资记录ID
- */
-export function getSalaryRecordById(salaryRecordId) {
-  return request({
-    url: `/api/SalaryRecords/${salaryRecordId}`,
-    method: 'get'
-  })
-}
-
-/**
- * 获取薪资统计信息
- */
-export function getSalaryStats() {
-  return request({
-    url: '/api/SalaryRecords/stats',
-    method: 'get'
-  })
-}
-
-/**
- * 获取分组薪资统计
- * @param {Object} params 分组参数
- */
-export function getGroupedSalaryStats(params) {
-  return request({
-    url: '/api/SalaryRecords/stats/grouped',
-    method: 'get',
-    params
-  })
-}
-
-/**
- * 获取特定员工的薪资记录
- * @param {string} employeeId 员工ID
- */
-export function getSalaryRecordsByEmployee(employeeId) {
-  return request({
-    url: `/api/SalaryRecords/employee/${employeeId}`,
-    method: 'get'
-  })
-}
-
-/**
- * 获取员工薪资汇总
- * @param {string} employeeId 员工ID
- */
-export function getEmployeeSalarySummary(employeeId) {
-  return request({
-    url: `/api/SalaryRecords/employee/${employeeId}/summary`,
-    method: 'get'
-  })
-}
-
-/**
- * 获取月度薪资报告
- * @param {Object} params 报告参数
- */
-export function getMonthlySalaryReport(params) {
-  return request({
-    url: '/api/SalaryRecords/reports/monthly',
-    method: 'get',
-    params
-  })
-}
-
-/**
- * 获取工资单
- * @param {Object} params 工资单参数
- */
-export function getPayroll(params) {
-  return request({
-    url: '/api/SalaryRecords/payroll',
-    method: 'get',
-    params
-  })
-}
-
-/**
- * 创建新的薪资记录
- * @param {Object} data 薪资记录数据
- */
-export function createSalaryRecord(data) {
-  return request({
-    url: '/api/SalaryRecords',
-    method: 'post',
-    data
-  })
-}
-
-/**
- * 批量创建薪资记录（批量发薪）
- * @param {Array} data 薪资记录数组
- */
-export function batchCreateSalaryRecords(data) {
-  return request({
-    url: '/api/SalaryRecords/batch',
-    method: 'post',
-    data
-  })
-}
-
-/**
- * 更新现有薪资记录
- * @param {string} salaryRecordId 薪资记录ID
- * @param {Object} data 更新数据
- */
-export function updateSalaryRecord(salaryRecordId, data) {
-  return request({
-    url: `/api/SalaryRecords/${salaryRecordId}`,
-    method: 'put',
-    data
-  })
-}
-
-/**
- * 删除薪资记录
- * @param {string} salaryRecordId 薪资记录ID
- */
-export function deleteSalaryRecord(salaryRecordId) {
-  return request({
-    url: `/api/SalaryRecords/${salaryRecordId}`,
-    method: 'delete'
-  })
+export function getFinancialStats(params) {
+  return request.get(`${BASE_URL}/stats`, { params });
 }
