@@ -1,8 +1,8 @@
 <template>
-  <PageTemplate title="消费记录" description="查看所有游客和内部消费的详细记录" icon="Tickets">
+  <FinancePageTemplate title="消费记录" description="查看所有游客和内部消费的详细记录" icon="Tickets">
     <template #header>
       <el-form :inline="true" :model="searchForm" class="search-form">
-        <el-form-item label="消费类型">
+        <el-form-item label="类型">
           <el-select v-model="searchForm.type" placeholder="请选择消费类型" clearable>
             <el-option label="门票" value="ticket"></el-option>
             <el-option label="商品" value="merchandise"></el-option>
@@ -45,12 +45,12 @@
       @current-change="handlePageChange"
       class="pagination-container"
     ></el-pagination>
-  </PageTemplate>
+  </FinancePageTemplate>
 </template>
 
 <script setup>
 import { ref, onMounted, reactive } from 'vue'
-import PageTemplate from '@/components/PageTemplate.vue'
+import FinancePageTemplate from '@/views/finance/components/FinancePageTemplate.vue'
 import { useFinanceStore } from '@/stores/finance'
 
 const financeStore = useFinanceStore()
@@ -93,6 +93,9 @@ const handlePageChange = (page) => {
 </script>
 
 <style scoped>
+.search-form {
+  margin-bottom: 20px;
+}
 .search-form .el-form-item {
   margin-bottom: 0;
 }

@@ -217,7 +217,7 @@ const fullMenuList = [
         roles: ['super_admin', 'finance_manager']
       },
       {
-        path: '/finance/records',
+        path: '/finance/consumption-records',
         title: '消费记录',
         icon: 'Tickets',
         roles: ['super_admin', 'finance_manager']

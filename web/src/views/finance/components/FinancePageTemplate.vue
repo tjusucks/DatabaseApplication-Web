@@ -8,9 +8,8 @@
       <p class="page-description">{{ description }}</p>
     </div>
     <div class="page-content">
-      <div class="placeholder">
-        <el-empty description="功能开发中，敬请期待..." />
-      </div>
+      <slot name="header"></slot>
+      <slot></slot>
     </div>
   </div>
 </template>
@@ -73,10 +72,8 @@ defineProps({
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
 }
 
-.placeholder {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 400px;
+/* 为模板下的搜索表单中的下拉选择框提供统一宽度 */
+.page-content :deep(.search-form .el-select) {
+  width: 180px;
 }
 </style>

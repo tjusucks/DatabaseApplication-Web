@@ -1,39 +1,48 @@
 <template>
-  <PageTemplate title="支出管理" description="管理和跟踪所有公园的支出项目" icon="Collection">
+  <FinancePageTemplate title="支出管理" description="记录和管理所有支出项目" icon="TakeawayBox">
     <template #header>
-      <el-form :inline="true" :model="searchForm" class="search-form">
-        <el-form-item label="类型">
-          <el-select v-model="searchForm.category" placeholder="请选择支出类别" clearable>
-            <el-option label="员工工资" value="salary"></el-option>
-            <el-option label="设施维护" value="maintenance"></el-option>
-            <el-option label="营销费用" value="marketing"></el-option>
-            <el-option label="其他" value="other"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="日期范围">
-          <el-date-picker
-            v-model="searchForm.dateRange"
-            type="daterange"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-          />
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="handleSearch">查询</el-button>
-          <el-button @click="resetSearch">重置</el-button>
-        </el-form-item>
-      </el-form>
-      <el-button type="primary" @click="openFormModal()">新增支出</el-button>
+      <div class="header-controls">
+        <el-form :inline="true" :model="searchForm" class="search-form">
+          <el-form-item label="类型">
+            <el-select v-model="searchForm.type" placeholder="请选择支出类型" clearable>
+              <el-option label="员工工资" value="员工工资"></el-option>
+              <el-option label="设备采购" value="设备采购"></el-option>
+              <el-option label="日常运营" value="日常运营"></el-option>
+              <el-option label="营销费用" value="营销费用"></el-option>
+              <el-option label="其他" value="其他"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="日期范围">
+            <el-date-picker
+              v-model="searchForm.dateRange"
+              type="daterange"
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              clearable
+              style="width: 240px;"
+            />
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="handleSearch" :icon="Search">查询</el-button>
+            <el-button @click="resetSearch">重置</el-button>
+          </el-form-item>
+        </el-form>
+        <el-button type="success" @click="openFormModal()" :icon="Plus">新增支出</el-button>
+      </div>
     </template>
 
     <el-table :data="financeStore.expenses" v-loading="loading" stripe>
       <el-table-column prop="id" label="ID" width="80"></el-table-column>
-      <el-table-column prop="category" label="类别" width="150"></el-table-column>
-      <el-table-column prop="amount" label="金额 (元)" width="150"></el-table-column>
+      <el-table-column prop="type" label="类型" width="150"></el-table-column>
+      <el-table-column prop="amount" label="金额 (元)" width="150" sortable>
+        <template #default="{ row }">
+          {{ parseFloat(row.amount).toFixed(2) }}
+        </template>
+      </el-table-column>
       <el-table-column prop="description" label="描述"></el-table-column>
-      <el-table-column prop="date" label="日期" width="180"></el-table-column>
-      <el-table-column label="操作" width="150">
+      <el-table-column prop="date" label="日期" width="180" sortable></el-table-column>
+      <el-table-column label="操作" width="150" fixed="right">
         <template #default="{ row }">
           <el-button link type="primary" @click="openFormModal(row)">编辑</el-button>
           <el-popconfirm title="确定删除吗？" @confirm="handleDelete(row.id)">
@@ -47,78 +56,95 @@
 
     <el-pagination
       background
-      layout="prev, pager, next, total"
+      layout="prev, pager, next, total, sizes"
       :total="financeStore.pagination.total"
       :current-page.sync="financeStore.pagination.currentPage"
       :page-size="financeStore.pagination.pageSize"
+      :page-sizes="[10, 20, 50, 100]"
       @current-change="handlePageChange"
+      @size-change="handleSizeChange"
       class="pagination-container"
     ></el-pagination>
 
     <!-- 新增/编辑弹窗 -->
-    <el-dialog :title="form.id ? '编辑支出' : '新增支出'" v-model="formModalVisible" width="500px">
-      <el-form :model="form" label-width="80px">
-        <el-form-item label="类别">
-          <el-select v-model="form.category" placeholder="请选择支出类别">
-            <el-option label="员工工资" value="salary"></el-option>
-            <el-option label="设施维护" value="maintenance"></el-option>
-            <el-option label="营销费用" value="marketing"></el-option>
-            <el-option label="其他" value="other"></el-option>
+    <el-dialog v-model="dialogVisible" :title="form.id ? '编辑支出' : '新增支出'" width="500px" @close="resetForm">
+      <el-form :model="form" :rules="rules" ref="formRef" label-width="80px">
+        <el-form-item label="类型" prop="type">
+          <el-select v-model="form.type" placeholder="请选择支出类型" style="width: 100%;">
+            <el-option label="员工工资" value="员工工资"></el-option>
+            <el-option label="设备采购" value="设备采购"></el-option>
+            <el-option label="日常运营" value="日常运营"></el-option>
+            <el-option label="营销费用" value="营销费用"></el-option>
+            <el-option label="其他" value="其他"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="金额">
-          <el-input-number v-model="form.amount" :precision="2" :step="10" :min="0"></el-input-number>
+        <el-form-item label="金额" prop="amount">
+          <el-input-number v-model="form.amount" :precision="2" :step="10" :min="0" style="width: 100%;"></el-input-number>
         </el-form-item>
-        <el-form-item label="日期">
-          <el-date-picker v-model="form.date" type="date" placeholder="选择日期"></el-date-picker>
+        <el-form-item label="日期" prop="date">
+          <el-date-picker v-model="form.date" type="date" placeholder="选择日期" value-format="YYYY-MM-DD" style="width: 100%;"></el-date-picker>
         </el-form-item>
-        <el-form-item label="描述">
+        <el-form-item label="描述" prop="description">
           <el-input v-model="form.description" type="textarea"></el-input>
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="formModalVisible = false">取消</el-button>
+        <el-button @click="dialogVisible = false">取消</el-button>
         <el-button type="primary" @click="handleSubmit">确定</el-button>
       </template>
     </el-dialog>
-  </PageTemplate>
+  </FinancePageTemplate>
 </template>
 
 <script setup>
 import { ref, onMounted, reactive } from 'vue'
-import PageTemplate from '@/components/PageTemplate.vue'
+import FinancePageTemplate from '@/views/finance/components/FinancePageTemplate.vue'
 import { useFinanceStore } from '@/stores/finance'
 import { ElMessage } from 'element-plus'
-import { createExpense, updateExpense, deleteExpense } from '@/api/finance'
+import { Search, Plus } from '@element-plus/icons-vue'
 
 const financeStore = useFinanceStore()
 const loading = ref(false)
+const dialogVisible = ref(false)
+const formRef = ref(null)
+
 const searchForm = reactive({
-  category: '',
+  type: '',
   dateRange: []
 })
-const formModalVisible = ref(false)
-const form = reactive({
+
+const initialFormState = {
   id: null,
-  category: '',
+  type: '',
   amount: 0,
   date: '',
   description: ''
-})
+}
 
-onMounted(() => {
-  fetchData()
-})
+const form = reactive({ ...initialFormState })
+
+const rules = {
+  type: [{ required: true, message: '请选择支出类型', trigger: 'change' }],
+  amount: [{ required: true, message: '请输入金额', trigger: 'blur' }],
+  date: [{ required: true, message: '请选择日期', trigger: 'change' }]
+}
 
 const fetchData = async () => {
   loading.value = true
   const params = {
-    category: searchForm.category || undefined,
+    page: financeStore.pagination.currentPage,
+    pageSize: financeStore.pagination.pageSize,
+    type: searchForm.type || undefined,
     startDate: searchForm.dateRange?.[0] || undefined,
-    endDate: searchForm.dateRange?.[1] || undefined,
+    endDate: searchForm.dateRange?.[1] || undefined
   }
-  await financeStore.fetchExpenses(params)
-  loading.value = false
+  try {
+    await financeStore.fetchExpenses(params)
+  } catch (error) {
+    console.error('获取支出列表失败:', error)
+  } finally {
+    loading.value = false
+  }
 }
 
 const handleSearch = () => {
@@ -127,7 +153,7 @@ const handleSearch = () => {
 }
 
 const resetSearch = () => {
-  searchForm.category = ''
+  searchForm.type = ''
   searchForm.dateRange = []
   handleSearch()
 }
@@ -137,43 +163,68 @@ const handlePageChange = (page) => {
   fetchData()
 }
 
-const openFormModal = (rowData = null) => {
-  if (rowData) {
-    Object.assign(form, rowData)
-  } else {
-    Object.assign(form, { id: null, category: '', amount: 0, date: '', description: '' })
+const handleSizeChange = (size) => {
+  financeStore.pagination.pageSize = size
+  financeStore.pagination.currentPage = 1
+  fetchData()
+}
+
+const openFormModal = (expense = null) => {
+  resetForm()
+  if (expense) {
+    Object.assign(form, expense)
   }
-  formModalVisible.value = true
+  dialogVisible.value = true
+}
+
+const resetForm = () => {
+  Object.assign(form, initialFormState)
+  formRef.value?.resetFields()
 }
 
 const handleSubmit = async () => {
-  try {
-    if (form.id) {
-      await updateExpense(form.id, form)
-      ElMessage.success('更新成功')
-    } else {
-      await createExpense(form)
-      ElMessage.success('新增成功')
+  await formRef.value.validate(async (valid) => {
+    if (valid) {
+      try {
+        if (form.id) {
+          await financeStore.updateExpense(form.id, form)
+          ElMessage.success('更新成功')
+        } else {
+          await financeStore.addExpense(form)
+          ElMessage.success('新增成功')
+        }
+        dialogVisible.value = false
+        fetchData()
+      } catch (error) {
+        ElMessage.error(form.id ? '更新失败' : '新增失败')
+      }
     }
-    formModalVisible.value = false
-    fetchData()
-  } catch (error) {
-    ElMessage.error('操作失败')
-  }
+  })
 }
 
 const handleDelete = async (id) => {
   try {
-    await deleteExpense(id)
+    await financeStore.deleteExpense(id)
     ElMessage.success('删除成功')
     fetchData()
   } catch (error) {
     ElMessage.error('删除失败')
   }
 }
+
+onMounted(() => {
+  fetchData()
+})
 </script>
 
 <style scoped>
+.header-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
 .search-form .el-form-item {
   margin-bottom: 0;
 }
