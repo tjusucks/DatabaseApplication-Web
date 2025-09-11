@@ -42,7 +42,7 @@ const props = defineProps({
   title: {
     type: String,
     required: true,
-    default: "页面标题",,
+    default: "页面标题",
   },
   description: {
     type: String,
@@ -83,6 +83,17 @@ const isLoading = computed(() => props.loading || internalLoading.value);
   padding: 20px;
   opacity: 0;
   animation: fadeInPage 0.3s ease-out 0.1s forwards;
+}
+
+@keyframes fadeInPage {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes fadeInPage {

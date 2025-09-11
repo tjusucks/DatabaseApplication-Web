@@ -18,11 +18,8 @@
     >
       <template v-for="item in menuList" :key="item.path">
         <!-- 单级菜单 -->
-        <el-menu-item
-          v-if="!item.children || item.children.length === 0"
-          :index="item.path"
-          @click="handleMenuClick(item)" @mouseenter="handleMenuHover(item)"
-        >
+        <el-menu-item v-if="!item.children || item.children.length === 0" :index="item.path"
+          @click="handleMenuClick(item)" @mouseenter="handleMenuHover(item)">
           <el-icon>
             <component :is="item.icon" />
           </el-icon>

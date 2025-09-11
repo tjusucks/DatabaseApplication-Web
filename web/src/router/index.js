@@ -631,14 +631,14 @@ router.beforeEach(async (to, from, next) => {
 router.afterEach((to, from, failure) => {
   if (failure) {
     console.error('路由导航失败:', failure)
-   
+    // 可以在这里添加错误处理逻辑
   }
 })
 
 // 路由错误处理
 router.onError((error) => {
   console.error('路由错误:', error)
-
+  // 可以在这里添加全局错误处理
 })
 
 export default router
