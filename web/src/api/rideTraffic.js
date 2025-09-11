@@ -8,7 +8,7 @@ import request from '@/utils/request'
 export function getAllRealTimeRideTraffic() {
   return request({
     url: '/api/resource/ride-traffic/realtime',
-    method: 'get'
+    method: 'get',
   })
 }
 
@@ -19,7 +19,7 @@ export function getAllRealTimeRideTraffic() {
 export function getRealTimeRideTraffic(rideId) {
   return request({
     url: `/api/resource/ride-traffic/realtime/${rideId}`,
-    method: 'get'
+    method: 'get',
   })
 }
 
@@ -31,7 +31,7 @@ export function getRealTimeRideTraffic(rideId) {
 export function getRideTrafficById(rideId, recordTime) {
   return request({
     url: `/api/resource/ride-traffic/${rideId}/${recordTime}`,
-    method: 'get'
+    method: 'get',
   })
 }
 
@@ -43,7 +43,7 @@ export function searchRideTraffic(params) {
   return request({
     url: '/api/resource/ride-traffic/search',
     method: 'get',
-    params
+    params,
   })
 }
 
@@ -55,7 +55,7 @@ export function getRideTrafficStats(params) {
   return request({
     url: '/api/resource/ride-traffic/stats',
     method: 'get',
-    params
+    params,
   })
 }
 
@@ -67,7 +67,7 @@ export function updateAllRideTraffic(data) {
   return request({
     url: '/api/resource/ride-traffic/update',
     method: 'post',
-    data
+    data,
   })
 }
 
@@ -80,7 +80,7 @@ export function updateRideTraffic(rideId, data) {
   return request({
     url: `/api/resource/ride-traffic/update/${rideId}`,
     method: 'post',
-    data
+    data,
   })
 }
 
@@ -92,7 +92,7 @@ export function updateRideTrafficConfig(data) {
   return request({
     url: '/api/resource/ride-traffic/update/config',
     method: 'post',
-    data
+    data,
   })
 }
 
@@ -102,6 +102,6 @@ export function updateRideTrafficConfig(data) {
 export function getRideTrafficConfig() {
   return request({
     url: '/api/resource/ride-traffic/update/config',
-    method: 'get'
+    method: 'get',
   })
 }

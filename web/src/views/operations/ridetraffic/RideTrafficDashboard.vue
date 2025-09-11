@@ -11,15 +11,39 @@
         <el-card class="control-card">
           <div class="control-header">
             <h3>控制面板</h3>
-            <el-button 
-              type="primary" 
-              @click="updateAllRealTimeData"
-              :loading="updatingAll"
-              size="small"
-            >
-              <el-icon><Refresh /></el-icon>
-              更新全部数据
-            </el-button>
+            <div class="control-buttons">
+              <el-button
+                type="primary"
+                @click="updateAllRealTimeData"
+                :loading="updatingAll"
+                size="small"
+              >
+                <el-icon><Refresh /></el-icon>
+                更新全部数据
+              </el-button>
+              <el-button
+                :type="isAutoRefresh ? 'success' : 'info'"
+                @click="toggleAutoRefresh"
+                size="small"
+              >
+                <el-icon>
+                  <component :is="isAutoRefresh ? 'VideoPlay' : 'VideoPause'" />
+                </el-icon>
+                {{ isAutoRefresh ? '停止自动刷新' : '开始自动刷新' }}
+              </el-button>
+              <el-select
+                v-model="refreshIntervalTime"
+                @change="changeRefreshInterval"
+                size="small"
+                style="width: 120px"
+              >
+                <el-option :value="1000" label="1秒刷新" />
+                <el-option :value="2000" label="2秒刷新" />
+                <el-option :value="3000" label="3秒刷新" />
+                <el-option :value="5000" label="5秒刷新" />
+                <el-option :value="10000" label="10秒刷新" />
+              </el-select>
+            </div>
           </div>
         </el-card>
       </div>
@@ -72,7 +96,7 @@
                 v-model="searchKeyword"
                 placeholder="搜索设施名称"
                 clearable
-                style="width: 200px; margin-right: 10px;"
+                style="width: 200px; margin-right: 10px"
                 @keyup.enter="filterRides"
               >
                 <template #prefix>
@@ -87,12 +111,7 @@
           </div>
         </template>
 
-        <el-table 
-          :data="filteredRides" 
-          v-loading="loading"
-          stripe
-          style="width: 100%"
-        >
+        <el-table :data="filteredRides" v-loading="loading" stripe style="width: 100%">
           <el-table-column prop="rideId" label="设施ID" width="80" />
           <el-table-column prop="rideName" label="设施名称" min-width="150">
             <template #default="{ row }">
@@ -103,22 +122,51 @@
           </el-table-column>
           <el-table-column prop="visitorCount" label="游客数量" width="100">
             <template #default="{ row }">
-              <el-tag :type="getVisitorCountTagType(row.visitorCount)">
+              <el-tag 
+                :type="getVisitorCountTagType(row.visitorCount)"
+                :class="{
+                  'flash-increase': getItemChangeType(row.rideId, 'visitorCount', row.visitorCount) === 'increase',
+                  'flash-decrease': getItemChangeType(row.rideId, 'visitorCount', row.visitorCount) === 'decrease'
+                }"
+              >
                 {{ row.visitorCount }}
               </el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="queueLength" label="队列长度" width="100" />
+          <el-table-column prop="queueLength" label="队列长度" width="100">
+            <template #default="{ row }">
+              <span 
+                :class="{
+                  'flash-increase': getItemChangeType(row.rideId, 'queueLength', row.queueLength) === 'increase',
+                  'flash-decrease': getItemChangeType(row.rideId, 'queueLength', row.queueLength) === 'decrease'
+                }"
+              >
+                {{ row.queueLength }}
+              </span>
+            </template>
+          </el-table-column>
           <el-table-column prop="waitingTime" label="等待时间(分钟)" width="120">
             <template #default="{ row }">
-              <span :class="{ 'high-waiting': row.waitingTime > 30 }">
+              <span 
+                :class="{
+                  'high-waiting': row.waitingTime > 30,
+                  'flash-increase': getItemChangeType(row.rideId, 'waitingTime', row.waitingTime) === 'increase',
+                  'flash-decrease': getItemChangeType(row.rideId, 'waitingTime', row.waitingTime) === 'decrease'
+                }"
+              >
                 {{ row.waitingTime }}
               </span>
             </template>
           </el-table-column>
           <el-table-column label="拥挤状态" width="100">
             <template #default="{ row }">
-              <el-tag :type="row.isCrowded ? 'danger' : 'success'">
+              <el-tag 
+                :type="row.isCrowded ? 'danger' : 'success'"
+                :class="{
+                  'flash-increase': getItemChangeType(row.rideId, 'isCrowded', row.isCrowded) === 'increase',
+                  'flash-decrease': getItemChangeType(row.rideId, 'isCrowded', row.isCrowded) === 'decrease'
+                }"
+              >
                 {{ row.isCrowded ? '拥挤' : '正常' }}
               </el-tag>
             </template>
@@ -130,9 +178,9 @@
           </el-table-column>
           <el-table-column label="操作" width="150">
             <template #default="{ row }">
-              <el-button 
-                size="small" 
-                type="primary" 
+              <el-button
+                size="small"
+                type="primary"
                 @click="updateRideData(row.rideId)"
                 :loading="updatingRideId === row.rideId"
               >
@@ -178,18 +226,22 @@ const pageSize = ref(20)
 const totalRides = ref(0)
 const lastUpdate = ref(new Date())
 
+// Store item-specific change tracking
+const itemChanges = ref({})
+
 // Statistics
 const stats = computed(() => {
   const totalRides = rides.value.length
-  const crowdedRides = rides.value.filter(ride => ride.isCrowded).length
-  const avgWaitingTime = totalRides > 0 
-    ? Math.round(rides.value.reduce((sum, ride) => sum + ride.waitingTime, 0) / totalRides)
-    : 0
-  
+  const crowdedRides = rides.value.filter((ride) => ride.isCrowded).length
+  const avgWaitingTime =
+    totalRides > 0
+      ? Math.round(rides.value.reduce((sum, ride) => sum + ride.waitingTime, 0) / totalRides)
+      : 0
+
   return {
     totalRides,
     crowdedRides,
-    avgWaitingTime
+    avgWaitingTime,
   }
 })
 
@@ -199,9 +251,7 @@ const filteredRides = computed(() => {
     return rides.value
   }
   const keyword = searchKeyword.value.toLowerCase()
-  return rides.value.filter(ride => 
-    ride.rideName.toLowerCase().includes(keyword)
-  )
+  return rides.value.filter((ride) => ride.rideName.toLowerCase().includes(keyword))
 })
 
 const formatLastUpdate = computed(() => {
@@ -212,6 +262,27 @@ const formatLastUpdate = computed(() => {
 const formatDate = (date) => {
   if (!date) return ''
   return new Date(date).toLocaleString('zh-CN')
+}
+
+// 检查项目是否有变化用于动画
+const hasItemChanges = (rideId, field) => {
+  const changes = itemChanges.value[rideId]
+  if (!changes) return false
+  if (field) {
+    return changes[field] !== undefined
+  }
+  return true
+}
+
+// 获取变化类型（用于颜色动画）
+const getItemChangeType = (rideId, field, currentValue) => {
+  const changes = itemChanges.value[rideId]
+  if (!changes || !changes[field]) return ''
+  
+  const change = changes[field]
+  if (change.from < change.to) return 'increase'
+  if (change.from > change.to) return 'decrease'
+  return ''
 }
 
 const getVisitorCountTagType = (count) => {
@@ -258,7 +329,7 @@ const updateAllRealTimeData = async () => {
   try {
     updatingAll.value = true
     await rideTrafficApi.updateAllRideTraffic({
-      recordTime: new Date().toISOString()
+      recordTime: new Date().toISOString(),
     })
     await fetchRealTimeData()
     ElMessage.success('全部数据更新成功')
@@ -274,7 +345,7 @@ const updateRideData = async (rideId) => {
   try {
     updatingRideId.value = rideId
     await rideTrafficApi.updateRideTraffic(rideId, {
-      recordTime: new Date().toISOString()
+      recordTime: new Date().toISOString(),
     })
     await fetchRealTimeData()
     ElMessage.success('设施数据更新成功')
@@ -290,24 +361,166 @@ const goToRideDetail = (rideId) => {
   router.push(`/operations/ridetraffic/${rideId}`)
 }
 
+// 实时更新相关
+const refreshInterval = ref(null)
+const isAutoRefresh = ref(true)
+const refreshIntervalTime = ref(5000) // 5秒刷新一次
+
 // Lifecycle
 onMounted(() => {
   fetchRealTimeData()
-})
-
-// Refresh data every 30 seconds
-let refreshInterval = null
-onMounted(() => {
-  refreshInterval = setInterval(() => {
-    fetchRealTimeData()
-  }, 30000)
+  startOptimizedAutoRefresh()
 })
 
 onUnmounted(() => {
-  if (refreshInterval) {
-    clearInterval(refreshInterval)
-  }
+  stopAutoRefresh()
 })
+
+// 实时更新方法
+const startAutoRefresh = () => {
+  if (refreshInterval.value) {
+    clearInterval(refreshInterval.value)
+  }
+
+  if (isAutoRefresh.value) {
+    refreshInterval.value = setInterval(() => {
+      if (!loading.value) {
+        fetchRealTimeData()
+      }
+    }, refreshIntervalTime.value)
+  }
+}
+
+// 防抖标志
+const isUpdating = ref(false)
+
+// 实时更新方法，使用增量更新避免UI闪烁
+const updateRealTimeStats = async () => {
+  if (!isAutoRefresh.value || loading.value || isUpdating.value) return
+
+  isUpdating.value = true
+  try {
+    const response = await rideTrafficApi.getAllRealTimeRideTraffic()
+    if (response && Array.isArray(response)) {
+      // 增量更新方式，避免整个数组替换导致的闪烁
+      const newRides = response
+      const currentRides = rides.value
+      
+      // 创建一个新的数组来存储更新后的数据
+      const updatedRides = []
+      
+      // 处理每个新数据项
+      for (let i = 0; i < newRides.length; i++) {
+        const newRide = newRides[i]
+        
+        // 查找对应的当前项
+        const currentIndex = currentRides.findIndex(ride => ride.rideId === newRide.rideId)
+        const currentRide = currentIndex >= 0 ? currentRides[currentIndex] : null
+        
+        if (currentRide) {
+          // 检查哪些字段发生了变化
+          const changes = {}
+          let hasChanges = false
+          
+          Object.keys(newRide).forEach(key => {
+            if (currentRide[key] !== newRide[key]) {
+              changes[key] = {
+                from: currentRide[key],
+                to: newRide[key]
+              }
+              hasChanges = true
+            }
+          })
+          
+          // 如果有变化，更新当前项并标记变化
+          if (hasChanges) {
+            // 更新当前项的值
+            Object.assign(currentRide, newRide)
+            
+            // 记录变化用于动画
+            itemChanges.value[newRide.rideId] = {
+              ...changes,
+              timestamp: Date.now()
+            }
+            
+            // 清除变化标记（1秒后）
+            setTimeout(() => {
+              if (itemChanges.value[newRide.rideId]) {
+                delete itemChanges.value[newRide.rideId]
+              }
+            }, 1000)
+            
+            updatedRides.push(currentRide)
+          } else {
+            // 没有变化，直接使用当前项
+            updatedRides.push(currentRide)
+          }
+        } else {
+          // 新增项
+          itemChanges.value[newRide.rideId] = {
+            isNew: true,
+            timestamp: Date.now()
+          }
+          
+          setTimeout(() => {
+            if (itemChanges.value[newRide.rideId]) {
+              delete itemChanges.value[newRide.rideId]
+            }
+          }, 1000)
+          
+          updatedRides.push({...newRide})
+        }
+      }
+      
+      // 更新引用而不是替换整个数组
+      rides.value.splice(0, rides.value.length, ...updatedRides)
+      
+      totalRides.value = newRides.length
+      lastUpdate.value = new Date()
+    }
+  } catch (error) {
+    console.error('获取实时流量数据失败:', error)
+  } finally {
+    isUpdating.value = false
+  }
+}
+
+// 优化的自动刷新方法
+const startOptimizedAutoRefresh = () => {
+  if (refreshInterval.value) {
+    clearInterval(refreshInterval.value)
+  }
+
+  if (isAutoRefresh.value) {
+    refreshInterval.value = setInterval(() => {
+      updateRealTimeStats()
+    }, refreshIntervalTime.value)
+  }
+}
+
+const stopAutoRefresh = () => {
+  if (refreshInterval.value) {
+    clearInterval(refreshInterval.value)
+    refreshInterval.value = null
+  }
+}
+
+const toggleAutoRefresh = () => {
+  isAutoRefresh.value = !isAutoRefresh.value
+  if (isAutoRefresh.value) {
+    startAutoRefresh()
+    ElMessage.success('已开启自动刷新')
+  } else {
+    stopAutoRefresh()
+    ElMessage.info('已关闭自动刷新')
+  }
+}
+
+const changeRefreshInterval = () => {
+  stopAutoRefresh()
+  startAutoRefresh()
+  ElMessage.success(`刷新间隔已设置为 ${refreshIntervalTime.value / 1000} 秒`)
+}
 </script>
 
 <style scoped>
@@ -327,6 +540,12 @@ onUnmounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.control-buttons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .stats-overview {

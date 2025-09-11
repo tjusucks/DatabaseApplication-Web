@@ -11,15 +11,39 @@
         <template #header>
           <div class="card-header">
             <span>设施信息</span>
-            <el-button 
-              type="primary" 
-              @click="updateRideData" 
-              :loading="updating"
-              size="small"
-            >
-              <el-icon><Refresh /></el-icon>
-              更新实时数据
-            </el-button>
+            <div class="header-controls">
+              <el-button 
+                type="primary" 
+                @click="updateRideData" 
+                :loading="updating"
+                size="small"
+              >
+                <el-icon><Refresh /></el-icon>
+                更新实时数据
+              </el-button>
+              <el-button 
+                :type="isAutoRefresh ? 'success' : 'info'" 
+                @click="toggleAutoRefresh"
+                size="small"
+              >
+                <el-icon>
+                  <component :is="isAutoRefresh ? 'VideoPlay' : 'VideoPause'" />
+                </el-icon>
+                {{ isAutoRefresh ? '停止自动刷新' : '开始自动刷新' }}
+              </el-button>
+              <el-select 
+                v-model="refreshIntervalTime" 
+                @change="changeRefreshInterval" 
+                size="small" 
+                style="width: 120px;"
+              >
+                <el-option :value="1000" label="1秒刷新" />
+                <el-option :value="2000" label="2秒刷新" />
+                <el-option :value="3000" label="3秒刷新" />
+                <el-option :value="5000" label="5秒刷新" />
+                <el-option :value="10000" label="10秒刷新" />
+              </el-select>
+            </div>
           </div>
         </template>
         
@@ -202,6 +226,12 @@ const historyPage = ref(1)
 const historyPageSize = ref(20)
 const historyTotal = ref(0)
 
+// 实时更新相关
+const refreshInterval = ref(null)
+const isAutoRefresh = ref(true)
+const refreshIntervalTime = ref(5000) // 5秒刷新一次
+const isUpdating = ref(false) // 防抖标志
+
 // Computed
 const rideId = computed(() => route.params.id)
 const rideName = computed(() => currentRide.value.rideName)
@@ -234,6 +264,77 @@ const getVisitorCountTagType = (count) => {
   if (count > 100) return 'danger'
   if (count > 50) return 'warning'
   return 'success'
+}
+
+// 实时更新方法
+const startAutoRefresh = () => {
+  if (refreshInterval.value) {
+    clearInterval(refreshInterval.value)
+  }
+  
+  if (isAutoRefresh.value) {
+    refreshInterval.value = setInterval(() => {
+      if (!loading.value && !updating.value) {
+        fetchRideRealTimeData()
+      }
+    }, refreshIntervalTime.value)
+  }
+}
+
+// 优化的实时更新方法，只更新数据部分
+const updateRealTimeRideData = async () => {
+  if (!isAutoRefresh.value || loading.value || updating.value || isUpdating.value || !rideId.value) return
+  
+  isUpdating.value = true
+  try {
+    const response = await rideTrafficApi.getRealTimeRideTraffic(rideId.value)
+    if (response) {
+      // 只更新数据，不触发页面重新渲染
+      currentRide.value = response
+      updateChart()
+    }
+  } catch (error) {
+    console.error('获取设施实时数据失败:', error)
+  } finally {
+    isUpdating.value = false
+  }
+}
+
+// 优化的自动刷新方法
+const startOptimizedAutoRefresh = () => {
+  if (refreshInterval.value) {
+    clearInterval(refreshInterval.value)
+  }
+  
+  if (isAutoRefresh.value) {
+    refreshInterval.value = setInterval(() => {
+      updateRealTimeRideData()
+    }, refreshIntervalTime.value)
+  }
+}
+
+const stopAutoRefresh = () => {
+  if (refreshInterval.value) {
+    clearInterval(refreshInterval.value)
+    refreshInterval.value = null
+  }
+}
+
+const toggleAutoRefresh = () => {
+  isAutoRefresh.value = !isAutoRefresh.value
+  if (isAutoRefresh.value) {
+    startAutoRefresh()
+    ElMessage.success('已开启自动刷新')
+  } else {
+    stopAutoRefresh()
+    ElMessage.info('已关闭自动刷新')
+  }
+}
+
+const changeRefreshInterval = () => {
+  stopAutoRefresh()
+  startAutoRefresh()
+  ElMessage.success(`刷新间隔已设置为 ${refreshIntervalTime.value / 1000} 秒`)
 }
 
 // API calls
@@ -382,6 +483,7 @@ const updateChart = () => {
 onMounted(() => {
   fetchRideRealTimeData()
   initChart()
+  startOptimizedAutoRefresh()
   
   // Set default date range to last 7 days
   const endDate = new Date()
@@ -399,6 +501,7 @@ onUnmounted(() => {
   if (chart.value) {
     chart.value.dispose()
   }
+  stopAutoRefresh()
 })
 
 // Watch for route changes
@@ -431,6 +534,12 @@ window.addEventListener('resize', () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .info-item {
