@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-// 游客管理 API
+// 游客管理 API - 基于后端 /api/user/visitors 路径
 
 /**
  * 创建新游客
@@ -8,7 +8,7 @@ import request from '@/utils/request'
  */
 export function createVisitor(data) {
   return request({
-    url: '/api/Visitors',
+    url: '/api/user/visitors',
     method: 'post',
     data
   })
@@ -20,7 +20,7 @@ export function createVisitor(data) {
  */
 export function getVisitors(params) {
   return request({
-    url: '/api/Visitors',
+    url: '/api/user/visitors',
     method: 'get',
     params
   })
@@ -28,92 +28,123 @@ export function getVisitors(params) {
 
 /**
  * 根据ID获取游客
- * @param {string} id 游客ID
+ * @param {string|number} id 游客ID
  */
 export function getVisitorById(id) {
   return request({
-    url: `/api/Visitors/${id}`,
+    url: `/api/user/visitors/${id}`,
     method: 'get'
   })
 }
 
 /**
- * 根据用户ID获取游客
- * @param {string} userId 用户ID
+ * 更新游客信息
+ * @param {string|number} id 游客ID
+ * @param {Object} data 更新数据
  */
-export function getVisitorByUserId(userId) {
+export function updateVisitor(id, data) {
   return request({
-    url: `/api/Visitors/user/${userId}`,
-    method: 'get'
+    url: `/api/user/visitors/${id}`,
+    method: 'put',
+    data
   })
 }
 
 /**
- * 获取游客历史记录
- * @param {string} id 游客ID
+ * 更新游客联系信息
+ * @param {string|number} id 游客ID
+ * @param {Object} data 联系信息数据 {email, phoneNumber}
  */
-export function getVisitorHistory(id) {
+export function updateVisitorContact(id, data) {
   return request({
-    url: `/api/Visitors/${id}/history`,
-    method: 'get'
+    url: `/api/user/visitors/${id}/contact`,
+    method: 'put',
+    data
   })
 }
 
 /**
- * 按姓名搜索游客
- * @param {string} name 姓名
+ * 删除游客
+ * @param {string|number} id 游客ID
  */
-export function searchVisitorsByName(name) {
+export function deleteVisitor(id) {
   return request({
-    url: '/api/Visitors/search/name',
-    method: 'get',
-    params: { name }
+    url: `/api/user/visitors/${id}`,
+    method: 'delete'
+  })
+}
+
+// ==================== 会员管理相关 API ====================
+
+/**
+ * 升级游客为会员
+ * @param {string|number} id 游客ID
+ */
+export function upgradeToMember(id) {
+  return request({
+    url: `/api/user/visitors/${id}/membership`,
+    method: 'post'
   })
 }
 
 /**
- * 按电话号码搜索游客
- * @param {string} phone 电话号码
+ * 取消游客会员资格
+ * @param {string|number} id 游客ID
  */
-export function searchVisitorsByPhone(phone) {
+export function removeMembership(id) {
   return request({
-    url: '/api/Visitors/search/phone',
-    method: 'get',
-    params: { phone }
+    url: `/api/user/visitors/${id}/membership`,
+    method: 'delete'
   })
 }
 
 /**
- * 按黑名单状态筛选游客
- * @param {boolean} isBlacklisted 是否在黑名单
+ * 为会员添加积分
+ * @param {string|number} id 游客ID
+ * @param {Object} data 积分数据 {points, reason}
  */
-export function getVisitorsByBlacklistStatus(isBlacklisted) {
+export function addPoints(id, data) {
   return request({
-    url: `/api/Visitors/blacklist/${isBlacklisted}`,
-    method: 'get'
+    url: `/api/user/visitors/${id}/points/add`,
+    method: 'post',
+    data
   })
 }
 
 /**
- * 按游客类型筛选
- * @param {string} visitorType 游客类型
+ * 扣除会员积分
+ * @param {string|number} id 游客ID
+ * @param {Object} data 积分数据 {points, reason}
  */
-export function getVisitorsByType(visitorType) {
+export function deductPoints(id, data) {
   return request({
-    url: `/api/Visitors/type/${visitorType}`,
-    method: 'get'
+    url: `/api/user/visitors/${id}/points/deduct`,
+    method: 'post',
+    data
   })
 }
 
 /**
- * 按注册日期范围筛选
- * @param {Object} params 日期范围参数
+ * 通过联系方式为会员添加积分
+ * @param {Object} data 积分数据 {email?, phoneNumber?, points, reason}
  */
-export function getVisitorsByRegistrationDate(params) {
+export function addPointsByContact(data) {
   return request({
-    url: '/api/Visitors/registration-date',
-    method: 'get',
-    params
+    url: `/api/user/visitors/points/add-by-contact`,
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 通过联系方式扣除会员积分
+ * @param {Object} data 积分数据 {email?, phoneNumber?, points, reason}
+ */
+export function deductPointsByContact(data) {
+  return request({
+    url: `/api/user/visitors/points/deduct-by-contact`,
+    method: 'post',
+    data
   })
 }
 
@@ -123,45 +154,86 @@ export function getVisitorsByRegistrationDate(params) {
  */
 export function searchVisitors(params) {
   return request({
-    url: '/api/Visitors/search',
+    url: '/api/user/visitors/search',
     method: 'get',
     params
   })
 }
 
 /**
- * 更新游客信息
- * @param {string} id 游客ID
- * @param {Object} data 更新数据
+ * 获取游客统计数据
+ * @param {Object} params 统计参数
  */
-export function updateVisitor(id, data) {
+export function getVisitorStats(params) {
   return request({
-    url: `/api/Visitors/${id}`,
-    method: 'put',
-    data
+    url: '/api/user/visitors/stats',
+    method: 'get',
+    params
   })
 }
 
 /**
- * 更新黑名单状态
- * @param {string} id 游客ID
- * @param {Object} data 黑名单状态数据
+ * 获取分组游客统计数据
+ * @param {Object} params 统计参数
  */
-export function updateVisitorBlacklistStatus(id, data) {
+export function getGroupedVisitorStats(params) {
   return request({
-    url: `/api/Visitors/${id}/blacklist`,
-    method: 'put',
-    data
+    url: '/api/user/visitors/stats/grouped',
+    method: 'get',
+    params
   })
 }
 
 /**
- * 删除游客
- * @param {string} id 游客ID
+ * 将游客加入黑名单
+ * @param {string|number} id 游客ID
+ * @param {Object} data 黑名单数据 {reason}
  */
-export function deleteVisitor(id) {
+export function blacklistVisitor(id, data) {
   return request({
-    url: `/api/Visitors/${id}`,
+    url: `/api/user/visitors/${id}/blacklist`,
+    method: 'post',
+    data: {
+      visitorId: parseInt(id),
+      reason: data.reason || '违规行为'
+    }
+  })
+}
+
+/**
+ * 将游客移出黑名单
+ * @param {string|number} id 游客ID
+ */
+export function unblacklistVisitor(id) {
+  return request({
+    url: `/api/user/visitors/${id}/blacklist`,
     method: 'delete'
   })
+}
+
+
+
+// 兼容性函数 - 保持向后兼容
+export function searchVisitorsByName(name) {
+  return searchVisitors({ keyword: name })
+}
+
+export function searchVisitorsByPhone(phone) {
+  return searchVisitors({ keyword: phone })
+}
+
+export function getVisitorsByBlacklistStatus(isBlacklisted) {
+  return searchVisitors({ isBlacklisted })
+}
+
+export function getVisitorsByType(visitorType) {
+  return searchVisitors({ visitorType })
+}
+
+export function updateVisitorBlacklistStatus(id, data) {
+  if (data.isBlacklisted) {
+    return blacklistVisitor(id, { reason: data.reason || '违规行为' })
+  } else {
+    return unblacklistVisitor(id)
+  }
 }

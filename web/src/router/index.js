@@ -9,9 +9,12 @@ const NotFound = () => import('@/views/error/404.vue')
 
 // 游客管理模块
 const VisitorList = () => import('@/views/visitors/VisitorList.vue')
+const VisitorCreate = () => import('@/views/visitors/VisitorCreate.vue')
+const VisitorEdit = () => import('@/views/visitors/VisitorEdit.vue')
 const VisitorDetail = () => import('@/views/visitors/VisitorDetail.vue')
 const VisitorRecords = () => import('@/views/visitors/VisitorRecords.vue')
 const VisitorBlacklist = () => import('@/views/visitors/VisitorBlacklist.vue')
+const MemberManagement = () => import('@/views/visitors/MemberManagement.vue')
 
 // 票务管理模块
 const TicketTypes = () => import('@/views/tickets/TicketTypes.vue')
@@ -100,21 +103,48 @@ const routes = [
         }
       },
       {
-        path: ':id',
-        name: 'VisitorDetail',
-        component: VisitorDetail,
-        meta: {
-          title: '游客详情',
-          roles: ['super_admin', 'customer_service']
-        }
-      },
-      {
         path: 'records',
         name: 'VisitorRecords',
         component: VisitorRecords,
         meta: {
           title: '进出记录',
           roles: ['super_admin', 'operations_manager', 'customer_service']
+        }
+      },
+      {
+        path: 'members',
+        name: 'MemberManagement',
+        component: MemberManagement,
+        meta: {
+          title: '会员管理',
+          roles: ['super_admin', 'customer_service']
+        }
+      },
+      {
+        path: 'create',
+        name: 'VisitorCreate',
+        component: VisitorCreate,
+        meta: {
+          title: '新增游客',
+          roles: ['super_admin', 'customer_service']
+        }
+      },
+      {
+        path: ':id/edit',
+        name: 'VisitorEdit',
+        component: VisitorEdit,
+        meta: {
+          title: '编辑游客',
+          roles: ['super_admin', 'customer_service']
+        }
+      },
+      {
+        path: ':id',
+        name: 'VisitorDetail',
+        component: VisitorDetail,
+        meta: {
+          title: '游客详情',
+          roles: ['super_admin', 'customer_service']
         }
       },
       {
