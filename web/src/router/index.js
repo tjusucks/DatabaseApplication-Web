@@ -42,6 +42,7 @@ const OperationsAnalytics = () => import('@/views/operations/OperationsAnalytics
 const FinanceIncome = () => import('@/views/finance/FinanceIncome.vue')
 const FinanceExpenses = () => import('@/views/finance/FinanceExpenses.vue')
 const FinanceReports = () => import('@/views/finance/FinanceReports.vue')
+const FinanceReportDetail = () => import('@/views/finance/FinanceReportDetail.vue') // 新增报表详情页
 const ConsumptionRecords = () => import('@/views/finance/ConsumptionRecords.vue')
 
 // 人力资源模块
@@ -330,26 +331,29 @@ const routes = [
   },
   // 运营分析路由
   {
-    path: '/operations',
+    path: "/operations",
     component: Layout,
     meta: { requiresAuth: true },
     children: [
       {
-        path: 'analytics',
-        name: 'OperationsAnalytics',
+        path: "analytics",
+        name: "OperationsAnalytics",
         component: OperationsAnalytics,
         meta: {
-          title: '运营分析',
-          roles: ['super_admin', 'operations_manager']
-        }
-      }
-    ]
+          title: "运营分析",
+          roles: ["super_admin", "operations_manager"],
+        },
+      },
+    ],
   },
   // 财务管理路由
   {
     path: '/finance',
     component: Layout,
-    meta: { requiresAuth: true },
+    meta: { 
+      requiresAuth: true,
+      roles: ['super_admin', 'finance_manager'] 
+    },
     children: [
       {
         path: 'income',
@@ -379,12 +383,21 @@ const routes = [
         }
       },
       {
-        path: 'consumption',
+        path: 'reports/:id',
+        name: 'FinanceReportDetail',
+        component: FinanceReportDetail,
+        meta: {
+          title: '报表详情',
+          roles: ['super_admin', 'finance_manager']
+        }
+      },
+      {
+        path: 'records',
         name: 'ConsumptionRecords',
         component: ConsumptionRecords,
         meta: {
           title: '消费记录',
-          roles: ['super_admin', 'finance_manager', 'customer_service']
+          roles: ['super_admin', 'finance_manager']
         }
       }
     ]
@@ -401,8 +414,8 @@ const routes = [
         component: EmployeeList,
         meta: {
           title: '员工列表',
-          roles: ['super_admin', 'hr_manager']
-        }
+          roles: ['super_admin', 'hr_manager'],
+        },
       },
       {
         path: 'employees/:id',
@@ -410,8 +423,8 @@ const routes = [
         component: EmployeeDetail,
         meta: {
           title: '员工详情',
-          roles: ['super_admin', 'hr_manager']
-        }
+          roles: ['super_admin', 'hr_manager'],
+        },
       },
       {
         path: 'payroll/generate',
@@ -419,8 +432,8 @@ const routes = [
         component: PayrollGenerate,
         meta: {
           title: '工资单生成',
-          roles: ['super_admin', 'hr_manager']
-        }
+          roles: ['super_admin', 'hr_manager'],
+        },
       },
       {
         path: 'payroll/records',
@@ -428,8 +441,8 @@ const routes = [
         component: PayrollRecords,
         meta: {
           title: '工资记录',
-          roles: ['super_admin', 'hr_manager']
-        }
+          roles: ['super_admin', 'hr_manager'],
+        },
       },
       {
         path: 'attendance/records',
@@ -437,63 +450,63 @@ const routes = [
         component: AttendanceRecords,
         meta: {
           title: '考勤记录',
-          roles: ['super_admin', 'hr_manager']
-        }
+          roles: ['super_admin', 'hr_manager'],
+        },
       },
       {
-        path: 'attendance/statistics',
-        name: 'AttendanceStatistics',
+        path: "attendance/statistics",
+        name: "AttendanceStatistics",
         component: AttendanceStatistics,
         meta: {
-          title: '考勤统计',
-          roles: ['super_admin', 'hr_manager']
-        }
+          title: "考勤统计",
+          roles: ["super_admin", "hr_manager"],
+        },
       },
       {
-        path: 'performance/evaluations',
-        name: 'PerformanceEvaluations',
+        path: "performance/evaluations",
+        name: "PerformanceEvaluations",
         component: PerformanceEvaluations,
         meta: {
-          title: '绩效评估',
-          roles: ['super_admin', 'hr_manager']
-        }
+          title: "绩效评估",
+          roles: ["super_admin", "hr_manager"],
+        },
       },
       {
-        path: 'performance/reports',
-        name: 'PerformanceReports',
+        path: "performance/reports",
+        name: "PerformanceReports",
         component: PerformanceReports,
         meta: {
-          title: '绩效报表',
-          roles: ['super_admin', 'hr_manager']
-        }
-      }
-    ]
+          title: "绩效报表",
+          roles: ["super_admin", "hr_manager"],
+        },
+      },
+    ],
   },
   // 权限管理路由
   {
-    path: '/auth',
+    path: "/auth",
     component: Layout,
     meta: { requiresAuth: true },
     children: [
       {
-        path: 'teams',
-        name: 'TeamManagement',
+        path: "teams",
+        name: "TeamManagement",
         component: TeamManagement,
         meta: {
-          title: '团队管理',
-          roles: ['super_admin']
-        }
+          title: "团队管理",
+          roles: ["super_admin"],
+        },
       },
       {
-        path: 'roles',
-        name: 'RolePermissions',
+        path: "roles",
+        name: "RolePermissions",
         component: RolePermissions,
         meta: {
-          title: '角色权限',
-          roles: ['super_admin']
-        }
-      }
-    ]
+          title: "角色权限",
+          roles: ["super_admin"],
+        },
+      },
+    ],
   },
   // 404 页面
   {

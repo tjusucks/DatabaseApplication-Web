@@ -1,13 +1,14 @@
 <template>
-  <PageTemplate 
-    title="收入管理" 
-    description="管理园区各项收入来源和统计"
-    icon="TrendCharts"
-  >
+  <PageTemplate title="收入管理" description="管理和跟踪所有公园的收入来源" icon="Coin">
     <template #header>
-      <el-form :inline="true" :model="searchForm" class="demo-form-inline">
-        <el-form-item label="收入来源">
-          <el-input v-model="searchForm.source" placeholder="输入收入来源搜索" clearable />
+      <el-form :inline="true" :model="searchForm" class="search-form">
+        <el-form-item label="类型">
+          <el-select v-model="searchForm.type" placeholder="请选择收入类型" clearable>
+            <el-option label="门票销售" value="ticket_sales"></el-option>
+            <el-option label="商品销售" value="merchandise_sales"></el-option>
+            <el-option label="餐饮" value="food_beverage"></el-option>
+            <el-option label="其他" value="other"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="日期范围">
           <el-date-picker
@@ -20,161 +21,165 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="handleSearch">查询</el-button>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="success" @click="handleAdd">新增收入</el-button>
+          <el-button @click="resetSearch">重置</el-button>
         </el-form-item>
       </el-form>
+      <el-button type="primary" @click="openFormModal()">新增收入</el-button>
     </template>
 
-    <el-table v-loading="financeStore.loading" :data="financeStore.records" style="width: 100%">
-      <el-table-column prop="transactionDate" label="日期" width="180" />
-      <el-table-column prop="amount" label="金额" width="150" />
-      <el-table-column prop="source" label="收入来源" />
-      <el-table-column prop="description" label="描述" />
-      <el-table-column label="操作" width="200">
+    <el-table :data="financeStore.incomes" v-loading="loading" stripe>
+      <el-table-column prop="id" label="ID" width="80"></el-table-column>
+      <el-table-column prop="type" label="类型" width="150"></el-table-column>
+      <el-table-column prop="amount" label="金额 (元)" width="150"></el-table-column>
+      <el-table-column prop="description" label="描述"></el-table-column>
+      <el-table-column prop="date" label="日期" width="180"></el-table-column>
+      <el-table-column label="操作" width="150">
         <template #default="{ row }">
-          <el-button size="small" @click="handleEdit(row)">编辑</el-button>
-          <el-button size="small" type="danger" @click="handleDelete(row.id)">删除</el-button>
+          <el-button link type="primary" @click="openFormModal(row)">编辑</el-button>
+          <el-popconfirm title="确定删除吗？" @confirm="handleDelete(row.id)">
+            <template #reference>
+              <el-button link type="danger">删除</el-button>
+            </template>
+          </el-popconfirm>
         </template>
       </el-table-column>
     </el-table>
 
-    <template #footer>
-      <el-pagination
-        background
-        layout="prev, pager, next, total"
-        :total="financeStore.pagination.total"
-        :page-size="financeStore.pagination.pageSize"
-        :current-page="financeStore.pagination.page"
-        @current-change="handlePageChange"
-      />
-    </template>
+    <el-pagination
+      background
+      layout="prev, pager, next, total"
+      :total="financeStore.pagination.total"
+      :current-page.sync="financeStore.pagination.currentPage"
+      :page-size="financeStore.pagination.pageSize"
+      @current-change="handlePageChange"
+      class="pagination-container"
+    ></el-pagination>
 
-    <!-- 新增/编辑对话框 -->
-    <el-dialog v-model="dialogVisible" :title="dialogTitle" width="500px">
+    <!-- 新增/编辑弹窗 -->
+    <el-dialog :title="form.id ? '编辑收入' : '新增收入'" v-model="formModalVisible" width="500px">
       <el-form :model="form" label-width="80px">
-        <el-form-item label="日期">
-          <el-date-picker v-model="form.transactionDate" type="date" placeholder="选择日期" />
+        <el-form-item label="类型">
+          <el-select v-model="form.type" placeholder="请选择收入类型">
+            <el-option label="门票销售" value="ticket_sales"></el-option>
+            <el-option label="商品销售" value="merchandise_sales"></el-option>
+            <el-option label="餐饮" value="food_beverage"></el-option>
+            <el-option label="其他" value="other"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="金额">
-          <el-input-number v-model="form.amount" :precision="2" :step="100" :min="0" />
+          <el-input-number v-model="form.amount" :precision="2" :step="10" :min="0"></el-input-number>
         </el-form-item>
-        <el-form-item label="收入来源">
-          <el-input v-model="form.source" />
+        <el-form-item label="日期">
+          <el-date-picker v-model="form.date" type="date" placeholder="选择日期"></el-date-picker>
         </el-form-item>
         <el-form-item label="描述">
-          <el-input v-model="form.description" type="textarea" />
+          <el-input v-model="form.description" type="textarea"></el-input>
         </el-form-item>
       </el-form>
       <template #footer>
-        <span class="dialog-footer">
-          <el-button @click="dialogVisible = false">取消</el-button>
-          <el-button type="primary" @click="handleSubmit">确定</el-button>
-        </span>
+        <el-button @click="formModalVisible = false">取消</el-button>
+        <el-button type="primary" @click="handleSubmit">确定</el-button>
       </template>
     </el-dialog>
   </PageTemplate>
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ref, onMounted, reactive } from 'vue'
 import PageTemplate from '@/components/PageTemplate.vue'
 import { useFinanceStore } from '@/stores/finance'
+import { ElMessage } from 'element-plus'
+import { createIncome, updateIncome, deleteIncome } from '@/api/finance'
 
 const financeStore = useFinanceStore()
-
+const loading = ref(false)
 const searchForm = reactive({
-  source: '',
-  dateRange: [],
+  type: '',
+  dateRange: []
 })
-
-const dialogVisible = ref(false)
-const dialogTitle = ref('')
+const formModalVisible = ref(false)
 const form = reactive({
   id: null,
-  transactionType: 'income',
-  transactionDate: '',
+  type: '',
   amount: 0,
-  source: '',
-  description: '',
+  date: '',
+  description: ''
 })
 
-const fetchIncomeRecords = (page = 1) => {
+onMounted(() => {
+  fetchData()
+})
+
+const fetchData = async () => {
+  loading.value = true
   const params = {
-    page,
-    pageSize: financeStore.pagination.pageSize,
-    source: searchForm.source || undefined,
+    type: searchForm.type || undefined,
     startDate: searchForm.dateRange?.[0] || undefined,
     endDate: searchForm.dateRange?.[1] || undefined,
   }
-  financeStore.fetchRecordsByType('income', params)
+  await financeStore.fetchIncomes(params)
+  loading.value = false
 }
 
-onMounted(() => {
-  fetchIncomeRecords()
-})
-
 const handleSearch = () => {
-  fetchIncomeRecords(1)
+  financeStore.pagination.currentPage = 1
+  fetchData()
+}
+
+const resetSearch = () => {
+  searchForm.type = ''
+  searchForm.dateRange = []
+  handleSearch()
 }
 
 const handlePageChange = (page) => {
-  fetchIncomeRecords(page)
+  financeStore.pagination.currentPage = page
+  fetchData()
 }
 
-const handleAdd = () => {
-  resetForm()
-  dialogTitle.value = '新增收入'
-  dialogVisible.value = true
-}
-
-const handleEdit = (row) => {
-  resetForm()
-  Object.assign(form, row)
-  dialogTitle.value = '编辑收入'
-  dialogVisible.value = true
+const openFormModal = (rowData = null) => {
+  if (rowData) {
+    Object.assign(form, rowData)
+  } else {
+    Object.assign(form, { id: null, type: '', amount: 0, date: '', description: '' })
+  }
+  formModalVisible.value = true
 }
 
 const handleSubmit = async () => {
   try {
     if (form.id) {
-      await financeStore.updateRecord(form.id, form)
+      await updateIncome(form.id, form)
       ElMessage.success('更新成功')
     } else {
-      await financeStore.createRecord(form)
+      await createIncome(form)
       ElMessage.success('新增成功')
     }
-    dialogVisible.value = false
-    fetchIncomeRecords(financeStore.pagination.page)
+    formModalVisible.value = false
+    fetchData()
   } catch (error) {
     ElMessage.error('操作失败')
   }
 }
 
-const handleDelete = (id) => {
-  ElMessageBox.confirm('确定要删除这条收入记录吗?', '提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning',
-  })
-    .then(async () => {
-      await financeStore.deleteRecord(id)
-      ElMessage.success('删除成功')
-      fetchIncomeRecords(financeStore.pagination.page)
-    })
-    .catch(() => {
-      // catch error
-    })
-}
-
-const resetForm = () => {
-  form.id = null
-  form.transactionType = 'income'
-  form.transactionDate = ''
-  form.amount = 0
-  form.source = ''
-  form.description = ''
+const handleDelete = async (id) => {
+  try {
+    await deleteIncome(id)
+    ElMessage.success('删除成功')
+    fetchData()
+  } catch (error) {
+    ElMessage.error('删除失败')
+  }
 }
 </script>
+
+<style scoped>
+.search-form .el-form-item {
+  margin-bottom: 0;
+}
+.pagination-container {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+}
+</style>

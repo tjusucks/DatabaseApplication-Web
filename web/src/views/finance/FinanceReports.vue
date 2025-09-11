@@ -1,204 +1,227 @@
 <template>
-  <PageTemplate 
-    title="财务报表" 
-    description="生成和查看各类财务报表"
-    icon="Document"
-  >
-    <template #header>
-      <el-form :inline="true" :model="filterForm" @submit.prevent="loadReports">
-        <el-form-item label="日期范围">
-          <el-date-picker
-            v-model="filterForm.dateRange"
-            type="daterange"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-            @change="loadReports"
-          />
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="loadReports">生成报表</el-button>
-        </el-form-item>
-      </el-form>
-    </template>
-
-    <el-row :gutter="20">
+  <PageTemplate title="财务报表" description="查看和分析公园的财务数据" icon="DataAnalysis">
+    <!-- 财务总览 -->
+    <el-row :gutter="20" class="summary-cards">
       <el-col :span="8">
-        <el-card shadow="always">
-          <div class="stat-card">
-            <div class="stat-title">总收入</div>
-            <div class="stat-value income">{{ formatCurrency(overview.totalIncome) }}</div>
+        <el-card shadow="hover">
+          <div class="card-content">
+            <div class="icon-wrapper" style="background-color: #e7f4ff;">
+              <el-icon :size="32" color="#409EFF"><Coin /></el-icon>
+            </div>
+            <div class="text-wrapper">
+              <p class="label">总收入</p>
+              <h3 class="value">{{ summary.totalIncome?.toFixed(2) || '0.00' }} 元</h3>
+            </div>
           </div>
         </el-card>
       </el-col>
       <el-col :span="8">
-        <el-card shadow="always">
-          <div class="stat-card">
-            <div class="stat-title">总支出</div>
-            <div class="stat-value expense">{{ formatCurrency(overview.totalExpenses) }}</div>
+        <el-card shadow="hover">
+          <div class="card-content">
+            <div class="icon-wrapper" style="background-color: #fff0f0;">
+              <el-icon :size="32" color="#F56C6C"><Collection /></el-icon>
+            </div>
+            <div class="text-wrapper">
+              <p class="label">总支出</p>
+              <h3 class="value">{{ summary.totalExpenses?.toFixed(2) || '0.00' }} 元</h3>
+            </div>
           </div>
         </el-card>
       </el-col>
       <el-col :span="8">
-        <el-card shadow="always">
-          <div class="stat-card">
-            <div class="stat-title">净利润</div>
-            <div class="stat-value profit">{{ formatCurrency(overview.netProfit) }}</div>
+        <el-card shadow="hover">
+          <div class="card-content">
+            <div class="icon-wrapper" style="background-color: #e9fbf4;">
+              <el-icon :size="32" color="#67C23A"><DataLine /></el-icon>
+            </div>
+            <div class="text-wrapper">
+              <p class="label">净利润</p>
+              <h3 class="value">{{ summary.netProfit?.toFixed(2) || '0.00' }} 元</h3>
+            </div>
           </div>
         </el-card>
       </el-col>
     </el-row>
 
-    <el-row :gutter="20" style="margin-top: 20px;">
-      <el-col :span="24">
-        <el-card>
-          <div ref="trendsChart" style="width: 100%; height: 400px;"></div>
-        </el-card>
-      </el-col>
-    </el-row>
-
+    <!-- 图表区域 -->
     <el-row :gutter="20" style="margin-top: 20px;">
       <el-col :span="12">
         <el-card>
-          <div ref="incomePieChart" style="width: 100%; height: 400px;"></div>
+          <template #header>按类型分组的财务统计</template>
+          <div ref="groupedChart" style="height: 400px;"></div>
         </el-card>
       </el-col>
       <el-col :span="12">
         <el-card>
-          <div ref="expenseBarChart" style="width: 100%; height: 400px;"></div>
+          <template #header>
+            <div class="chart-header">
+              <span>按时间段统计</span>
+              <el-date-picker
+                v-model="timeRange"
+                type="daterange"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                @change="fetchTimeData"
+                style="width: 250px;"
+              />
+            </div>
+          </template>
+          <div ref="timeChart" style="height: 400px;"></div>
         </el-card>
       </el-col>
     </el-row>
-
   </PageTemplate>
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, computed, watch, nextTick } from 'vue'
-import * as echarts from 'echarts'
+import { ref, onMounted, watch, nextTick } from 'vue'
 import PageTemplate from '@/components/PageTemplate.vue'
 import { useFinanceStore } from '@/stores/finance'
+import * as echarts from 'echarts'
+import { Coin, Collection, DataLine } from '@element-plus/icons-vue'
 
 const financeStore = useFinanceStore()
+const summary = ref({})
+const timeRange = ref([])
 
-const filterForm = reactive({
-  dateRange: [],
-})
+// ECharts 实例
+const groupedChart = ref(null)
+const timeChart = ref(null)
+let groupedChartInstance = null
+let timeChartInstance = null
 
-const overview = computed(() => financeStore.overview)
-const groupedStats = computed(() => financeStore.groupedStats)
-
-const trendsChart = ref(null)
-const incomePieChart = ref(null)
-const expenseBarChart = ref(null)
-
-let trendsChartInstance = null
-let incomePieChartInstance = null
-let expenseBarChartInstance = null
-
-const loadReports = async () => {
-  const params = {
-    startDate: filterForm.dateRange?.[0] || undefined,
-    endDate: filterForm.dateRange?.[1] || undefined,
+// 初始化 ECharts
+const initCharts = () => {
+  if (groupedChart.value) {
+    groupedChartInstance = echarts.init(groupedChart.value)
   }
-  await Promise.all([
-    financeStore.fetchOverview(params),
-    financeStore.fetchGroupedStats({ ...params, groupBy: 'source' }),
-  ])
-  await nextTick()
-  updateCharts()
+  if (timeChart.value) {
+    timeChartInstance = echarts.init(timeChart.value)
+  }
 }
 
-onMounted(() => {
-  const endDate = new Date()
-  const startDate = new Date()
-  startDate.setMonth(startDate.getMonth() - 1)
-  filterForm.dateRange = [startDate, endDate]
-  
-  trendsChartInstance = echarts.init(trendsChart.value)
-  incomePieChartInstance = echarts.init(incomePieChart.value)
-  expenseBarChartInstance = echarts.init(expenseBarChart.value)
-  
-  loadReports()
-  
-  window.addEventListener('resize', resizeCharts)
-})
+// 更新分组统计图表
+const updateGroupedChart = (data) => {
+  if (!groupedChartInstance) return
+  const option = {
+    tooltip: { trigger: 'item' },
+    legend: { top: '5%', left: 'center' },
+    series: [
+      {
+        name: '财务统计',
+        type: 'pie',
+        radius: ['40%', '70%'],
+        avoidLabelOverlap: false,
+        itemStyle: {
+          borderRadius: 10,
+          borderColor: '#fff',
+          borderWidth: 2
+        },
+        label: { show: false, position: 'center' },
+        emphasis: {
+          label: { show: true, fontSize: '20', fontWeight: 'bold' }
+        },
+        labelLine: { show: false },
+        data: data.map(item => ({ value: item.amount, name: item.type }))
+      }
+    ]
+  }
+  groupedChartInstance.setOption(option)
+}
 
-watch(groupedStats, updateCharts, { deep: true })
-
-const updateCharts = () => {
-  if (!trendsChartInstance || !incomePieChartInstance || !expenseBarChartInstance) return
-
-  // 趋势图
-  const dailyStats = financeStore.groupedStats.filter(s => s.groupBy === 'date');
-  trendsChartInstance.setOption({
-    title: { text: '收支趋势' },
+// 更新时间段统计图表
+const updateTimeChart = (data) => {
+  if (!timeChartInstance) return
+  const option = {
     tooltip: { trigger: 'axis' },
-    legend: { data: ['收入', '支出'] },
-    xAxis: { type: 'category', data: dailyStats.map(s => s.key) },
+    xAxis: {
+      type: 'category',
+      data: data.map(item => item.date)
+    },
     yAxis: { type: 'value' },
     series: [
-      { name: '收入', type: 'line', data: dailyStats.map(s => s.totalIncome) },
-      { name: '支出', type: 'line', data: dailyStats.map(s => s.totalExpenses) }
+      {
+        name: '收入',
+        type: 'line',
+        data: data.map(item => item.income),
+        smooth: true
+      },
+      {
+        name: '支出',
+        type: 'line',
+        data: data.map(item => item.expense),
+        smooth: true
+      }
     ]
-  });
-
-  // 收入构成饼图
-  const incomeData = financeStore.groupedStats
-    .filter(s => s.transactionType === 'income' && s.groupBy === 'source')
-    .map(item => ({ value: item.totalAmount, name: item.key }))
-  incomePieChartInstance.setOption({
-    title: { text: '收入来源构成', left: 'center' },
-    tooltip: { trigger: 'item' },
-    legend: { orient: 'vertical', left: 'left' },
-    series: [{ type: 'pie', radius: '50%', data: incomeData }]
-  });
-
-  // 支出构成条形图
-  const expenseData = financeStore.groupedStats
-    .filter(s => s.transactionType === 'expense' && s.groupBy === 'source')
-  expenseBarChartInstance.setOption({
-    title: { text: '支出分类排行' },
-    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
-    xAxis: { type: 'value' },
-    yAxis: { type: 'category', data: expenseData.map(item => item.key) },
-    series: [{ type: 'bar', data: expenseData.map(item => item.totalAmount) }]
-  });
+  }
+  timeChartInstance.setOption(option)
 }
 
-const resizeCharts = () => {
-  trendsChartInstance?.resize()
-  incomePieChartInstance?.resize()
-  expenseBarChartInstance?.resize()
+// 获取数据
+const fetchData = async () => {
+  await financeStore.fetchFinanceSummary()
+  summary.value = financeStore.summary
+
+  await financeStore.fetchFinanceGroupedByType()
+  await nextTick()
+  updateGroupedChart(financeStore.groupedStats)
+  
+  await fetchTimeData()
 }
 
-const formatCurrency = (value) => {
-  if (typeof value !== 'number') return '¥ 0.00'
-  return `¥ ${value.toFixed(2)}`
+const fetchTimeData = async () => {
+  const params = {
+    startDate: timeRange.value?.[0] || undefined,
+    endDate: timeRange.value?.[1] || undefined,
+  }
+  await financeStore.fetchFinanceOverTime(params)
+  await nextTick()
+  updateTimeChart(financeStore.timeStats)
 }
 
+onMounted(async () => {
+  initCharts()
+  await fetchData()
+  window.addEventListener('resize', () => {
+    groupedChartInstance?.resize()
+    timeChartInstance?.resize()
+  })
+})
+
+watch(() => financeStore.groupedStats, (newData) => {
+  updateGroupedChart(newData)
+})
+
+watch(() => financeStore.timeStats, (newData) => {
+  updateTimeChart(newData)
+})
 </script>
 
 <style scoped>
-.stat-card {
-  text-align: center;
+.summary-cards .el-card {
+  border-radius: 10px;
 }
-.stat-title {
-  font-size: 16px;
-  color: #606266;
-  margin-bottom: 10px;
+.card-content {
+  display: flex;
+  align-items: center;
 }
-.stat-value {
+.icon-wrapper {
+  padding: 15px;
+  border-radius: 50%;
+  margin-right: 20px;
+}
+.text-wrapper .label {
+  margin: 0;
+  color: #909399;
+}
+.text-wrapper .value {
+  margin: 5px 0 0;
   font-size: 24px;
-  font-weight: bold;
 }
-.income {
-  color: #67C23A;
-}
-.expense {
-  color: #F56C6C;
-}
-.profit {
-  color: #409EFF;
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 </style>
