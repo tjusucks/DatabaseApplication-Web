@@ -38,7 +38,7 @@ export const useTicketStore = defineStore("ticket", {
     async fetchTicketTypeById(id) {
       try {
         const response = await ticketApi.getTicketTypeById(id);
-        this.ticketTypeDetail = response.data;
+        this.ticketTypeDetail = response;
       } catch (error) {
         ElMessage.error("获取票种详情失败");
       }
@@ -49,7 +49,7 @@ export const useTicketStore = defineStore("ticket", {
         const response = await ticketApi.getPriceRulesForTicketType(
           ticketTypeId
         );
-        this.priceRulesForType = response.data || [];
+        this.priceRulesForType = response ?? [];
       } catch (error) {
         ElMessage.error("获取价格规则失败");
       }
@@ -61,7 +61,7 @@ export const useTicketStore = defineStore("ticket", {
         return true;
       } catch (error) {
         ElMessage.error(
-          "新增价格规则失败：" + (error.response?.data?.message || "未知错误")
+          "新增价格规则失败：" + (error.response?.message || "未知错误")
         );
         return false;
       }
@@ -70,7 +70,7 @@ export const useTicketStore = defineStore("ticket", {
       try {
         const ticketTypesResponse = await ticketApi.getTicketTypes();
         // [修正] 从 ticketTypesResponse 中正确提取数组
-        const ticketTypes = ticketTypesResponse || [];
+        const ticketTypes = ticketTypesResponse ?? [];
 
         const priceRulePromises = ticketTypes.map(async (type) => {
           // [最终修正] 正确解析 getPriceRulesForTicketType 的响应
@@ -127,6 +127,76 @@ export const useReservationStore = defineStore("reservation", {
     currentReservation: null,
   }),
   actions: {
+    /**
+     * @description 执行一个完整的销售流程 (创建预订 -> 处理支付)
+     * @param {object} saleData - 来自销售页面的表单数据
+     */
+    async createSale(saleData) {
+      try {
+        // --- 准备创建预订的数据体 (Payload) ---
+        // [最终修正] 结构与后端 CreateReservationCommand 完全匹配
+        const reservationPayload = {
+          // 1. VisitorId: 必须提供一个游客ID
+          //    在真实场景中，您会先根据 saleData.visitorPhone 调用一个 "搜索/创建游客" 的 API 来获取ID
+          visitorId: 1, // [临时虚拟值] 假设一个存在的游客ID
+
+          // 2. VisitDate: 游玩日期，通常是今天
+          visitDate: new Date().toISOString(), // 发送 ISO 8601 格式的字符串
+
+          // 3. Items: 购买的票种和数量列表
+          items: [
+            {
+              ticketTypeId: saleData.ticketTypeId,
+              quantity: saleData.quantity,
+            },
+          ],
+
+          // 4. 可选字段
+          promotionId: null, // 如果有促销活动，可以在此传入ID
+          specialRequests: "", // 特殊要求
+        };
+
+        // --- 调用 API ---
+
+        // 步骤一：创建预订
+        console.log("正在创建预订，Payload:", reservationPayload);
+        const createResponse = await ticketApi.createReservation(
+          reservationPayload
+        );
+
+        // 从返回的 CreateReservationResponseDto 中解构数据
+        const { reservationId, totalAmount } = createResponse;
+
+        if (!reservationId) {
+          throw new Error("创建预订失败，未返回预订ID");
+        }
+        console.log(
+          `预订创建成功，ID: ${reservationId}, 总金额: ${totalAmount}`
+        );
+
+        // 步骤二：处理支付
+        const paymentPayload = {
+          paymentMethod: "Cash", // 假设现场销售为现金支付
+          amount: totalAmount, // 使用后端计算返回的总金额
+        };
+
+        console.log("正在处理支付，Payload:", paymentPayload);
+        await ticketApi.processReservationPayment(
+          reservationId,
+          paymentPayload
+        );
+
+        ElMessage.success("销售成功！");
+        return true;
+      } catch (error) {
+        ElMessage.error(
+          "销售失败：" +
+            (error.response?.data?.message || error.message || "未知错误")
+        );
+        console.error("createSale 过程出错:", error);
+        return false;
+      }
+    },
     /**
      * @description (对应 ReservationList.vue) 获取预订列表
      * @param {object} params - 查询参数 { page, size, keyword }
