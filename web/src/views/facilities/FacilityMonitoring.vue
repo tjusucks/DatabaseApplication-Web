@@ -30,7 +30,7 @@
 import { ref, onMounted } from 'vue';
 import * as echarts from 'echarts';
 import { useRoute } from 'vue-router';
-import { getFacilityMonitoringData } from '@/api/facilities';
+import { searchRides, getRideStats } from '@/api/facilities';
 
 const route = useRoute();
 const temperatureChart = ref(null);
@@ -63,9 +63,18 @@ const updateCharts = (data) => {
 };
 
 const fetchMonitoringData = async () => {
-  const id = route.params.id;
-  const data = await getFacilityMonitoringData(id);
-  updateCharts(data);
+  const data = await getRideStats({
+    startDate: null, // 可选：添加日期范围
+    endDate: null,
+  });
+
+  updateCharts({
+    timestamps: ['时间1', '时间2'], // 示例时间数据
+    temperatures: [22, 24], // 示例温度数据
+    flowRates: [10, 12], // 示例流量数据
+  });
+
+  console.log('统计数据:', data);
 };
 
 onMounted(() => {

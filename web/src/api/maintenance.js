@@ -1,31 +1,28 @@
 import axios from 'axios';
 
-const BASE_URL_RECORDS = '/api/maintenance/records';
-const BASE_URL_SCHEDULES = '/api/maintenance/schedules';
+const BASE_URL = '/api/resource/maintenance';
 
-export const getMaintenanceRecords = async (params) => {
-  const response = await axios.get(BASE_URL_RECORDS, { params });
+export const createMaintenanceRecord = async (data) => {
+  const response = await axios.post(BASE_URL, data);
   return response.data;
 };
 
-export const getMaintenanceRecordDetail = async (id) => {
-  const response = await axios.get(`${BASE_URL_RECORDS}/${id}`);
+export const updateMaintenanceRecord = async (id, data) => {
+  const response = await axios.put(`${BASE_URL}/${id}`, data);
   return response.data;
 };
 
-export const addMaintenanceRecord = async (data) => {
-  await axios.post(BASE_URL_RECORDS, data);
-};
-
-export const getMaintenanceSchedules = async (params) => {
-  const response = await axios.get(BASE_URL_SCHEDULES, { params });
+export const deleteMaintenanceRecord = async (id) => {
+  const response = await axios.delete(`${BASE_URL}/${id}`);
   return response.data;
 };
 
-export const addMaintenanceSchedule = async (data) => {
-  await axios.post(BASE_URL_SCHEDULES, data);
+export const searchMaintenanceRecords = async (params) => {
+  const response = await axios.get(`${BASE_URL}/search`, { params });
+  return response.data;
 };
 
-export const deleteMaintenanceSchedule = async (id) => {
-  await axios.delete(`${BASE_URL_SCHEDULES}/${id}`);
+export const getMaintenanceStats = async (params) => {
+  const response = await axios.get(`${BASE_URL}/stats`, { params });
+  return response.data;
 };
