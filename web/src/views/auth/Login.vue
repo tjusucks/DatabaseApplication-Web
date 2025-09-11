@@ -7,7 +7,7 @@
         <h1 class="title">主题公园管理系统</h1>
         <p class="subtitle">Theme Park Management System</p>
       </div>
-      
+
       <!-- 登录表单 -->
       <el-form
         ref="loginFormRef"
@@ -25,7 +25,7 @@
             clearable
           />
         </el-form-item>
-        
+
         <el-form-item prop="password">
           <el-input
             v-model="loginForm.password"
@@ -37,14 +37,14 @@
             clearable
           />
         </el-form-item>
-        
+
         <el-form-item>
           <div class="login-options">
             <el-checkbox v-model="loginForm.remember">记住密码</el-checkbox>
             <el-link type="primary" :underline="false">忘记密码？</el-link>
           </div>
         </el-form-item>
-        
+
         <el-form-item>
           <el-button
             type="primary"
@@ -57,29 +57,21 @@
           </el-button>
         </el-form-item>
       </el-form>
-      
+
       <!-- 快速登录提示 -->
       <div class="quick-login">
         <el-divider>快速登录</el-divider>
         <div class="demo-accounts">
-          <el-tag 
-            @click="quickLogin('admin')" 
-            class="demo-tag"
-            type="danger"
-          >
+          <el-tag @click="quickLogin('admin')" class="demo-tag" type="danger">
             管理员: admin / 123456
           </el-tag>
-          <el-tag 
-            @click="quickLogin('employee')" 
-            class="demo-tag"
-            type="info"
-          >
+          <el-tag @click="quickLogin('employee')" class="demo-tag" type="info">
             员工: employee / 123456
           </el-tag>
         </div>
       </div>
     </div>
-    
+
     <!-- 背景装饰 -->
     <div class="login-bg">
       <div class="bg-shape shape-1"></div>
@@ -108,33 +100,33 @@ const loading = ref(false)
 const loginForm = reactive({
   username: '',
   password: '',
-  remember: false
+  remember: false,
 })
 
 // 表单验证规则
 const loginRules = {
   username: [
     { required: true, message: '请输入用户名', trigger: 'blur' },
-    { min: 2, max: 20, message: '用户名长度在 2 到 20 个字符', trigger: 'blur' }
+    { min: 2, max: 20, message: '用户名长度在 2 到 20 个字符', trigger: 'blur' },
   ],
   password: [
     { required: true, message: '请输入密码', trigger: 'blur' },
-    { min: 6, max: 20, message: '密码长度在 6 到 20 个字符', trigger: 'blur' }
-  ]
+    { min: 6, max: 20, message: '密码长度在 6 到 20 个字符', trigger: 'blur' },
+  ],
 }
 
 // 处理登录
 const handleLogin = async () => {
   if (!loginFormRef.value) return
-  
+
   try {
     const valid = await loginFormRef.value.validate()
     if (!valid) return
-    
+
     loading.value = true
-    
+
     await userStore.login(loginForm)
-    
+
     ElMessage.success('登录成功')
     router.push('/')
   } catch (error) {
@@ -293,7 +285,8 @@ onMounted(() => {
 }
 
 @keyframes float {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0px) rotate(0deg);
   }
   50% {
@@ -307,11 +300,11 @@ onMounted(() => {
     width: 90%;
     padding: 30px 20px;
   }
-  
+
   .title {
     font-size: 20px;
   }
-  
+
   .demo-accounts {
     align-items: center;
   }

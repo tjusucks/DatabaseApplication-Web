@@ -25,16 +25,16 @@
 defineProps({
   title: {
     type: String,
-    required: true
+    required: true,
   },
   description: {
     type: String,
-    default: ''
+    default: '',
   },
   icon: {
     type: String,
-    default: 'Document'
-  }
+    default: 'Document',
+  },
 })
 </script>
 

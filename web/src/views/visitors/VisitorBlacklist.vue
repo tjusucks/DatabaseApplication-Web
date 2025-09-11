@@ -107,7 +107,9 @@
           <template #default="{ row }">
             <div v-if="row.user?.email || row.user?.phoneNumber">
               <div v-if="row.user?.email" class="contact-item">{{ row.user.email }}</div>
-              <div v-if="row.user?.phoneNumber" class="contact-item">{{ row.user.phoneNumber }}</div>
+              <div v-if="row.user?.phoneNumber" class="contact-item">
+                {{ row.user.phoneNumber }}
+              </div>
             </div>
             <span v-else class="text-muted">-</span>
           </template>
@@ -175,7 +177,10 @@
           <div class="visitor-info">
             <p><strong>姓名：</strong>{{ selectedVisitor.user?.displayName || '-' }}</p>
             <p><strong>联系方式：</strong>{{ getContactInfo(selectedVisitor) }}</p>
-            <p><strong>类型：</strong>{{ selectedVisitor.visitorType === 'Member' ? '会员' : '普通游客' }}</p>
+            <p>
+              <strong>类型：</strong
+              >{{ selectedVisitor.visitorType === 'Member' ? '会员' : '普通游客' }}
+            </p>
           </div>
         </el-form-item>
         <el-form-item label="拉黑原因" prop="reason">
@@ -231,14 +236,14 @@ import {
   Download,
   CircleCloseFilled,
   User,
-  PieChart
+  PieChart,
 } from '@element-plus/icons-vue'
 import {
   searchVisitors,
   getVisitorById,
   blacklistVisitor,
   unblacklistVisitor,
-  getVisitorStats
+  getVisitorStats,
 } from '@/api/visitors'
 
 const router = useRouter()
@@ -246,7 +251,7 @@ const router = useRouter()
 // 搜索表单
 const searchForm = reactive({
   keyword: '',
-  dateRange: []
+  dateRange: [],
 })
 
 // 表格数据
@@ -258,14 +263,14 @@ const selectedRows = ref([])
 const pagination = reactive({
   currentPage: 1,
   pageSize: 20,
-  total: 0
+  total: 0,
 })
 
 // 统计数据
 const stats = reactive({
   totalBlacklisted: 0,
   totalVisitors: 0,
-  blacklistRate: 0
+  blacklistRate: 0,
 })
 
 // 添加黑名单对话框
@@ -275,16 +280,12 @@ const selectedVisitor = ref(null)
 const addFormRef = ref(null)
 const addForm = reactive({
   visitorId: '',
-  reason: ''
+  reason: '',
 })
 
 const addRules = {
-  visitorId: [
-    { required: true, message: '请输入游客ID', trigger: 'blur' }
-  ],
-  reason: [
-    { required: true, message: '请输入拉黑原因', trigger: 'blur' }
-  ]
+  visitorId: [{ required: true, message: '请输入游客ID', trigger: 'blur' }],
+  reason: [{ required: true, message: '请输入拉黑原因', trigger: 'blur' }],
 }
 
 // 编辑原因对话框
@@ -292,7 +293,7 @@ const editReasonDialogVisible = ref(false)
 const editReasonSubmitting = ref(false)
 const editingVisitor = ref(null)
 const editReasonForm = reactive({
-  reason: ''
+  reason: '',
 })
 
 // 格式化日期
@@ -319,7 +320,7 @@ const handleSearch = () => {
 const handleReset = () => {
   Object.assign(searchForm, {
     keyword: '',
-    dateRange: []
+    dateRange: [],
   })
   pagination.currentPage = 1
   loadData()
@@ -374,7 +375,6 @@ const handleAddSubmit = async () => {
     addDialogVisible.value = false
     await loadData()
     await loadStats()
-
   } catch (error) {
     if (error.message) {
       ElMessage.error('添加失败：' + error.message)
@@ -393,16 +393,14 @@ const handleBatchRemove = async () => {
       {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        type: 'warning'
-      }
+        type: 'warning',
+      },
     )
 
     loading.value = true
 
     // 并发处理所有解除操作
-    const promises = selectedRows.value.map(row =>
-      unblacklistVisitor(row.visitorId)
-    )
+    const promises = selectedRows.value.map((row) => unblacklistVisitor(row.visitorId))
 
     await Promise.all(promises)
 
@@ -410,7 +408,6 @@ const handleBatchRemove = async () => {
     selectedRows.value = []
     await loadData()
     await loadStats()
-
   } catch (error) {
     if (error !== 'cancel') {
       ElMessage.error('批量解除失败：' + error.message)
@@ -444,8 +441,8 @@ const handleRemoveFromBlacklist = async (row) => {
       {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        type: 'warning'
-      }
+        type: 'warning',
+      },
     )
 
     loading.value = true
@@ -454,7 +451,6 @@ const handleRemoveFromBlacklist = async (row) => {
     ElMessage.success('解除黑名单成功')
     await loadData()
     await loadStats()
-
   } catch (error) {
     if (error !== 'cancel') {
       ElMessage.error('解除失败：' + error.message)
@@ -479,13 +475,12 @@ const handleEditReasonSubmit = async () => {
     // 先解除黑名单，再重新添加（模拟更新原因）
     await unblacklistVisitor(editingVisitor.value.visitorId)
     await blacklistVisitor(editingVisitor.value.visitorId, {
-      reason: editReasonForm.reason
+      reason: editReasonForm.reason,
     })
 
     ElMessage.success('更新拉黑原因成功')
     editReasonDialogVisible.value = false
     await loadData()
-
   } catch (error) {
     ElMessage.error('更新失败：' + error.message)
   } finally {
@@ -515,7 +510,7 @@ const loadData = async () => {
     const params = {
       page: pagination.currentPage,
       pageSize: pagination.pageSize,
-      isBlacklisted: true // 只查询黑名单游客
+      isBlacklisted: true, // 只查询黑名单游客
     }
 
     // 添加搜索条件
@@ -559,7 +554,8 @@ const loadStats = async () => {
 
       // 计算黑名单比例
       if (stats.totalVisitors > 0) {
-        stats.blacklistRate = Math.round((stats.totalBlacklisted / stats.totalVisitors) * 100 * 10) / 10
+        stats.blacklistRate =
+          Math.round((stats.totalBlacklisted / stats.totalVisitors) * 100 * 10) / 10
       } else {
         stats.blacklistRate = 0
       }

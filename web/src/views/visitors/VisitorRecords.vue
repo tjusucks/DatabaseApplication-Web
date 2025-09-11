@@ -26,7 +26,12 @@
           />
         </el-form-item>
         <el-form-item label="记录类型">
-          <el-select v-model="searchForm.recordType" placeholder="请选择" clearable style="width: 120px">
+          <el-select
+            v-model="searchForm.recordType"
+            placeholder="请选择"
+            clearable
+            style="width: 120px"
+          >
             <el-option label="全部" value="" />
             <el-option label="入园记录" value="entry" />
           </el-select>
@@ -110,70 +115,70 @@
       <template #header>
         <span>入园记录</span>
       </template>
-          <el-table :data="entryRecords" v-loading="entryLoading" stripe border>
-            <el-table-column prop="entryRecordId" label="记录ID" width="100" />
-            <el-table-column label="游客信息" width="200">
-              <template #default="{ row }">
-                <div class="visitor-info">
-                  <div><strong>ID:</strong> {{ row.visitorId }}</div>
-                  <div v-if="row.visitor?.user?.displayName">
-                    <strong>姓名:</strong> {{ row.visitor.user.displayName }}
-                  </div>
-                </div>
-              </template>
-            </el-table-column>
-            <el-table-column label="入园时间" width="180">
-              <template #default="{ row }">
-                {{ formatDate(row.entryTime) }}
-              </template>
-            </el-table-column>
-            <el-table-column label="出园时间" width="180">
-              <template #default="{ row }">
-                {{ row.exitTime ? formatDate(row.exitTime) : '未出园' }}
-              </template>
-            </el-table-column>
-            <el-table-column prop="entryGate" label="入园门" width="120" />
-            <el-table-column prop="exitGate" label="出园门" width="120" />
-            <el-table-column label="游玩时长" width="120">
-              <template #default="{ row }">
-                {{ calculateDuration(row.entryTime, row.exitTime) }}
-              </template>
-            </el-table-column>
-            <el-table-column label="状态" width="100">
-              <template #default="{ row }">
-                <el-tag :type="row.exitTime ? 'info' : 'success'">
-                  {{ row.exitTime ? '已出园' : '在园中' }}
-                </el-tag>
-              </template>
-            </el-table-column>
-            <el-table-column label="操作" width="200" fixed="right">
-              <template #default="{ row }">
-                <el-button type="primary" size="small" @click="handleViewEntryDetail(row)">
-                  查看详情
-                </el-button>
-                <el-button
-                  v-if="!row.exitTime"
-                  type="warning"
-                  size="small"
-                  @click="handleManualExit(row)">
-                  手动出园
-                </el-button>
-              </template>
-            </el-table-column>
-          </el-table>
+      <el-table :data="entryRecords" v-loading="entryLoading" stripe border>
+        <el-table-column prop="entryRecordId" label="记录ID" width="100" />
+        <el-table-column label="游客信息" width="200">
+          <template #default="{ row }">
+            <div class="visitor-info">
+              <div><strong>ID:</strong> {{ row.visitorId }}</div>
+              <div v-if="row.visitor?.user?.displayName">
+                <strong>姓名:</strong> {{ row.visitor.user.displayName }}
+              </div>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="入园时间" width="180">
+          <template #default="{ row }">
+            {{ formatDate(row.entryTime) }}
+          </template>
+        </el-table-column>
+        <el-table-column label="出园时间" width="180">
+          <template #default="{ row }">
+            {{ row.exitTime ? formatDate(row.exitTime) : '未出园' }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="entryGate" label="入园门" width="120" />
+        <el-table-column prop="exitGate" label="出园门" width="120" />
+        <el-table-column label="游玩时长" width="120">
+          <template #default="{ row }">
+            {{ calculateDuration(row.entryTime, row.exitTime) }}
+          </template>
+        </el-table-column>
+        <el-table-column label="状态" width="100">
+          <template #default="{ row }">
+            <el-tag :type="row.exitTime ? 'info' : 'success'">
+              {{ row.exitTime ? '已出园' : '在园中' }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="200" fixed="right">
+          <template #default="{ row }">
+            <el-button type="primary" size="small" @click="handleViewEntryDetail(row)">
+              查看详情
+            </el-button>
+            <el-button
+              v-if="!row.exitTime"
+              type="warning"
+              size="small"
+              @click="handleManualExit(row)"
+            >
+              手动出园
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
 
-          <div class="pagination-container">
-            <el-pagination
-              :current-page="entryPagination.currentPage"
-              :page-size="entryPagination.pageSize"
-              :page-sizes="[10, 20, 50, 100]"
-              :total="entryPagination.total"
-              layout="total, sizes, prev, pager, next, jumper"
-              @size-change="handleEntrySizeChange"
-              @current-change="handleEntryCurrentChange"
-            />
-          </div>
-
+      <div class="pagination-container">
+        <el-pagination
+          :current-page="entryPagination.currentPage"
+          :page-size="entryPagination.pageSize"
+          :page-sizes="[10, 20, 50, 100]"
+          :total="entryPagination.total"
+          layout="total, sizes, prev, pager, next, jumper"
+          @size-change="handleEntrySizeChange"
+          @current-change="handleEntryCurrentChange"
+        />
+      </div>
     </el-card>
 
     <!-- 入园记录详情对话框 -->
@@ -181,7 +186,8 @@
       v-model="detailDialogVisible"
       title="入园记录详情"
       width="600px"
-      :close-on-click-modal="false">
+      :close-on-click-modal="false"
+    >
       <div v-if="currentDetailRecord" class="detail-content">
         <el-descriptions :column="2" border>
           <el-descriptions-item label="记录ID">
@@ -197,7 +203,9 @@
             {{ formatDateTime(currentDetailRecord.entryTime) }}
           </el-descriptions-item>
           <el-descriptions-item label="出园时间" :span="2">
-            {{ currentDetailRecord.exitTime ? formatDateTime(currentDetailRecord.exitTime) : '未出园' }}
+            {{
+              currentDetailRecord.exitTime ? formatDateTime(currentDetailRecord.exitTime) : '未出园'
+            }}
           </el-descriptions-item>
           <el-descriptions-item label="入园门">
             {{ currentDetailRecord.entryGate }}
@@ -227,10 +235,7 @@
 
       <template #footer>
         <el-button @click="detailDialogVisible = false">关闭</el-button>
-        <el-button
-          v-if="currentDetailRecord?.isActive"
-          type="warning"
-          @click="handleQuickExit">
+        <el-button v-if="currentDetailRecord?.isActive" type="warning" @click="handleQuickExit">
           快速出园
         </el-button>
       </template>
@@ -278,11 +283,7 @@
 <script setup>
 import { ref, reactive, onMounted, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import {
-  searchEntryRecords,
-  updateEntryRecord,
-  getEntryRecordStats
-} from '@/api/entryRecords'
+import { searchEntryRecords, updateEntryRecord, getEntryRecordStats } from '@/api/entryRecords'
 import { searchVisitors } from '@/api/visitors'
 
 // 搜索表单
@@ -290,7 +291,7 @@ const searchForm = reactive({
   visitorId: '',
   visitorName: '',
   recordType: '',
-  dateRange: []
+  dateRange: [],
 })
 
 // 统计数据
@@ -298,7 +299,7 @@ const stats = reactive({
   totalEntries: 0,
   currentInPark: 0,
   todayEntries: 0,
-  avgDuration: 0
+  avgDuration: 0,
 })
 
 // 入园记录
@@ -307,7 +308,7 @@ const entryLoading = ref(false)
 const entryPagination = reactive({
   currentPage: 1,
   pageSize: 20,
-  total: 0
+  total: 0,
 })
 
 // 详情对话框
@@ -321,7 +322,7 @@ const currentExitRecord = ref(null)
 const exitForm = reactive({
   exitGate: '',
   exitTime: new Date(),
-  remarks: ''
+  remarks: '',
 })
 
 // 格式化日期
@@ -339,7 +340,7 @@ const formatDateTime = (dateString) => {
     day: '2-digit',
     hour: '2-digit',
     minute: '2-digit',
-    second: '2-digit'
+    second: '2-digit',
   })
 }
 
@@ -411,10 +412,10 @@ const calculateDuration = (entryTimeOrRecord, exitTime = null) => {
 // 格式化会员等级
 const formatMemberLevel = (level) => {
   const levelMap = {
-    'Bronze': '青铜',
-    'Silver': '白银',
-    'Gold': '黄金',
-    'Platinum': '铂金'
+    Bronze: '青铜',
+    Silver: '白银',
+    Gold: '黄金',
+    Platinum: '铂金',
   }
   return levelMap[level] || level
 }
@@ -422,10 +423,10 @@ const formatMemberLevel = (level) => {
 // 获取会员等级标签类型
 const getMemberLevelType = (level) => {
   const typeMap = {
-    'Bronze': '',
-    'Silver': 'info',
-    'Gold': 'warning',
-    'Platinum': 'success'
+    Bronze: '',
+    Silver: 'info',
+    Gold: 'warning',
+    Platinum: 'success',
   }
   return typeMap[level] || ''
 }
@@ -433,10 +434,10 @@ const getMemberLevelType = (level) => {
 // 格式化会员操作
 const formatMembershipOperation = (operation) => {
   const operationMap = {
-    'upgrade': '升级会员',
-    'downgrade': '降级',
-    'cancel': '取消会员',
-    'level_change': '等级变更'
+    upgrade: '升级会员',
+    downgrade: '降级',
+    cancel: '取消会员',
+    level_change: '等级变更',
   }
   return operationMap[operation] || operation
 }
@@ -444,10 +445,10 @@ const formatMembershipOperation = (operation) => {
 // 获取会员操作类型
 const getMembershipOperationType = (operation) => {
   const typeMap = {
-    'upgrade': 'success',
-    'downgrade': 'warning',
-    'cancel': 'danger',
-    'level_change': 'info'
+    upgrade: 'success',
+    downgrade: 'warning',
+    cancel: 'danger',
+    level_change: 'info',
   }
   return typeMap[operation] || 'info'
 }
@@ -464,7 +465,7 @@ const handleReset = () => {
     visitorId: '',
     visitorName: '',
     recordType: '',
-    dateRange: []
+    dateRange: [],
   })
   handleSearch()
 }
@@ -514,7 +515,7 @@ const handleExitSubmit = async () => {
 
     await updateEntryRecord(currentExitRecord.value.entryRecordId, {
       EntryRecordId: currentExitRecord.value.entryRecordId,
-      ExitGate: exitForm.exitGate
+      ExitGate: exitForm.exitGate,
       // 出园时间由后端自动设置为当前时间
       // remarks字段暂不支持
     })
@@ -523,7 +524,6 @@ const handleExitSubmit = async () => {
     exitDialogVisible.value = false
     await loadEntryRecords()
     await loadStats()
-
   } catch (error) {
     ElMessage.error('出园记录更新失败：' + error.message)
   } finally {
@@ -543,8 +543,6 @@ const handleEntryCurrentChange = (page) => {
   loadEntryRecords()
 }
 
-
-
 // 加载统计数据
 const loadStats = async () => {
   try {
@@ -558,14 +556,14 @@ const loadStats = async () => {
 
     const todayResponse = await getEntryRecordStats({
       entryTimeStart: todayStart.toISOString(),
-      entryTimeEnd: todayEnd.toISOString()
+      entryTimeEnd: todayEnd.toISOString(),
     })
 
     if (totalResponse && todayResponse) {
       // 映射后端字段到前端期望的字段
       stats.totalEntries = totalResponse.totalEntries || 0
-      stats.currentInPark = totalResponse.activeEntries || 0  // 当前在园人数
-      stats.todayEntries = todayResponse.totalEntries || 0    // 今日入园次数
+      stats.currentInPark = totalResponse.activeEntries || 0 // 当前在园人数
+      stats.todayEntries = todayResponse.totalEntries || 0 // 今日入园次数
 
       // 计算平均游玩时长（基于实际数据）
       if (totalResponse.totalExits > 0) {
@@ -592,14 +590,14 @@ const calculateAvgDuration = async () => {
     const response = await searchEntryRecords({
       page: 1,
       pageSize: 1000, // 获取足够多的记录
-      IsActive: false // 只获取已出园的记录（注意大写I）
+      IsActive: false, // 只获取已出园的记录（注意大写I）
     })
 
     if (response && response.items && response.items.length > 0) {
       let totalDuration = 0
       let validRecords = 0
 
-      response.items.forEach(record => {
+      response.items.forEach((record) => {
         if (record.entryTime && record.exitTime) {
           const entryTime = new Date(record.entryTime)
           const exitTime = new Date(record.exitTime)
@@ -634,7 +632,7 @@ const loadEntryRecords = async () => {
     const params = {
       page: entryPagination.currentPage,
       pageSize: entryPagination.pageSize,
-      includeVisitorInfo: true
+      includeVisitorInfo: true,
     }
 
     // 添加搜索条件
@@ -667,8 +665,6 @@ const loadEntryRecords = async () => {
     entryLoading.value = false
   }
 }
-
-
 
 // 组件挂载时加载数据
 onMounted(() => {

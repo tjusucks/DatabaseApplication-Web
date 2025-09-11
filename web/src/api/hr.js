@@ -12,7 +12,7 @@ export function createAttendance(data) {
   return request({
     url: '/api/attendance',
     method: 'post',
-    data
+    data,
   })
 }
 
@@ -25,7 +25,7 @@ export function updateAttendance(id, data) {
   return request({
     url: `/api/attendance/${id}`,
     method: 'put',
-    data
+    data,
   })
 }
 
@@ -36,7 +36,7 @@ export function updateAttendance(id, data) {
 export function deleteAttendance(id) {
   return request({
     url: `/api/attendance/${id}`,
-    method: 'delete'
+    method: 'delete',
   })
 }
 
@@ -48,7 +48,7 @@ export function checkIn(data) {
   return request({
     url: '/api/attendance/checkin',
     method: 'post',
-    data
+    data,
   })
 }
 
@@ -60,7 +60,7 @@ export function checkOut(data) {
   return request({
     url: '/api/attendance/checkout',
     method: 'post',
-    data
+    data,
   })
 }
 
@@ -72,7 +72,7 @@ export function applyLeave(data) {
   return request({
     url: '/api/attendance/leave',
     method: 'post',
-    data
+    data,
   })
 }
 
@@ -85,7 +85,7 @@ export function updateAttendanceStatus(id, data) {
   return request({
     url: `/api/attendance/status/${id}`,
     method: 'put',
-    data
+    data,
   })
 }
 
@@ -97,7 +97,7 @@ export function queryAttendance(data) {
   return request({
     url: '/api/attendance/query',
     method: 'post',
-    data
+    data,
   })
 }
 
@@ -111,7 +111,7 @@ export function createEmployee(data) {
   return request({
     url: '/api/employees',
     method: 'post',
-    data
+    data,
   })
 }
 
@@ -122,7 +122,7 @@ export function createEmployee(data) {
 export function getEmployeeById(id) {
   return request({
     url: `/api/employees/${id}`,
-    method: 'get'
+    method: 'get',
   })
 }
 
@@ -135,7 +135,7 @@ export function updateEmployee(id, data) {
   return request({
     url: `/api/employees/${id}`,
     method: 'put',
-    data
+    data,
   })
 }
 
@@ -146,7 +146,7 @@ export function updateEmployee(id, data) {
 export function deleteEmployee(id) {
   return request({
     url: `/api/employees/${id}`,
-    method: 'delete'
+    method: 'delete',
   })
 }
 
@@ -158,7 +158,7 @@ export function getEmployees(params) {
   return request({
     url: '/api/employees',
     method: 'get',
-    params
+    params,
   })
 }
 
@@ -172,7 +172,7 @@ export function createEmployeeReview(data) {
   return request({
     url: '/api/employeereviews',
     method: 'post',
-    data
+    data,
   })
 }
 
@@ -185,7 +185,7 @@ export function updateEmployeeReview(id, data) {
   return request({
     url: `/api/employeereviews/${id}`,
     method: 'put',
-    data
+    data,
   })
 }
 
@@ -196,7 +196,7 @@ export function updateEmployeeReview(id, data) {
 export function deleteEmployeeReview(id) {
   return request({
     url: `/api/employeereviews/${id}`,
-    method: 'delete'
+    method: 'delete',
   })
 }
 
@@ -207,7 +207,7 @@ export function deleteEmployeeReview(id) {
 export function getEmployeeReviewById(id) {
   return request({
     url: `/api/employeereviews/${id}`,
-    method: 'get'
+    method: 'get',
   })
 }
 
@@ -219,7 +219,7 @@ export function getEmployeeReviews(params) {
   return request({
     url: '/api/employeereviews',
     method: 'get',
-    params
+    params,
   })
 }
 
@@ -231,6 +231,6 @@ export function createAttendanceDeduction(data) {
   return request({
     url: '/api/employeereviews/attendance-deduction',
     method: 'post',
-    data
+    data,
   })
 }

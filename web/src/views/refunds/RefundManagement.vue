@@ -10,18 +10,10 @@
     <el-card class="search-card">
       <el-form :model="searchForm" inline class="search-form">
         <el-form-item label="申请单号">
-          <el-input 
-            v-model="searchForm.refundId" 
-            placeholder="请输入申请单号"
-            clearable
-          />
+          <el-input v-model="searchForm.refundId" placeholder="请输入申请单号" clearable />
         </el-form-item>
         <el-form-item label="游客姓名">
-          <el-input 
-            v-model="searchForm.visitorName" 
-            placeholder="请输入游客姓名"
-            clearable
-          />
+          <el-input v-model="searchForm.visitorName" placeholder="请输入游客姓名" clearable />
         </el-form-item>
         <el-form-item label="申请状态">
           <el-select v-model="searchForm.status" placeholder="请选择状态" clearable>
@@ -51,7 +43,7 @@
           </el-button>
         </el-form-item>
       </el-form>
-      
+
       <div class="action-buttons">
         <el-button type="success" @click="handleExport">
           <el-icon><Download /></el-icon>
@@ -66,25 +58,15 @@
 
     <!-- 数据表格 -->
     <el-card class="table-card">
-      <el-table 
-        :data="tableData" 
-        v-loading="loading"
-        stripe
-        border
-        style="width: 100%"
-      >
+      <el-table :data="tableData" v-loading="loading" stripe border style="width: 100%">
         <el-table-column prop="refundId" label="申请单号" width="140" />
         <el-table-column prop="visitorName" label="游客姓名" width="120" />
         <el-table-column prop="ticketType" label="票种" width="120" />
         <el-table-column prop="originalAmount" label="原价金额" width="100">
-          <template #default="{ row }">
-            ¥{{ row.originalAmount }}
-          </template>
+          <template #default="{ row }"> ¥{{ row.originalAmount }} </template>
         </el-table-column>
         <el-table-column prop="refundAmount" label="退款金额" width="100">
-          <template #default="{ row }">
-            ¥{{ row.refundAmount }}
-          </template>
+          <template #default="{ row }"> ¥{{ row.refundAmount }} </template>
         </el-table-column>
         <el-table-column prop="reason" label="退票原因" width="150" show-overflow-tooltip />
         <el-table-column prop="status" label="状态" width="100">
@@ -97,21 +79,19 @@
         <el-table-column prop="applyTime" label="申请时间" width="160" />
         <el-table-column label="操作" width="200" fixed="right">
           <template #default="{ row }">
-            <el-button type="primary" size="small" @click="handleView(row)">
-              查看
-            </el-button>
-            <el-button 
-              v-if="row.status === 'pending'" 
-              type="success" 
-              size="small" 
+            <el-button type="primary" size="small" @click="handleView(row)"> 查看 </el-button>
+            <el-button
+              v-if="row.status === 'pending'"
+              type="success"
+              size="small"
               @click="handleApprove(row)"
             >
               审核
             </el-button>
-            <el-button 
-              v-if="row.status === 'approved'" 
-              type="warning" 
-              size="small" 
+            <el-button
+              v-if="row.status === 'approved'"
+              type="warning"
+              size="small"
               @click="handleRefund(row)"
             >
               退款
@@ -144,9 +124,9 @@
           <el-input v-model="approveForm.visitorName" disabled />
         </el-form-item>
         <el-form-item label="退款金额">
-          <el-input-number 
-            v-model="approveForm.refundAmount" 
-            :min="0" 
+          <el-input-number
+            v-model="approveForm.refundAmount"
+            :min="0"
             :max="approveForm.originalAmount"
             :precision="2"
             style="width: 100%"
@@ -159,9 +139,9 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="审核备注">
-          <el-input 
-            v-model="approveForm.remark" 
-            type="textarea" 
+          <el-input
+            v-model="approveForm.remark"
+            type="textarea"
             :rows="3"
             placeholder="请输入审核备注"
           />
@@ -184,7 +164,7 @@ const searchForm = reactive({
   refundId: '',
   visitorName: '',
   status: '',
-  dateRange: []
+  dateRange: [],
 })
 
 // 表格数据
@@ -195,7 +175,7 @@ const loading = ref(false)
 const pagination = reactive({
   currentPage: 1,
   pageSize: 20,
-  total: 0
+  total: 0,
 })
 
 // 审核对话框
@@ -206,7 +186,7 @@ const approveForm = reactive({
   originalAmount: 0,
   refundAmount: 0,
   result: 'approved',
-  remark: ''
+  remark: '',
 })
 
 // 模拟数据
@@ -219,7 +199,7 @@ const mockData = [
     refundAmount: 120,
     reason: '行程变更',
     status: 'pending',
-    applyTime: '2024-01-15 10:30:00'
+    applyTime: '2024-01-15 10:30:00',
   },
   {
     refundId: 'RF002',
@@ -229,7 +209,7 @@ const mockData = [
     refundAmount: 64,
     reason: '身体不适',
     status: 'approved',
-    applyTime: '2024-01-16 14:20:00'
+    applyTime: '2024-01-16 14:20:00',
   },
   {
     refundId: 'RF003',
@@ -239,8 +219,8 @@ const mockData = [
     refundAmount: 0,
     reason: '重复购买',
     status: 'rejected',
-    applyTime: '2024-01-17 09:15:00'
-  }
+    applyTime: '2024-01-17 09:15:00',
+  },
 ]
 
 // 获取状态类型
@@ -249,7 +229,7 @@ const getStatusType = (status) => {
     pending: 'warning',
     approved: 'success',
     rejected: 'danger',
-    refunded: 'info'
+    refunded: 'info',
   }
   return statusMap[status] || 'info'
 }
@@ -260,7 +240,7 @@ const getStatusText = (status) => {
     pending: '待审核',
     approved: '已通过',
     rejected: '已拒绝',
-    refunded: '已退款'
+    refunded: '已退款',
   }
   return statusMap[status] || '未知'
 }
@@ -277,7 +257,7 @@ const handleReset = () => {
     refundId: '',
     visitorName: '',
     status: '',
-    dateRange: []
+    dateRange: [],
   })
   loadData()
 }
@@ -305,7 +285,7 @@ const handleApprove = (row) => {
     originalAmount: row.originalAmount,
     refundAmount: row.refundAmount,
     result: 'approved',
-    remark: ''
+    remark: '',
   })
   approveDialogVisible.value = true
 }
@@ -321,16 +301,12 @@ const handleSubmitApprove = () => {
 // 执行退款
 const handleRefund = async (row) => {
   try {
-    await ElMessageBox.confirm(
-      `确定要为申请单 ${row.refundId} 执行退款操作吗？`,
-      '确认退款',
-      {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }
-    )
-    
+    await ElMessageBox.confirm(`确定要为申请单 ${row.refundId} 执行退款操作吗？`, '确认退款', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning',
+    })
+
     // 这里应该调用API执行退款
     ElMessage.success('退款操作成功')
     loadData()
@@ -354,7 +330,7 @@ const handleCurrentChange = (page) => {
 // 加载数据
 const loadData = () => {
   loading.value = true
-  
+
   // 模拟 API 调用
   setTimeout(() => {
     tableData.value = mockData
@@ -418,11 +394,11 @@ onMounted(() => {
   .search-form {
     flex-direction: column;
   }
-  
+
   .action-buttons {
     flex-direction: column;
   }
-  
+
   .action-buttons .el-button {
     width: 100%;
   }

@@ -26,7 +26,12 @@
           />
         </el-form-item>
         <el-form-item label="会员等级">
-          <el-select v-model="searchForm.memberLevel" placeholder="请选择" clearable style="width: 120px">
+          <el-select
+            v-model="searchForm.memberLevel"
+            placeholder="请选择"
+            clearable
+            style="width: 120px"
+          >
             <el-option label="全部" value="" />
             <el-option label="青铜会员" value="Bronze" />
             <el-option label="白银会员" value="Silver" />
@@ -251,15 +256,8 @@
 import { ref, reactive, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import {
-  Search, Refresh, User, Star, TrendCharts,
-  Plus, Minus
-} from '@element-plus/icons-vue'
-import { 
-  searchVisitors, 
-  addPoints, 
-  deductPoints 
-} from '@/api/visitors'
+import { Search, Refresh, User, Star, TrendCharts, Plus, Minus } from '@element-plus/icons-vue'
+import { searchVisitors, addPoints, deductPoints } from '@/api/visitors'
 
 const router = useRouter()
 
@@ -270,7 +268,7 @@ const stats = reactive({
   totalMembers: 0,
   totalPoints: 0,
   avgPoints: 0,
-  activeMembers: 0
+  activeMembers: 0,
 })
 
 // 搜索表单
@@ -279,14 +277,14 @@ const searchForm = reactive({
   visitorName: '',
   memberLevel: '',
   minPoints: null,
-  maxPoints: null
+  maxPoints: null,
 })
 
 // 分页
 const pagination = reactive({
   currentPage: 1,
   pageSize: 20,
-  total: 0
+  total: 0,
 })
 
 // 积分操作
@@ -298,18 +296,18 @@ const pointsFormRef = ref()
 
 const pointsForm = reactive({
   points: 1,
-  reason: ''
+  reason: '',
 })
 
 const pointsRules = {
   points: [
     { required: true, message: '请输入积分数量', trigger: 'blur' },
-    { type: 'number', min: 1, message: '积分数量必须大于0', trigger: 'blur' }
+    { type: 'number', min: 1, message: '积分数量必须大于0', trigger: 'blur' },
   ],
   reason: [
     { required: true, message: '请输入操作原因', trigger: 'blur' },
-    { min: 2, max: 200, message: '原因长度在 2 到 200 个字符', trigger: 'blur' }
-  ]
+    { min: 2, max: 200, message: '原因长度在 2 到 200 个字符', trigger: 'blur' },
+  ],
 }
 
 // 计算属性
@@ -320,10 +318,10 @@ const pointsDialogTitle = computed(() => {
 // 获取会员等级类型
 const getMemberLevelType = (level) => {
   const types = {
-    'Bronze': 'info',
-    'Silver': 'primary',
-    'Gold': 'warning',
-    'Platinum': 'success'
+    Bronze: 'info',
+    Silver: 'primary',
+    Gold: 'warning',
+    Platinum: 'success',
   }
   return types[level] || 'info'
 }
@@ -331,10 +329,10 @@ const getMemberLevelType = (level) => {
 // 获取会员等级文本
 const getMemberLevelText = (level) => {
   const texts = {
-    'Bronze': '青铜会员',
-    'Silver': '白银会员',
-    'Gold': '黄金会员',
-    'Platinum': '铂金会员'
+    Bronze: '青铜会员',
+    Silver: '白银会员',
+    Gold: '黄金会员',
+    Platinum: '铂金会员',
   }
   return texts[level] || level
 }
@@ -353,7 +351,7 @@ const loadMembers = async () => {
     const params = {
       pageNumber: pagination.currentPage,
       pageSize: pagination.pageSize,
-      visitorType: 1 // 只查询会员 (Member = 1)
+      visitorType: 1, // 只查询会员 (Member = 1)
     }
 
     // 添加搜索条件
@@ -368,18 +366,17 @@ const loadMembers = async () => {
     }
 
     const response = await searchVisitors(params)
-    
+
     if (response && response.items) {
       members.value = response.items
       pagination.total = response.totalCount
-      
+
       // 计算统计数据
       calculateStats(response.items)
     } else {
       members.value = []
       pagination.total = 0
     }
-
   } catch (error) {
     console.error('加载会员数据失败:', error)
     ElMessage.error('加载会员数据失败：' + error.message)
@@ -395,7 +392,7 @@ const calculateStats = (memberList) => {
   stats.totalMembers = memberList.length
   stats.totalPoints = memberList.reduce((sum, member) => sum + (member.points || 0), 0)
   stats.avgPoints = stats.totalMembers > 0 ? Math.round(stats.totalPoints / stats.totalMembers) : 0
-  stats.activeMembers = memberList.filter(member => !member.isBlacklisted).length
+  stats.activeMembers = memberList.filter((member) => !member.isBlacklisted).length
 }
 
 // 搜索
@@ -411,7 +408,7 @@ const handleReset = () => {
     visitorName: '',
     memberLevel: '',
     minPoints: null,
-    maxPoints: null
+    maxPoints: null,
   })
   pagination.currentPage = 1
   loadMembers()
@@ -454,12 +451,12 @@ const resetPointsForm = () => {
 const handlePointsSubmit = async () => {
   try {
     await pointsFormRef.value.validate()
-    
+
     pointsSubmitting.value = true
-    
+
     const data = {
       points: pointsForm.points,
-      reason: pointsForm.reason
+      reason: pointsForm.reason,
     }
 
     if (pointsOperation.value === 'add') {
@@ -472,7 +469,6 @@ const handlePointsSubmit = async () => {
 
     pointsDialogVisible.value = false
     await loadMembers() // 重新加载数据
-
   } catch (error) {
     console.error('积分操作失败:', error)
     ElMessage.error('积分操作失败：' + error.message)
@@ -551,7 +547,7 @@ onMounted(() => {
   top: 50%;
   transform: translateY(-50%);
   font-size: 40px;
-  color: #E4E7ED;
+  color: #e4e7ed;
   z-index: 1;
 }
 
@@ -579,7 +575,7 @@ onMounted(() => {
 }
 
 .no-contact {
-  color: #C0C4CC;
+  color: #c0c4cc;
   font-style: italic;
 }
 
@@ -588,7 +584,7 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   gap: 4px;
-  color: #E6A23C;
+  color: #e6a23c;
   font-weight: bold;
 }
 
@@ -604,7 +600,7 @@ onMounted(() => {
 }
 
 .member-summary {
-  background: #F5F7FA;
+  background: #f5f7fa;
   padding: 12px;
   border-radius: 4px;
   line-height: 1.6;

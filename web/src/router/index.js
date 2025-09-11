@@ -57,17 +57,15 @@ const AttendanceStatistics = () => import('@/views/hr/attendance/AttendanceStati
 const PerformanceEvaluations = () => import('@/views/hr/performance/PerformanceEvaluations.vue')
 const PerformanceReports = () => import('@/views/hr/performance/PerformanceReports.vue')
 
-
-
 const routes = [
   {
     path: '/login',
     name: 'Login',
     component: Login,
-    meta: { 
+    meta: {
       title: '登录',
-      requiresAuth: false 
-    }
+      requiresAuth: false,
+    },
   },
   {
     path: '/',
@@ -79,13 +77,21 @@ const routes = [
         path: 'dashboard',
         name: 'Dashboard',
         component: Dashboard,
-        meta: { 
+        meta: {
           title: '仪表板',
           icon: 'House',
-          roles: ['super_admin', 'finance_manager', 'hr_manager', 'operations_manager', 'ticket_manager', 'customer_service', 'employee']
-        }
-      }
-    ]
+          roles: [
+            'super_admin',
+            'finance_manager',
+            'hr_manager',
+            'operations_manager',
+            'ticket_manager',
+            'customer_service',
+            'employee',
+          ],
+        },
+      },
+    ],
   },
   // 游客管理路由
   {
@@ -99,8 +105,8 @@ const routes = [
         component: VisitorList,
         meta: {
           title: '游客列表',
-          roles: ['super_admin', 'customer_service']
-        }
+          roles: ['super_admin', 'customer_service'],
+        },
       },
       {
         path: 'records',
@@ -108,8 +114,8 @@ const routes = [
         component: VisitorRecords,
         meta: {
           title: '进出记录',
-          roles: ['super_admin', 'operations_manager', 'customer_service']
-        }
+          roles: ['super_admin', 'operations_manager', 'customer_service'],
+        },
       },
       {
         path: 'members',
@@ -117,8 +123,8 @@ const routes = [
         component: MemberManagement,
         meta: {
           title: '会员管理',
-          roles: ['super_admin', 'customer_service']
-        }
+          roles: ['super_admin', 'customer_service'],
+        },
       },
       {
         path: 'create',
@@ -126,8 +132,8 @@ const routes = [
         component: VisitorCreate,
         meta: {
           title: '新增游客',
-          roles: ['super_admin', 'customer_service']
-        }
+          roles: ['super_admin', 'customer_service'],
+        },
       },
       {
         path: ':id/edit',
@@ -135,8 +141,8 @@ const routes = [
         component: VisitorEdit,
         meta: {
           title: '编辑游客',
-          roles: ['super_admin', 'customer_service']
-        }
+          roles: ['super_admin', 'customer_service'],
+        },
       },
       {
         path: ':id',
@@ -144,8 +150,8 @@ const routes = [
         component: VisitorDetail,
         meta: {
           title: '游客详情',
-          roles: ['super_admin', 'customer_service']
-        }
+          roles: ['super_admin', 'customer_service'],
+        },
       },
       {
         path: 'blacklist',
@@ -153,10 +159,10 @@ const routes = [
         component: VisitorBlacklist,
         meta: {
           title: '黑名单管理',
-          roles: ['super_admin', 'customer_service']
-        }
-      }
-    ]
+          roles: ['super_admin', 'customer_service'],
+        },
+      },
+    ],
   },
   // 票务管理路由
   {
@@ -170,8 +176,8 @@ const routes = [
         component: TicketTypes,
         meta: {
           title: '票种管理',
-          roles: ['super_admin', 'ticket_manager']
-        }
+          roles: ['super_admin', 'ticket_manager'],
+        },
       },
       {
         path: 'pricing',
@@ -179,8 +185,8 @@ const routes = [
         component: TicketPricing,
         meta: {
           title: '价格管理',
-          roles: ['super_admin', 'ticket_manager']
-        }
+          roles: ['super_admin', 'ticket_manager'],
+        },
       },
       {
         path: 'sales',
@@ -188,8 +194,8 @@ const routes = [
         component: TicketSales,
         meta: {
           title: '门票销售',
-          roles: ['super_admin', 'ticket_manager']
-        }
+          roles: ['super_admin', 'ticket_manager'],
+        },
       },
       {
         path: 'statistics',
@@ -197,10 +203,10 @@ const routes = [
         component: TicketStatistics,
         meta: {
           title: '销售统计',
-          roles: ['super_admin', 'ticket_manager']
-        }
-      }
-    ]
+          roles: ['super_admin', 'ticket_manager'],
+        },
+      },
+    ],
   },
   // 预订管理路由
   {
@@ -214,8 +220,8 @@ const routes = [
         component: ReservationList,
         meta: {
           title: '预订列表',
-          roles: ['super_admin', 'ticket_manager']
-        }
+          roles: ['super_admin', 'ticket_manager'],
+        },
       },
       {
         path: ':id',
@@ -223,10 +229,10 @@ const routes = [
         component: ReservationDetail,
         meta: {
           title: '预订详情',
-          roles: ['super_admin', 'ticket_manager']
-        }
-      }
-    ]
+          roles: ['super_admin', 'ticket_manager'],
+        },
+      },
+    ],
   },
   // 退票管理路由
   {
@@ -240,8 +246,8 @@ const routes = [
         component: RefundList,
         meta: {
           title: '退票列表',
-          roles: ['super_admin', 'ticket_manager']
-        }
+          roles: ['super_admin', 'ticket_manager'],
+        },
       },
       {
         path: 'management',
@@ -249,10 +255,10 @@ const routes = [
         component: RefundManagement,
         meta: {
           title: '退票管理',
-          roles: ['super_admin', 'ticket_manager']
-        }
-      }
-    ]
+          roles: ['super_admin', 'ticket_manager'],
+        },
+      },
+    ],
   },
   // 营销管理路由
   {
@@ -266,8 +272,8 @@ const routes = [
         component: PromotionList,
         meta: {
           title: '优惠活动',
-          roles: ['super_admin', 'ticket_manager']
-        }
+          roles: ['super_admin', 'ticket_manager'],
+        },
       },
       {
         path: 'create',
@@ -275,10 +281,10 @@ const routes = [
         component: PromotionCreate,
         meta: {
           title: '创建活动',
-          roles: ['super_admin', 'ticket_manager']
-        }
-      }
-    ]
+          roles: ['super_admin', 'ticket_manager'],
+        },
+      },
+    ],
   },
   // 设施管理路由
   {
@@ -292,8 +298,8 @@ const routes = [
         component: FacilityList,
         meta: {
           title: '设施列表',
-          roles: ['super_admin', 'operations_manager']
-        }
+          roles: ['super_admin', 'operations_manager'],
+        },
       },
       {
         path: ':id',
@@ -301,8 +307,8 @@ const routes = [
         component: FacilityDetail,
         meta: {
           title: '设施详情',
-          roles: ['super_admin', 'operations_manager']
-        }
+          roles: ['super_admin', 'operations_manager'],
+        },
       },
       {
         path: 'monitoring',
@@ -310,10 +316,10 @@ const routes = [
         component: FacilityMonitoring,
         meta: {
           title: '设施监控',
-          roles: ['super_admin', 'operations_manager']
-        }
-      }
-    ]
+          roles: ['super_admin', 'operations_manager'],
+        },
+      },
+    ],
   },
   // 维护管理路由
   {
@@ -327,8 +333,8 @@ const routes = [
         component: MaintenanceRecords,
         meta: {
           title: '维护记录',
-          roles: ['super_admin', 'operations_manager']
-        }
+          roles: ['super_admin', 'operations_manager'],
+        },
       },
       {
         path: 'schedule',
@@ -336,10 +342,10 @@ const routes = [
         component: MaintenanceSchedule,
         meta: {
           title: '维护计划',
-          roles: ['super_admin', 'operations_manager']
-        }
-      }
-    ]
+          roles: ['super_admin', 'operations_manager'],
+        },
+      },
+    ],
   },
   // 安全检查路由
   {
@@ -353,10 +359,10 @@ const routes = [
         component: SafetyInspections,
         meta: {
           title: '安全检查',
-          roles: ['super_admin', 'operations_manager']
-        }
-      }
-    ]
+          roles: ['super_admin', 'operations_manager'],
+        },
+      },
+    ],
   },
   // 运营分析路由
   {
@@ -370,10 +376,10 @@ const routes = [
         component: OperationsAnalytics,
         meta: {
           title: '运营分析',
-          roles: ['super_admin', 'operations_manager']
-        }
-      }
-    ]
+          roles: ['super_admin', 'operations_manager'],
+        },
+      },
+    ],
   },
   // 财务管理路由
   {
@@ -387,8 +393,8 @@ const routes = [
         component: FinanceIncome,
         meta: {
           title: '收入管理',
-          roles: ['super_admin', 'finance_manager']
-        }
+          roles: ['super_admin', 'finance_manager'],
+        },
       },
       {
         path: 'expenses',
@@ -396,8 +402,8 @@ const routes = [
         component: FinanceExpenses,
         meta: {
           title: '支出管理',
-          roles: ['super_admin', 'finance_manager']
-        }
+          roles: ['super_admin', 'finance_manager'],
+        },
       },
       {
         path: 'reports',
@@ -405,8 +411,8 @@ const routes = [
         component: FinanceReports,
         meta: {
           title: '财务报表',
-          roles: ['super_admin', 'finance_manager']
-        }
+          roles: ['super_admin', 'finance_manager'],
+        },
       },
       {
         path: 'consumption',
@@ -414,10 +420,10 @@ const routes = [
         component: ConsumptionRecords,
         meta: {
           title: '消费记录',
-          roles: ['super_admin', 'finance_manager', 'customer_service']
-        }
-      }
-    ]
+          roles: ['super_admin', 'finance_manager', 'customer_service'],
+        },
+      },
+    ],
   },
   // 人力资源路由
   {
@@ -431,8 +437,8 @@ const routes = [
         component: EmployeeList,
         meta: {
           title: '员工列表',
-          roles: ['super_admin', 'hr_manager']
-        }
+          roles: ['super_admin', 'hr_manager'],
+        },
       },
       {
         path: 'employees/:id',
@@ -440,8 +446,8 @@ const routes = [
         component: EmployeeDetail,
         meta: {
           title: '员工详情',
-          roles: ['super_admin', 'hr_manager']
-        }
+          roles: ['super_admin', 'hr_manager'],
+        },
       },
       {
         path: 'payroll/generate',
@@ -449,8 +455,8 @@ const routes = [
         component: PayrollGenerate,
         meta: {
           title: '工资单生成',
-          roles: ['super_admin', 'hr_manager']
-        }
+          roles: ['super_admin', 'hr_manager'],
+        },
       },
       {
         path: 'payroll/records',
@@ -458,8 +464,8 @@ const routes = [
         component: PayrollRecords,
         meta: {
           title: '工资记录',
-          roles: ['super_admin', 'hr_manager']
-        }
+          roles: ['super_admin', 'hr_manager'],
+        },
       },
       {
         path: 'attendance/records',
@@ -467,8 +473,8 @@ const routes = [
         component: AttendanceRecords,
         meta: {
           title: '考勤记录',
-          roles: ['super_admin', 'hr_manager']
-        }
+          roles: ['super_admin', 'hr_manager'],
+        },
       },
       {
         path: 'attendance/statistics',
@@ -476,8 +482,8 @@ const routes = [
         component: AttendanceStatistics,
         meta: {
           title: '考勤统计',
-          roles: ['super_admin', 'hr_manager']
-        }
+          roles: ['super_admin', 'hr_manager'],
+        },
       },
       {
         path: 'performance/evaluations',
@@ -485,8 +491,8 @@ const routes = [
         component: PerformanceEvaluations,
         meta: {
           title: '绩效评估',
-          roles: ['super_admin', 'hr_manager']
-        }
+          roles: ['super_admin', 'hr_manager'],
+        },
       },
       {
         path: 'performance/reports',
@@ -494,10 +500,10 @@ const routes = [
         component: PerformanceReports,
         meta: {
           title: '绩效报表',
-          roles: ['super_admin', 'hr_manager']
-        }
-      }
-    ]
+          roles: ['super_admin', 'hr_manager'],
+        },
+      },
+    ],
   },
   // 权限管理路由
   {
@@ -511,8 +517,8 @@ const routes = [
         component: TeamManagement,
         meta: {
           title: '团队管理',
-          roles: ['super_admin']
-        }
+          roles: ['super_admin'],
+        },
       },
       {
         path: 'roles',
@@ -520,50 +526,52 @@ const routes = [
         component: RolePermissions,
         meta: {
           title: '角色权限',
-          roles: ['super_admin']
-        }
-      }
-    ]
+          roles: ['super_admin'],
+        },
+      },
+    ],
   },
   // 404 页面
   {
     path: '/:pathMatch(.*)*',
     name: 'NotFound',
     component: NotFound,
-    meta: { title: '页面未找到' }
-  }
+    meta: { title: '页面未找到' },
+  },
 ]
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes
+  routes,
 })
 
 // 路由守卫
 router.beforeEach((to, from, next) => {
   const userStore = useUserStore()
-  
+
   // 设置页面标题
-  document.title = to.meta.title ? `${to.meta.title} - ${import.meta.env.VITE_APP_TITLE}` : import.meta.env.VITE_APP_TITLE
-  
+  document.title = to.meta.title
+    ? `${to.meta.title} - ${import.meta.env.VITE_APP_TITLE}`
+    : import.meta.env.VITE_APP_TITLE
+
   // 检查是否需要登录
   if (to.meta.requiresAuth && !userStore.isLoggedIn) {
     next('/login')
     return
   }
-  
+
   // 检查角色权限
   if (to.meta.roles && !userStore.hasAnyRole(to.meta.roles)) {
     next('/404')
     return
   }
-  
+
   // 已登录用户访问登录页面，重定向到首页
   if (to.path === '/login' && userStore.isLoggedIn) {
     next('/')
     return
   }
-  
+
   next()
 })
 
