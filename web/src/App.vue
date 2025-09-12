@@ -21,7 +21,8 @@ onMounted(() => {
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   background-color: #f0f2f5;
   color: #303133;
 }
@@ -32,6 +33,9 @@ body {
   overflow: hidden;
   margin: 0;
   padding: 0;
+  /* 防止闪烁的基础样式 */
+  background-color: #f0f2f5;
+  transition: none;
 }
 
 /* Custom scrollbar styles */
@@ -54,18 +58,36 @@ body {
   background: #a8a8a8;
 }
 
-/* Element Plus style overrides */
+/* Element Plus style overrides - 防闪烁优化 */
 .el-card {
   border-radius: 8px;
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+  background-color: #fff;
 }
 
 .el-button {
   border-radius: 4px;
+  transition: all 0.3s ease;
 }
 
 .el-input__wrapper {
   border-radius: 4px;
+  transition: border-color 0.3s ease;
+}
+
+/* 表格加载优化 */
+.el-table {
+  background-color: #fff;
+}
+
+.el-table__body-wrapper {
+  transition: opacity 0.3s ease;
+}
+
+/* 防止组件初始化时的闪烁 */
+.el-loading-parent--relative {
+  transition: none !important;
 }
 
 /* Responsive utility classes */

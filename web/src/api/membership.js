@@ -10,7 +10,7 @@ export function registerMember(data) {
   return request({
     url: '/api/Membership/register',
     method: 'post',
-    data
+    data,
   })
 }
 
@@ -21,7 +21,7 @@ export function registerMember(data) {
 export function getMemberById(id) {
   return request({
     url: `/api/Membership/${id}`,
-    method: 'get'
+    method: 'get',
   })
 }
 
@@ -32,7 +32,7 @@ export function getMemberById(id) {
 export function getMemberByUserId(userId) {
   return request({
     url: `/api/Membership/by-user/${userId}`,
-    method: 'get'
+    method: 'get',
   })
 }
 
@@ -44,7 +44,7 @@ export function getAllMembers(params) {
   return request({
     url: '/api/Membership',
     method: 'get',
-    params
+    params,
   })
 }
 
@@ -55,7 +55,7 @@ export function getAllMembers(params) {
 export function getMembersByType(type) {
   return request({
     url: `/api/Membership/by-type/${type}`,
-    method: 'get'
+    method: 'get',
   })
 }
 
@@ -66,7 +66,7 @@ export function getMembersByType(type) {
 export function getMembersByLevel(level) {
   return request({
     url: `/api/Membership/by-level/${level}`,
-    method: 'get'
+    method: 'get',
   })
 }
 
@@ -79,7 +79,7 @@ export function upgradeMember(id, data) {
   return request({
     url: `/api/Membership/${id}/upgrade`,
     method: 'post',
-    data
+    data,
   })
 }
 
@@ -91,7 +91,7 @@ export function addPoints(data) {
   return request({
     url: '/api/Membership/points/add',
     method: 'post',
-    data
+    data,
   })
 }
 
@@ -103,7 +103,7 @@ export function deductPoints(data) {
   return request({
     url: '/api/Membership/points/deduct',
     method: 'post',
-    data
+    data,
   })
 }
 
@@ -116,7 +116,7 @@ export function updateMember(id, data) {
   return request({
     url: `/api/Membership/${id}`,
     method: 'put',
-    data
+    data,
   })
 }
 
@@ -129,7 +129,7 @@ export function addToBlacklist(id, data) {
   return request({
     url: `/api/Membership/${id}/blacklist`,
     method: 'post',
-    data
+    data,
   })
 }
 
@@ -142,7 +142,7 @@ export function removeFromBlacklist(id, data) {
   return request({
     url: `/api/Membership/${id}/unblacklist`,
     method: 'post',
-    data
+    data,
   })
 }
 
@@ -152,7 +152,7 @@ export function removeFromBlacklist(id, data) {
 export function getMemberStatistics() {
   return request({
     url: '/api/Membership/statistics',
-    method: 'get'
+    method: 'get',
   })
 }
 
@@ -163,6 +163,6 @@ export function getMemberStatistics() {
 export function deleteMember(id) {
   return request({
     url: `/api/Membership/${id}`,
-    method: 'delete'
+    method: 'delete',
   })
 }

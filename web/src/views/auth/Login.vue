@@ -33,10 +33,12 @@
         </el-form-item>
       </el-form>
 
+
       <!-- 注册链接 -->
       <div class="register-link">
         <el-divider>还没有账号？</el-divider>
         <el-button type="text" @click="goToRegister">立即注册</el-button>
+
       </div>
     </div>
 
@@ -68,19 +70,19 @@ const loading = ref(false)
 const loginForm = reactive({
   username: '',
   password: '',
-  remember: false
+  remember: false,
 })
 
 // 表单验证规则
 const loginRules = {
   username: [
     { required: true, message: '请输入用户名', trigger: 'blur' },
-    { min: 2, max: 20, message: '用户名长度在 2 到 20 个字符', trigger: 'blur' }
+    { min: 2, max: 20, message: '用户名长度在 2 到 20 个字符', trigger: 'blur' },
   ],
   password: [
     { required: true, message: '请输入密码', trigger: 'blur' },
-    { min: 6, max: 20, message: '密码长度在 6 到 20 个字符', trigger: 'blur' }
-  ]
+    { min: 6, max: 20, message: '密码长度在 6 到 20 个字符', trigger: 'blur' },
+  ],
 }
 
 // 处理登录
@@ -236,6 +238,7 @@ onMounted(() => {
 }
 
 @keyframes float {
+
 
   0%,
   100% {

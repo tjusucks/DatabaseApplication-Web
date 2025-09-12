@@ -1,3 +1,3 @@
-# DatabaseApplication-Web
+# DatabaseApplication Web
 
-Frontend application built with SolidJS to interact with Oracle backend.
+Frontend application built with VueJS to interact with Oracle backend.
