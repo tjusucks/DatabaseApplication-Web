@@ -1,4 +1,5 @@
 <template>
+  <PageTemplate title="黑名单管理" description="管理被拉黑的游客信息" icon="CircleCloseFilled" />
   <div class="blacklist-management">
     <!-- 页面标题 -->
     <div class="page-header">

@@ -33,12 +33,6 @@ const fullMenuList = [
         roles: ['super_admin', 'operations_manager', 'customer_service'],
       },
       {
-        path: '/visitors/members',
-        title: '会员管理',
-        icon: 'Star',
-        roles: ['super_admin', 'customer_service'],
-      },
-      {
         path: '/visitors/blacklist',
         title: '黑名单管理',
         icon: 'CircleCloseFilled',
@@ -125,7 +119,7 @@ const fullMenuList = [
         roles: ['super_admin', 'ticket_manager'],
       },
       {
-        path: '/refunds/management',
+        path: '/refunds/request',
         title: '退票管理',
         icon: 'Setting',
         roles: ['super_admin', 'ticket_manager'],

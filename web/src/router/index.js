@@ -9,12 +9,9 @@ const NotFound = () => import('@/views/error/404.vue')
 
 // 游客管理模块
 const VisitorList = () => import('@/views/visitors/VisitorList.vue')
-const VisitorCreate = () => import('@/views/visitors/VisitorCreate.vue')
-const VisitorEdit = () => import('@/views/visitors/VisitorEdit.vue')
 const VisitorDetail = () => import('@/views/visitors/VisitorDetail.vue')
 const VisitorRecords = () => import('@/views/visitors/VisitorRecords.vue')
 const VisitorBlacklist = () => import('@/views/visitors/VisitorBlacklist.vue')
-const MemberManagement = () => import('@/views/visitors/MemberManagement.vue')
 
 // 票务管理模块
 const TicketTypes = () => import('@/views/tickets/TicketTypes.vue')
@@ -26,7 +23,9 @@ const ReservationDetail = () => import('@/views/reservations/ReservationDetail.v
 const PromotionList = () => import('@/views/promotions/PromotionList.vue')
 const PromotionCreate = () => import('@/views/promotions/PromotionCreate.vue')
 const RefundList = () => import('@/views/refunds/RefundList.vue')
-const RefundManagement = () => import('@/views/refunds/RefundManagement.vue')
+const RefundRequest = () => import('@/views/refunds/RefundRequest.vue')
+const PromotionDetail = () => import('@/views/promotions/PromotionDetail.vue')
+const TicketTypeDetail = () => import('@/views/tickets/TicketTypeDetail.vue')
 
 // 权限管理模块
 const TeamManagement = () => import('@/views/auth/TeamManagement.vue')
@@ -109,48 +108,21 @@ const routes = [
         },
       },
       {
-        path: 'records',
-        name: 'VisitorRecords',
-        component: VisitorRecords,
-        meta: {
-          title: '进出记录',
-          roles: ['super_admin', 'operations_manager', 'customer_service'],
-        },
-      },
-      {
-        path: 'members',
-        name: 'MemberManagement',
-        component: MemberManagement,
-        meta: {
-          title: '会员管理',
-          roles: ['super_admin', 'customer_service'],
-        },
-      },
-      {
-        path: 'create',
-        name: 'VisitorCreate',
-        component: VisitorCreate,
-        meta: {
-          title: '新增游客',
-          roles: ['super_admin', 'customer_service'],
-        },
-      },
-      {
-        path: ':id/edit',
-        name: 'VisitorEdit',
-        component: VisitorEdit,
-        meta: {
-          title: '编辑游客',
-          roles: ['super_admin', 'customer_service'],
-        },
-      },
-      {
         path: ':id',
         name: 'VisitorDetail',
         component: VisitorDetail,
         meta: {
           title: '游客详情',
           roles: ['super_admin', 'customer_service'],
+        },
+      },
+      {
+        path: 'records',
+        name: 'VisitorRecords',
+        component: VisitorRecords,
+        meta: {
+          title: '进出记录',
+          roles: ['super_admin', 'operations_manager', 'customer_service'],
         },
       },
       {
@@ -176,6 +148,15 @@ const routes = [
         component: TicketTypes,
         meta: {
           title: '票种管理',
+          roles: ['super_admin', 'ticket_manager'],
+        },
+      },
+      {
+        path: 'detail',
+        name: 'TicketTypeDetail',
+        component: TicketTypeDetail,
+        meta: {
+          title: '票种详情',
           roles: ['super_admin', 'ticket_manager'],
         },
       },
@@ -206,6 +187,17 @@ const routes = [
           roles: ['super_admin', 'ticket_manager'],
         },
       },
+      // [新增详情页路由]
+      {
+        path: 'types/:id',
+        name: 'TicketTypeDetail',
+        component: TicketTypeDetail,
+        meta: {
+          title: '价格规则管理',
+          roles: ['super_admin', 'ticket_manager'],
+          //hidden: true, // 不在侧边栏显示
+        },
+      },
     ],
   },
   // 预订管理路由
@@ -234,37 +226,38 @@ const routes = [
       },
     ],
   },
+
   // 退票管理路由
   {
     path: '/refunds',
     component: Layout,
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true, title: '退票管理', icon: 'RefreshLeft' },
+    redirect: '/refunds/list',
     children: [
       {
         path: 'list',
         name: 'RefundList',
         component: RefundList,
-        meta: {
-          title: '退票列表',
-          roles: ['super_admin', 'ticket_manager'],
-        },
+        meta: { title: '退票列表', roles: ['super_admin', 'ticket_manager'] },
       },
       {
-        path: 'management',
-        name: 'RefundManagement',
-        component: RefundManagement,
+        path: 'request',
+        name: 'RefundRequest',
+        component: RefundRequest,
         meta: {
-          title: '退票管理',
-          roles: ['super_admin', 'ticket_manager'],
+          title: '申请退票',
+          roles: ['super_admin', 'ticket_manager', 'customer_service'],
         },
       },
     ],
   },
+
   // 营销管理路由
   {
     path: '/promotions',
     component: Layout,
     meta: { requiresAuth: true },
+    redirect: '/promotions/list',
     children: [
       {
         path: 'list',
@@ -273,6 +266,17 @@ const routes = [
         meta: {
           title: '优惠活动',
           roles: ['super_admin', 'ticket_manager'],
+        },
+      },
+      // [新增详情页路由]
+      {
+        path: `detail/:id`,
+        name: 'PromotionDetail',
+        component: PromotionDetail,
+        meta: {
+          title: '活动详情管理',
+          roles: ['super_admin', 'ticket_manager'],
+          //hidden: true, // 不在侧边栏显示
         },
       },
       {
@@ -531,6 +535,7 @@ const routes = [
       },
     ],
   },
+
   // 404 页面
   {
     path: '/:pathMatch(.*)*',

@@ -1,31 +1,38 @@
 <template>
-  <div class="page-template">
-    <div class="page-header">
-      <h2>{{ title }}</h2>
-      <p v-if="description">{{ description }}</p>
-    </div>
+  <div class="page-template-container">
+    <el-card shadow="never">
+      <template #header>
+        <div class="page-header">
+          <div class="header-content">
+            <el-icon v-if="icon" :size="24" class="header-icon">
+              <!-- 动态组件来显示Element Plus图标 -->
+              <component :is="icon" />
+            </el-icon>
+            <div>
+              <h2 class="title">{{ title }}</h2>
+              <p class="description">{{ description }}</p>
+            </div>
+          </div>
+        </div>
+      </template>
 
-    <el-card>
-      <div class="template-content">
-        <el-icon size="64" color="#ddd">
-          <component :is="icon" />
-        </el-icon>
-        <h3>{{ title }}</h3>
-        <p>功能开发中，敬请期待...</p>
-        <el-button type="primary" @click="$router.go(-1)">
-          <el-icon><Back /></el-icon>
-          返回上页
-        </el-button>
+      <!-- 主内容区域 -->
+      <div class="page-content">
+        <slot></slot>
       </div>
     </el-card>
   </div>
 </template>
 
 <script setup>
+import { defineProps } from 'vue'
+
+// 接收父组件传递的属性
 defineProps({
   title: {
     type: String,
     required: true,
+    default: '页面标题',
   },
   description: {
     type: String,
@@ -33,44 +40,36 @@ defineProps({
   },
   icon: {
     type: String,
-    default: 'Document',
+    default: '',
   },
 })
 </script>
 
 <style scoped>
-.page-template {
-  padding: 0;
+.page-template-container {
+  padding: 20px;
 }
-
 .page-header {
-  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
-
-.page-header h2 {
-  margin: 0 0 8px 0;
-  font-size: 24px;
-  color: #303133;
+.header-content {
+  display: flex;
+  align-items: center;
 }
-
-.page-header p {
+.header-icon {
+  margin-right: 12px;
+  color: #409eff; /* 主题色 */
+}
+.title {
   margin: 0;
-  color: #606266;
-  font-size: 14px;
+  font-size: 20px;
+  font-weight: 600;
 }
-
-.template-content {
-  text-align: center;
-  padding: 60px 20px;
+.description {
+  margin: 4px 0 0;
   color: #909399;
-}
-
-.template-content h3 {
-  margin: 20px 0 10px 0;
-  color: #606266;
-}
-
-.template-content p {
-  margin-bottom: 30px;
+  font-size: 14px;
 }
 </style>
