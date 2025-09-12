@@ -422,7 +422,7 @@ const routes = [
     component: Layout,
     meta: {
       requiresAuth: true,
-      roles: ['super_admin', 'finance_manager']
+      roles: ['super_admin', 'finance_manager'],
     },
     children: [
       {
