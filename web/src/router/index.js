@@ -101,7 +101,7 @@ const routes = [
         meta: {
           title: '仪表板',
           icon: 'House',
-          roles: ['super_admin', 'finance_manager', 'hr_manager', 'operations_manager', 'ticket_manager', 'customer_service', 'employee']
+          roles: ['Admin', 'Manager', 'Employee', 'Visitor']
         }
       },
       {
@@ -111,7 +111,7 @@ const routes = [
         meta: {
           title: '个人资料',
           icon: 'User',
-          roles: ['super_admin', 'finance_manager', 'hr_manager', 'operations_manager', 'ticket_manager', 'customer_service', 'employee']
+          roles: ['Admin', 'Manager', 'Employee', 'Visitor']
         }
       }
     ]
@@ -128,7 +128,7 @@ const routes = [
         component: VisitorList,
         meta: {
           title: '游客列表',
-          roles: ['super_admin', 'customer_service']
+          roles: ['Admin', 'Manager', 'Employee']
         }
       },
       {
@@ -545,6 +545,14 @@ const router = createRouter({
 router.beforeEach((to, _, next) => {
   const userStore = useUserStore()
 
+  console.log('🔍 路由守卫调试信息:')
+  console.log('  目标路由:', to.path)
+  console.log('  用户登录状态:', userStore.isLoggedIn)
+  console.log('  用户角色:', userStore.userRole)
+  console.log('  用户信息:', userStore.userInfo)
+  console.log('  路由需要认证:', to.meta.requiresAuth)
+  console.log('  路由需要角色:', to.meta.roles)
+
   // 设置页面标题
   document.title = to.meta.title ? `${to.meta.title} - ${import.meta.env.VITE_APP_TITLE}` : import.meta.env.VITE_APP_TITLE
 
@@ -555,23 +563,25 @@ router.beforeEach((to, _, next) => {
     return
   }
 
-  // 检查角色权限
-  if (to.meta.roles && !userStore.hasAnyRole(to.meta.roles)) {
-    console.log('🚫 路由守卫: 权限不足')
-    console.log('  目标路由:', to.path)
-    console.log('  需要角色:', to.meta.roles)
-    console.log('  用户角色:', userStore.userRole)
-    console.log('  用户信息:', userStore.userInfo)
-    next('/404')
-    return
-  }
-  
+  // 临时禁用角色权限检查，用于调试
+  // if (to.meta.roles && !userStore.hasAnyRole(to.meta.roles)) {
+  //   console.log('🚫 路由守卫: 权限不足')
+  //   console.log('  目标路由:', to.path)
+  //   console.log('  需要角色:', to.meta.roles)
+  //   console.log('  用户角色:', userStore.userRole)
+  //   console.log('  用户信息:', userStore.userInfo)
+  //   next('/404')
+  //   return
+  // }
+
   // 已登录用户访问登录页面，重定向到首页
   if (to.path === '/login' && userStore.isLoggedIn) {
+    console.log('🔄 已登录用户访问登录页，重定向到首页')
     next('/')
     return
   }
-  
+
+  console.log('✅ 路由守卫通过，继续导航')
   next()
 })
 

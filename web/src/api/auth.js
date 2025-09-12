@@ -25,11 +25,6 @@ export const checkUsernameAvailability = (username) => {
   return request.get(`/auth/check-username/${username}`)
 }
 
-// 修改密码
-export const changePassword = (data) => {
-  return request.post('/auth/change-password', data)
-}
-
 // 重置密码
 export const resetPassword = (data) => {
   return request.post('/auth/reset-password', data)

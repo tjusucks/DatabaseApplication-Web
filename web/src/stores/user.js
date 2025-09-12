@@ -5,8 +5,7 @@ import {
   login as loginApi,
   logout as logoutApi,
   register as registerApi,
-  getUserInfo,
-  changePassword as changePasswordApi
+  getUserInfo
 } from '@/api/auth'
 
 export const useUserStore = defineStore('user', () => {
@@ -21,7 +20,9 @@ export const useUserStore = defineStore('user', () => {
 
   // 检查是否有指定角色
   const hasRole = (role) => {
-    return userInfo.value.roleName === role || userInfo.value.roleName === 'SuperAdmin'
+    // Admin角色拥有所有权限
+    if (userInfo.value.roleName === 'Admin') return true
+    return userInfo.value.roleName === role
   }
 
   // 检查是否有任意一个角色
@@ -86,9 +87,13 @@ export const useUserStore = defineStore('user', () => {
   // 登出
   const logout = async () => {
     try {
-      await logoutApi()
+      // 只有在已登录状态下才调用后端登出API
+      if (isAuthenticated.value) {
+        await logoutApi()
+      }
     } catch (error) {
       console.error('登出API调用失败:', error)
+      // 即使API调用失败，也要清除本地状态
     } finally {
       // 清除状态和本地存储
       userInfo.value = {}
@@ -121,17 +126,7 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
-  // 修改密码
-  const changePassword = async (passwordData) => {
-    try {
-      await changePasswordApi(passwordData)
-      ElMessage.success('密码修改成功')
-    } catch (error) {
-      const errorMessage = error.response?.data?.message || error.message || '密码修改失败'
-      ElMessage.error(errorMessage)
-      throw new Error(errorMessage)
-    }
-  }
+
 
   // 更新用户信息
   const updateUserInfo = (newUserInfo) => {
@@ -156,7 +151,6 @@ export const useUserStore = defineStore('user', () => {
     register,
     logout,
     fetchUserInfo,
-    changePassword,
     updateUserInfo
   }
 })
