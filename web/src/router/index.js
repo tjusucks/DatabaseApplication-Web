@@ -9,9 +9,12 @@ const NotFound = () => import('@/views/error/404.vue')
 
 // 游客管理模块
 const VisitorList = () => import('@/views/visitors/VisitorList.vue')
+const VisitorCreate = () => import('@/views/visitors/VisitorCreate.vue')
+const VisitorEdit = () => import('@/views/visitors/VisitorEdit.vue')
 const VisitorDetail = () => import('@/views/visitors/VisitorDetail.vue')
 const VisitorRecords = () => import('@/views/visitors/VisitorRecords.vue')
 const VisitorBlacklist = () => import('@/views/visitors/VisitorBlacklist.vue')
+const MemberManagement = () => import('@/views/visitors/MemberManagement.vue')
 
 // 票务管理模块
 const TicketTypes = () => import('@/views/tickets/TicketTypes.vue')
@@ -44,6 +47,7 @@ const OperationsAnalytics = () => import('@/views/operations/OperationsAnalytics
 const FinanceIncome = () => import('@/views/finance/FinanceIncome.vue')
 const FinanceExpenses = () => import('@/views/finance/FinanceExpenses.vue')
 const FinanceReports = () => import('@/views/finance/FinanceReports.vue')
+const FinanceReportDetail = () => import('@/views/finance/FinanceReportDetail.vue') // 新增报表详情页
 const ConsumptionRecords = () => import('@/views/finance/ConsumptionRecords.vue')
 
 // 人力资源模块
@@ -108,21 +112,48 @@ const routes = [
         },
       },
       {
-        path: ':id',
-        name: 'VisitorDetail',
-        component: VisitorDetail,
-        meta: {
-          title: '游客详情',
-          roles: ['super_admin', 'customer_service'],
-        },
-      },
-      {
         path: 'records',
         name: 'VisitorRecords',
         component: VisitorRecords,
         meta: {
           title: '进出记录',
           roles: ['super_admin', 'operations_manager', 'customer_service'],
+        },
+      },
+      {
+        path: 'members',
+        name: 'MemberManagement',
+        component: MemberManagement,
+        meta: {
+          title: '会员管理',
+          roles: ['super_admin', 'customer_service'],
+        },
+      },
+      {
+        path: 'create',
+        name: 'VisitorCreate',
+        component: VisitorCreate,
+        meta: {
+          title: '新增游客',
+          roles: ['super_admin', 'customer_service'],
+        },
+      },
+      {
+        path: ':id/edit',
+        name: 'VisitorEdit',
+        component: VisitorEdit,
+        meta: {
+          title: '编辑游客',
+          roles: ['super_admin', 'customer_service'],
+        },
+      },
+      {
+        path: ':id',
+        name: 'VisitorDetail',
+        component: VisitorDetail,
+        meta: {
+          title: '游客详情',
+          roles: ['super_admin', 'customer_service'],
         },
       },
       {
@@ -389,7 +420,10 @@ const routes = [
   {
     path: '/finance',
     component: Layout,
-    meta: { requiresAuth: true },
+    meta: {
+      requiresAuth: true,
+      roles: ['super_admin', 'finance_manager'],
+    },
     children: [
       {
         path: 'income',
@@ -419,12 +453,22 @@ const routes = [
         },
       },
       {
-        path: 'consumption',
+        path: 'reports/:id',
+        name: 'FinanceReportDetail',
+        component: FinanceReportDetail,
+        meta: {
+          title: '报表详情',
+          roles: ['super_admin', 'finance_manager'],
+          hidden: true, // 不在菜单中显示
+        },
+      },
+      {
+        path: 'consumption-records',
         name: 'ConsumptionRecords',
         component: ConsumptionRecords,
         meta: {
           title: '消费记录',
-          roles: ['super_admin', 'finance_manager', 'customer_service'],
+          roles: ['super_admin', 'finance_manager'],
         },
       },
     ],

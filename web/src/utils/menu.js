@@ -33,6 +33,12 @@ const fullMenuList = [
         roles: ['super_admin', 'operations_manager', 'customer_service'],
       },
       {
+        path: '/visitors/members',
+        title: '会员管理',
+        icon: 'Star',
+        roles: ['super_admin', 'customer_service'],
+      },
+      {
         path: '/visitors/blacklist',
         title: '黑名单管理',
         icon: 'CircleCloseFilled',
@@ -119,7 +125,7 @@ const fullMenuList = [
         roles: ['super_admin', 'ticket_manager'],
       },
       {
-        path: '/refunds/request',
+        path: '/refunds/management',
         title: '退票管理',
         icon: 'Setting',
         roles: ['super_admin', 'ticket_manager'],
@@ -197,32 +203,32 @@ const fullMenuList = [
   {
     path: '/finance',
     title: '财务管理',
-    icon: 'Wallet',
+    icon: 'Money',
     roles: ['super_admin', 'finance_manager'],
     children: [
       {
         path: '/finance/income',
         title: '收入管理',
-        icon: 'TrendCharts',
+        icon: 'Coin',
         roles: ['super_admin', 'finance_manager'],
       },
       {
         path: '/finance/expenses',
         title: '支出管理',
-        icon: 'Minus',
+        icon: 'Collection',
         roles: ['super_admin', 'finance_manager'],
       },
       {
         path: '/finance/reports',
         title: '财务报表',
-        icon: 'Document',
+        icon: 'DataAnalysis',
         roles: ['super_admin', 'finance_manager'],
       },
       {
-        path: '/finance/consumption',
+        path: '/finance/consumption-records',
         title: '消费记录',
-        icon: 'List',
-        roles: ['super_admin', 'finance_manager', 'customer_service'],
+        icon: 'Tickets',
+        roles: ['super_admin', 'finance_manager'],
       },
     ],
   },
