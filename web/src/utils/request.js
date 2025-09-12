@@ -1,13 +1,14 @@
 import axios from 'axios'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/stores/user'
 import { useAppStore } from '@/stores/app'
 import router from '@/router'
 
 // 创建 axios 实例
 const service = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL: import.meta.env.VITE_API_BASE_URL || '/api',
   timeout: 15000,
+  withCredentials: true, // 支持Cookie认证
   headers: {
     'Content-Type': 'application/json',
   },
@@ -15,17 +16,14 @@ const service = axios.create({
 
 // 请求拦截器
 service.interceptors.request.use(
-  (config) => {
-    const userStore = useUserStore()
+
+  config => {
+
     const appStore = useAppStore()
 
     // 显示全局加载状态
     appStore.setGlobalLoading(true)
 
-    // 添加认证 token
-    if (userStore.token) {
-      config.headers.Authorization = `Bearer ${userStore.token}`
-    }
 
     // 添加请求时间戳，防止缓存
     if (config.method === 'get') {
@@ -74,12 +72,8 @@ service.interceptors.response.use(
     return response.data
   },
 
-  /**
-   * 失败回调 (onRejected)
-   * HTTP 状态码超出 2xx 范围时，会触发此函数。
-   */
-  (error) => {
-    // 1. 获取 store 实例
+  async error => {
+
     const appStore = useAppStore()
     const userStore = useUserStore()
 

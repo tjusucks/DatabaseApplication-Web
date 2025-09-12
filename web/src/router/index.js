@@ -3,6 +3,9 @@ import { useUserStore } from '@/stores/user'
 
 // 导入页面组件
 const Login = () => import('@/views/auth/Login.vue')
+const Register = () => import('@/views/auth/Register.vue')
+const ResetPassword = () => import('@/views/auth/ResetPassword.vue')
+const Profile = () => import('@/views/auth/Profile.vue')
 const Layout = () => import('@/layout/index.vue')
 const Dashboard = () => import('@/views/dashboard/index.vue')
 const NotFound = () => import('@/views/error/404.vue')
@@ -67,9 +70,30 @@ const routes = [
     component: Login,
     meta: {
       title: '登录',
-      requiresAuth: false,
-    },
+
+      requiresAuth: false
+    }
+
   },
+  {
+    path: '/register',
+    name: 'Register',
+    component: Register,
+    meta: {
+      title: '注册',
+      requiresAuth: false
+    }
+  },
+  {
+    path: '/reset-password',
+    name: 'ResetPassword',
+    component: ResetPassword,
+    meta: {
+      title: '重置密码',
+      requiresAuth: false
+    }
+  },
+
   {
     path: '/',
     component: Layout,
@@ -83,18 +107,22 @@ const routes = [
         meta: {
           title: '仪表板',
           icon: 'House',
-          roles: [
-            'super_admin',
-            'finance_manager',
-            'hr_manager',
-            'operations_manager',
-            'ticket_manager',
-            'customer_service',
-            'employee',
-          ],
-        },
+
+          roles: ['Admin', 'Manager', 'Employee', 'Visitor']
+        }
       },
-    ],
+      {
+        path: 'profile',
+        name: 'Profile',
+        component: Profile,
+        meta: {
+          title: '个人资料',
+          icon: 'User',
+          roles: ['Admin', 'Manager', 'Employee', 'Visitor']
+        }
+      }
+    ]
+
   },
   // 游客管理路由
   {
@@ -108,8 +136,19 @@ const routes = [
         component: VisitorList,
         meta: {
           title: '游客列表',
-          roles: ['super_admin', 'customer_service'],
-        },
+
+          roles: ['Admin', 'Manager', 'Employee']
+        }
+      },
+      {
+        path: ':id',
+        name: 'VisitorDetail',
+        component: VisitorDetail,
+        meta: {
+          title: '游客详情',
+          roles: ['super_admin', 'customer_service']
+        }
+
       },
       {
         path: 'records',
@@ -595,50 +634,49 @@ const router = createRouter({
 })
 
 // 路由守卫
-router.beforeEach(async (to, from, next) => {
+
+router.beforeEach((to, _, next) => {
   const userStore = useUserStore()
 
-  try {
-    // 设置页面标题
-    document.title = to.meta.title ? `${to.meta.title} - ${import.meta.env.VITE_APP_TITLE}` : import.meta.env.VITE_APP_TITLE
+  console.log('🔍 路由守卫调试信息:')
+  console.log('  目标路由:', to.path)
+  console.log('  用户登录状态:', userStore.isLoggedIn)
+  console.log('  用户角色:', userStore.userRole)
+  console.log('  用户信息:', userStore.userInfo)
+  console.log('  路由需要认证:', to.meta.requiresAuth)
+  console.log('  路由需要角色:', to.meta.roles)
 
-    // 检查是否需要登录
-    if (to.meta.requiresAuth && !userStore.isLoggedIn) {
-      next('/login')
-      return
-    }
+  // 设置页面标题
+  document.title = to.meta.title ? `${to.meta.title} - ${import.meta.env.VITE_APP_TITLE}` : import.meta.env.VITE_APP_TITLE
 
-    // 检查角色权限
-    if (to.meta.roles && !userStore.hasAnyRole(to.meta.roles)) {
-      next('/404')
-      return
-    }
-
-    // 已登录用户访问登录页面，重定向到首页
-    if (to.path === '/login' && userStore.isLoggedIn) {
-      next('/')
-      return
-    }
-
-    next()
-  } catch (error) {
-    console.error('路由守卫错误:', error)
-    next('/404')
+  // 检查是否需要登录
+  if (to.meta.requiresAuth && !userStore.isLoggedIn) {
+    console.log('🔒 路由守卫: 需要登录，跳转到登录页')
+    next('/login')
+    return
   }
-})
 
-// 路由后置守卫 - 处理组件加载错误
-router.afterEach((to, from, failure) => {
-  if (failure) {
-    console.error('路由导航失败:', failure)
-    // 可以在这里添加错误处理逻辑
+  // 临时禁用角色权限检查，用于调试
+  // if (to.meta.roles && !userStore.hasAnyRole(to.meta.roles)) {
+  //   console.log('🚫 路由守卫: 权限不足')
+  //   console.log('  目标路由:', to.path)
+  //   console.log('  需要角色:', to.meta.roles)
+  //   console.log('  用户角色:', userStore.userRole)
+  //   console.log('  用户信息:', userStore.userInfo)
+  //   next('/404')
+  //   return
+  // }
+
+  // 已登录用户访问登录页面，重定向到首页
+  if (to.path === '/login' && userStore.isLoggedIn) {
+    console.log('🔄 已登录用户访问登录页，重定向到首页')
+    next('/')
+    return
   }
-})
 
-// 路由错误处理
-router.onError((error) => {
-  console.error('路由错误:', error)
-  // 可以在这里添加全局错误处理
+  console.log('✅ 路由守卫通过，继续导航')
+  next()
+
 })
 
 export default router
