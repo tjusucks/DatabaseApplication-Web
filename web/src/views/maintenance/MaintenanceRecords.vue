@@ -4,7 +4,12 @@
       <template #header>
         <div class="card-header">
           <span>维护记录</span>
-          <el-input v-model="searchQuery" placeholder="搜索维护记录" clearable @input="fetchRecords" />
+          <el-input
+            v-model="searchQuery"
+            placeholder="搜索维护记录"
+            clearable
+            @input="fetchRecords"
+          />
           <el-button type="primary" @click="openAddDialog">新增维护记录</el-button>
         </div>
       </template>
@@ -30,7 +35,9 @@
           <template #default="{ row }">
             <el-button size="small" @click.stop="viewRecordDetail(row)">查看详情</el-button>
             <el-button size="small" type="primary" @click.stop="editRecord(row)">编辑</el-button>
-            <el-button size="small" type="danger" @click.stop="deleteRecord(row.maintenanceId)">删除</el-button>
+            <el-button size="small" type="danger" @click.stop="deleteRecord(row.maintenanceId)"
+              >删除</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -44,7 +51,11 @@
     </el-card>
 
     <!-- 新增/编辑维护记录对话框 -->
-    <el-dialog v-model="isDialogVisible" :title="isEditing ? '编辑维护记录' : '新增维护记录'" width="600px">
+    <el-dialog
+      v-model="isDialogVisible"
+      :title="isEditing ? '编辑维护记录' : '新增维护记录'"
+      width="600px"
+    >
       <el-form :model="form" ref="formRef" label-width="120px" :rules="rules">
         <el-form-item label="设施ID" prop="rideId">
           <el-input-number v-model="form.rideId" :min="1" placeholder="请输入设施ID" />
@@ -64,18 +75,18 @@
           </el-select>
         </el-form-item>
         <el-form-item label="开始时间" prop="startTime">
-          <el-date-picker 
-            v-model="form.startTime" 
-            type="datetime" 
+          <el-date-picker
+            v-model="form.startTime"
+            type="datetime"
             placeholder="选择开始时间"
             format="YYYY-MM-DD HH:mm:ss"
             value-format="YYYY-MM-DDTHH:mm:ss.sssZ"
           />
         </el-form-item>
         <el-form-item label="结束时间" prop="endTime">
-          <el-date-picker 
-            v-model="form.endTime" 
-            type="datetime" 
+          <el-date-picker
+            v-model="form.endTime"
+            type="datetime"
             placeholder="选择结束时间（可选）"
             format="YYYY-MM-DD HH:mm:ss"
             value-format="YYYY-MM-DDTHH:mm:ss.sssZ"
@@ -85,10 +96,18 @@
           <el-input-number v-model="form.cost" :min="0" :precision="2" placeholder="请输入费用" />
         </el-form-item>
         <el-form-item label="更换部件" prop="partsReplaced">
-          <el-input v-model="form.partsReplaced" type="textarea" placeholder="请输入更换的部件（可选）" />
+          <el-input
+            v-model="form.partsReplaced"
+            type="textarea"
+            placeholder="请输入更换的部件（可选）"
+          />
         </el-form-item>
         <el-form-item label="维护详情" prop="maintenanceDetails">
-          <el-input v-model="form.maintenanceDetails" type="textarea" placeholder="请输入维护详情（可选）" />
+          <el-input
+            v-model="form.maintenanceDetails"
+            type="textarea"
+            placeholder="请输入维护详情（可选）"
+          />
         </el-form-item>
         <el-form-item label="是否完成" prop="isCompleted">
           <el-switch v-model="form.isCompleted" />
@@ -97,19 +116,23 @@
           <el-switch v-model="form.isAccepted" />
         </el-form-item>
         <el-form-item label="验收日期" prop="acceptanceDate" v-if="form.isAccepted">
-          <el-date-picker 
-            v-model="form.acceptanceDate" 
-            type="datetime" 
+          <el-date-picker
+            v-model="form.acceptanceDate"
+            type="datetime"
             placeholder="选择验收日期"
             format="YYYY-MM-DD HH:mm:ss"
             value-format="YYYY-MM-DDTHH:mm:ss.sssZ"
           />
         </el-form-item>
         <el-form-item label="验收意见" prop="acceptanceComments" v-if="form.isAccepted">
-          <el-input v-model="form.acceptanceComments" type="textarea" placeholder="请输入验收意见" />
+          <el-input
+            v-model="form.acceptanceComments"
+            type="textarea"
+            placeholder="请输入验收意见"
+          />
         </el-form-item>
       </el-form>
-      
+
       <template #footer>
         <div class="dialog-footer">
           <el-button @click="isDialogVisible = false">取 消</el-button>
@@ -121,17 +144,22 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import { searchMaintenanceRecords, createMaintenanceRecord, updateMaintenanceRecord, deleteMaintenanceRecord } from '@/api/maintenance';
-import { ElMessage, ElMessageBox } from 'element-plus';
+import { ref, onMounted } from 'vue'
+import {
+  searchMaintenanceRecords,
+  createMaintenanceRecord,
+  updateMaintenanceRecord,
+  deleteMaintenanceRecord,
+} from '@/api/maintenance'
+import { ElMessage, ElMessageBox } from 'element-plus'
 
-const records = ref([]);
-const loading = ref(false);
-const searchQuery = ref('');
-const pagination = ref({ page: 1, pageSize: 10, total: 0 });
-const isDialogVisible = ref(false);
-const isEditing = ref(false);
-const formRef = ref();
+const records = ref([])
+const loading = ref(false)
+const searchQuery = ref('')
+const pagination = ref({ page: 1, pageSize: 10, total: 0 })
+const isDialogVisible = ref(false)
+const isEditing = ref(false)
+const formRef = ref()
 
 const form = ref({
   rideId: null,
@@ -146,42 +174,42 @@ const form = ref({
   isCompleted: false,
   isAccepted: null,
   acceptanceDate: null,
-  acceptanceComments: null
-});
+  acceptanceComments: null,
+})
 
 const rules = {
   rideId: [{ required: true, message: '请输入设施ID', trigger: 'blur' }],
   teamId: [{ required: true, message: '请输入团队ID', trigger: 'blur' }],
   maintenanceType: [{ required: true, message: '请选择维护类型', trigger: 'change' }],
   startTime: [{ required: true, message: '请选择开始时间', trigger: 'change' }],
-  cost: [{ required: true, message: '请输入费用', trigger: 'blur' }]
-};
+  cost: [{ required: true, message: '请输入费用', trigger: 'blur' }],
+}
 
 const fetchRecords = async () => {
-  loading.value = true;
+  loading.value = true
   try {
     const data = await searchMaintenanceRecords({
       query: searchQuery.value,
       page: pagination.value.page,
       pageSize: pagination.value.pageSize,
-    });
-    records.value = data.maintenanceRecords || [];
-    pagination.value.total = data.totalCount || 0;
+    })
+    records.value = data.maintenanceRecords || []
+    pagination.value.total = data.totalCount || 0
   } catch (error) {
-    ElMessage.error('获取维护记录失败');
-    console.error('获取维护记录失败:', error);
+    ElMessage.error('获取维护记录失败')
+    console.error('获取维护记录失败:', error)
   } finally {
-    loading.value = false;
+    loading.value = false
   }
-};
+}
 
 const viewRecordDetail = (record) => {
-  console.log('查看维护记录详情:', record);
+  console.log('查看维护记录详情:', record)
   // 这里可以跳转到详情页面或显示详情弹窗
-};
+}
 
 const openAddDialog = () => {
-  isEditing.value = false;
+  isEditing.value = false
   form.value = {
     rideId: null,
     teamId: null,
@@ -195,66 +223,66 @@ const openAddDialog = () => {
     isCompleted: false,
     isAccepted: null,
     acceptanceDate: null,
-    acceptanceComments: null
-  };
-  isDialogVisible.value = true;
-};
+    acceptanceComments: null,
+  }
+  isDialogVisible.value = true
+}
 
 const editRecord = (record) => {
-  isEditing.value = true;
-  form.value = { ...record };
-  isDialogVisible.value = true;
-};
+  isEditing.value = true
+  form.value = { ...record }
+  isDialogVisible.value = true
+}
 
 const saveRecord = async () => {
-  if (!formRef.value) return;
-  
+  if (!formRef.value) return
+
   try {
-    await formRef.value.validate();
-    
+    await formRef.value.validate()
+
     if (isEditing.value) {
-      await updateMaintenanceRecord(form.value.maintenanceId, form.value);
-      ElMessage.success('更新维护记录成功');
+      await updateMaintenanceRecord(form.value.maintenanceId, form.value)
+      ElMessage.success('更新维护记录成功')
     } else {
-      await createMaintenanceRecord(form.value);
-      ElMessage.success('新增维护记录成功');
+      await createMaintenanceRecord(form.value)
+      ElMessage.success('新增维护记录成功')
     }
-    
-    isDialogVisible.value = false;
-    fetchRecords();
+
+    isDialogVisible.value = false
+    fetchRecords()
   } catch (error) {
-    ElMessage.error(isEditing.value ? '更新维护记录失败' : '新增维护记录失败');
-    console.error('保存维护记录失败:', error);
+    ElMessage.error(isEditing.value ? '更新维护记录失败' : '新增维护记录失败')
+    console.error('保存维护记录失败:', error)
   }
-};
+}
 
 const deleteRecord = async (id) => {
   try {
     await ElMessageBox.confirm('确定要删除这条维护记录吗？', '确认删除', {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
-      type: 'warning'
-    });
-    
-    await deleteMaintenanceRecord(id);
-    ElMessage.success('删除维护记录成功');
-    fetchRecords();
+      type: 'warning',
+    })
+
+    await deleteMaintenanceRecord(id)
+    ElMessage.success('删除维护记录成功')
+    fetchRecords()
   } catch (error) {
     if (error !== 'cancel') {
-      ElMessage.error('删除维护记录失败');
-      console.error('删除维护记录失败:', error);
+      ElMessage.error('删除维护记录失败')
+      console.error('删除维护记录失败:', error)
     }
   }
-};
+}
 
 const formatDateTime = (dateTime) => {
-  if (!dateTime) return '-';
-  return new Date(dateTime).toLocaleString('zh-CN');
-};
+  if (!dateTime) return '-'
+  return new Date(dateTime).toLocaleString('zh-CN')
+}
 
 onMounted(() => {
-  fetchRecords();
-});
+  fetchRecords()
+})
 </script>
 
 <style scoped>

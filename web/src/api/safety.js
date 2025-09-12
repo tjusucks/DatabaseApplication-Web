@@ -74,6 +74,6 @@ export function getInspectionStats(params) {
 }
 
 // 为了保持向后兼容，可以保留一些旧的函数名作为别名
-export const getSafetyInspections = searchInspectionRecords;
-export const addSafetyInspection = createInspectionRecord;
-export const deleteSafetyInspection = deleteInspectionRecord;
+export const getSafetyInspections = searchInspectionRecords
+export const addSafetyInspection = createInspectionRecord
+export const deleteSafetyInspection = deleteInspectionRecord

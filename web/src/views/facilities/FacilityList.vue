@@ -29,10 +29,10 @@
               <img src="@/images/facilities/ticket-icon.png" alt="票" class="small-icon" />
             </div>
           </div>
-          <el-input 
-            v-model="searchQuery.keyword" 
-            placeholder="搜索设施" 
-            clearable 
+          <el-input
+            v-model="searchQuery.keyword"
+            placeholder="搜索设施"
+            clearable
             @input="fetchFacilities"
             class="search-input"
           />
@@ -47,7 +47,9 @@
           <template #default="{ row }">
             <el-button size="small" @click.stop="viewFacilityDetail(row)">查看详情</el-button>
             <el-button size="small" type="primary" @click.stop="editFacility(row)">更改</el-button>
-            <el-button size="small" type="danger" @click.stop="deleteFacility(row.id)">删除</el-button>
+            <el-button size="small" type="danger" @click.stop="deleteFacility(row.id)"
+              >删除</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -64,7 +66,7 @@
           <span>新增设施</span>
           <!-- <img src="@/images/facilities/plus-icon.png" alt="+" class="button-icon" /> -->
         </el-button>
-        
+
         <!-- 添加装饰性的小设施图片 -->
         <div class="action-decorations">
           <img src="@/images/facilities/bumper-car.png" alt="碰碰车" class="decoration-small" />
@@ -74,22 +76,42 @@
 
       <el-dialog title="新增设施" v-model="isAddDialogVisible">
         <el-form :model="newFacility" ref="addFacilityForm">
-          <el-form-item label="设施名称" prop="name" :rules="[{ required: true, message: '请输入设施名称', trigger: 'blur' }]">
+          <el-form-item
+            label="设施名称"
+            prop="name"
+            :rules="[{ required: true, message: '请输入设施名称', trigger: 'blur' }]"
+          >
             <el-input v-model="newFacility.name" />
           </el-form-item>
-          <el-form-item label="状态" prop="status" :rules="[{ required: true, message: '请选择状态', trigger: 'change' }]">
+          <el-form-item
+            label="状态"
+            prop="status"
+            :rules="[{ required: true, message: '请选择状态', trigger: 'change' }]"
+          >
             <el-select v-model="newFacility.status" placeholder="请选择状态">
               <el-option label="启用" value="enabled" />
               <el-option label="禁用" value="disabled" />
             </el-select>
           </el-form-item>
-          <el-form-item label="位置" prop="location" :rules="[{ required: true, message: '请输入位置', trigger: 'blur' }]">
+          <el-form-item
+            label="位置"
+            prop="location"
+            :rules="[{ required: true, message: '请输入位置', trigger: 'blur' }]"
+          >
             <el-input v-model="newFacility.location" />
           </el-form-item>
-          <el-form-item label="容量" prop="capacity" :rules="[{ required: true, message: '请输入容量', trigger: 'blur' }]">
+          <el-form-item
+            label="容量"
+            prop="capacity"
+            :rules="[{ required: true, message: '请输入容量', trigger: 'blur' }]"
+          >
             <el-input-number v-model="newFacility.capacity" />
           </el-form-item>
-          <el-form-item label="运行时长 (分钟)" prop="duration" :rules="[{ required: true, message: '请输入运行时长', trigger: 'blur' }]">
+          <el-form-item
+            label="运行时长 (分钟)"
+            prop="duration"
+            :rules="[{ required: true, message: '请输入运行时长', trigger: 'blur' }]"
+          >
             <el-input-number v-model="newFacility.duration" />
           </el-form-item>
           <el-form-item label="描述" prop="description">
@@ -124,7 +146,7 @@
             <img src="@/images/facilities/chart-icon.png" alt="图表" class="stats-icon" />
           </div>
         </div>
-        
+
         <el-card class="stats-card">
           <div class="stats-grid">
             <div class="stat-item">
@@ -207,13 +229,13 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import { searchRides, deleteRide, createRide, getRideStats } from '@/api/facilities';
+import { ref, onMounted } from 'vue'
+import { searchRides, deleteRide, createRide, getRideStats } from '@/api/facilities'
 
-const facilities = ref([]);
-const loading = ref(false);
-const pagination = ref({ page: 1, pageSize: 10, total: 0 });
-const isAddDialogVisible = ref(false);
+const facilities = ref([])
+const loading = ref(false)
+const pagination = ref({ page: 1, pageSize: 10, total: 0 })
+const isAddDialogVisible = ref(false)
 const newFacility = ref({
   rideName: '',
   location: '',
@@ -225,7 +247,7 @@ const newFacility = ref({
   description: '',
   openDate: null,
   managerId: null,
-});
+})
 const searchQuery = ref({
   keyword: '',
   status: null,
@@ -233,7 +255,7 @@ const searchQuery = ref({
   managerId: null,
   minCapacity: null,
   maxCapacity: null,
-});
+})
 const stats = ref({
   totalRides: 0,
   operationalRides: 0,
@@ -244,50 +266,50 @@ const stats = ref({
   averageDuration: 0,
   firstOpenDate: null,
   lastOpenDate: null,
-});
-const dateRange = ref([null, null]);
+})
+const dateRange = ref([null, null])
 
 const fetchFacilities = async () => {
-  loading.value = true;
+  loading.value = true
   try {
     const data = await searchRides({
       ...searchQuery.value,
       page: pagination.value.page,
       pageSize: pagination.value.pageSize,
-    });
-    facilities.value = data.amusementRides;
-    pagination.value.total = data.totalCount;
+    })
+    facilities.value = data.amusementRides
+    pagination.value.total = data.totalCount
   } finally {
-    loading.value = false;
+    loading.value = false
   }
-};
+}
 
 const fetchStats = async () => {
-  const [startDate, endDate] = dateRange.value;
-  const data = await getRideStats({ startDate, endDate });
-  stats.value = data;
-};
+  const [startDate, endDate] = dateRange.value
+  const data = await getRideStats({ startDate, endDate })
+  stats.value = data
+}
 
 const viewFacilityDetail = (facility) => {
-  console.log('查看设施详情:', facility);
-};
+  console.log('查看设施详情:', facility)
+}
 
 const editFacility = (facility) => {
-  console.log('编辑设施:', facility);
+  console.log('编辑设施:', facility)
   // 打开编辑弹窗或跳转到编辑页面
-};
+}
 
 const deleteFacility = async (id) => {
   try {
-    await deleteRide(id);
-    fetchFacilities(); // 重新加载设施列表
+    await deleteRide(id)
+    fetchFacilities() // 重新加载设施列表
   } catch (error) {
-    console.error('删除设施失败:', error);
+    console.error('删除设施失败:', error)
   }
-};
+}
 
 const openAddFacilityDialog = () => {
-  console.log('打开新增设施弹窗'); // 添加调试信息
+  console.log('打开新增设施弹窗') // 添加调试信息
   newFacility.value = {
     rideName: '',
     location: '',
@@ -299,20 +321,20 @@ const openAddFacilityDialog = () => {
     description: '',
     openDate: null,
     managerId: null,
-  };
-  isAddDialogVisible.value = true;
-};
+  }
+  isAddDialogVisible.value = true
+}
 
 const addFacility = async () => {
   try {
-    console.log('新增设施数据:', newFacility.value); // 添加调试信息
-    await createRide(newFacility.value);
-    isAddDialogVisible.value = false;
-    fetchFacilities(); // 重新加载设施列表
+    console.log('新增设施数据:', newFacility.value) // 添加调试信息
+    await createRide(newFacility.value)
+    isAddDialogVisible.value = false
+    fetchFacilities() // 重新加载设施列表
   } catch (error) {
-    console.error('新增设施失败:', error);
+    console.error('新增设施失败:', error)
   }
-};
+}
 
 const resetSearch = () => {
   searchQuery.value = {
@@ -322,14 +344,14 @@ const resetSearch = () => {
     managerId: null,
     minCapacity: null,
     maxCapacity: null,
-  };
-  fetchFacilities();
-};
+  }
+  fetchFacilities()
+}
 
 onMounted(() => {
-  fetchFacilities();
-  fetchStats();
-});
+  fetchFacilities()
+  fetchStats()
+})
 </script>
 
 <style scoped>
@@ -364,7 +386,7 @@ onMounted(() => {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   margin: 0 0 10px 0;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .page-subtitle {
@@ -410,14 +432,23 @@ onMounted(() => {
   width: 80px;
   height: 80px;
   opacity: 0.3;
-  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  25% { transform: translateY(-10px) rotate(1deg); }
-  50% { transform: translateY(-20px) rotate(0deg); }
-  75% { transform: translateY(-10px) rotate(-1deg); }
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-10px) rotate(1deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(0deg);
+  }
+  75% {
+    transform: translateY(-10px) rotate(-1deg);
+  }
 }
 
 /* 主卡片样式 */
@@ -460,8 +491,13 @@ onMounted(() => {
 }
 
 @keyframes bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-5px); }
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
 }
 
 .search-input {
@@ -518,8 +554,12 @@ onMounted(() => {
 }
 
 @keyframes rotate {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* 统计区域样式 */
@@ -546,8 +586,13 @@ onMounted(() => {
 }
 
 @keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.1); }
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
 }
 
 .stats-card {
@@ -673,7 +718,7 @@ onMounted(() => {
   height: 80px;
   width: auto;
   opacity: 0.6;
-  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
 }
 
 .footer-decoration.floating {
@@ -685,38 +730,38 @@ onMounted(() => {
   .page-header {
     padding: 20px;
   }
-  
+
   .page-title {
     font-size: 2em;
   }
-  
+
   .card-header {
     flex-direction: column;
     gap: 15px;
   }
-  
+
   .search-input {
     width: 100%;
   }
-  
+
   .action-section {
     flex-direction: column;
     gap: 15px;
   }
-  
+
   .stats-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .footer-images {
     gap: 20px;
     height: 80px;
   }
-  
+
   .footer-decoration {
     height: 60px;
   }
-  
+
   .floating-image img {
     width: 60px;
     height: 60px;
