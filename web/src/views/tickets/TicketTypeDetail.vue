@@ -4,9 +4,7 @@
     description="为当前票种设置不同条件下的价格"
   >
     <div class="action-bar">
-      <el-button type="primary" icon="Plus" @click="openDialog('create')">
-        新增价格规则
-      </el-button>
+      <el-button type="primary" icon="Plus" @click="openDialog('create')"> 新增价格规则 </el-button>
     </div>
 
     <el-table :data="priceRulesForType" border stripe v-loading="loading">
@@ -17,20 +15,10 @@
       <el-table-column prop="endDate" label="失效日期" />
       <el-table-column label="操作" fixed="right" align="center">
         <template #default="{ row }">
-          <el-button
-            size="small"
-            type="primary"
-            link
-            icon="Edit"
-            @click="openDialog('edit', row)"
+          <el-button size="small" type="primary" link icon="Edit" @click="openDialog('edit', row)"
             >编辑</el-button
           >
-          <el-button
-            size="small"
-            type="danger"
-            link
-            icon="Delete"
-            @click="handleDelete(row)"
+          <el-button size="small" type="danger" link icon="Delete" @click="handleDelete(row)"
             >删除</el-button
           >
         </template>
@@ -47,11 +35,7 @@
     >
       <el-form :model="form" :rules="rules" ref="formRef" label-width="100px">
         <el-form-item label="规则描述" prop="ruleName">
-          <el-select
-            v-model="form.ruleName"
-            placeholder="请选择规则类型"
-            style="width: 100%"
-          >
+          <el-select v-model="form.ruleName" placeholder="请选择规则类型" style="width: 100%">
             <el-option label="平日价" value="平日价" />
             <el-option label="周末价" value="周末价" />
             <el-option label="节假日特惠" value="节假日特惠" />
@@ -60,12 +44,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="价格" prop="price">
-          <el-input-number
-            v-model="form.price"
-            :precision="2"
-            :step="10"
-            :min="0"
-          />
+          <el-input-number v-model="form.price" :precision="2" :step="10" :min="0" />
         </el-form-item>
         <el-form-item label="生效日期" prop="startDate">
           <el-date-picker
@@ -89,13 +68,7 @@
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="dialogVisible = false">取消</el-button>
-          <el-button
-            type="primary"
-            @click="handleSubmit"
-            :loading="isSubmitting"
-          >
-            确认
-          </el-button>
+          <el-button type="primary" @click="handleSubmit" :loading="isSubmitting"> 确认 </el-button>
         </span>
       </template>
     </el-dialog>
@@ -103,134 +76,123 @@
 </template>
 
 <script setup>
-import { onMounted, ref, reactive, computed } from "vue";
-import { useRoute } from "vue-router";
-import { useTicketStore } from "@/stores/tickets.js";
-import { storeToRefs } from "pinia";
-import PageTemplate from "@/components/PageTemplate.vue";
-import { ElMessageBox, ElMessage } from "element-plus";
+import { onMounted, ref, reactive, computed } from 'vue'
+import { useRoute } from 'vue-router'
+import { useTicketStore } from '@/stores/tickets.js'
+import { storeToRefs } from 'pinia'
+import PageTemplate from '@/components/PageTemplate.vue'
+import { ElMessageBox, ElMessage } from 'element-plus'
 
 // 1. 初始化
-const route = useRoute();
-const ticketStore = useTicketStore();
-const ticketTypeId = Number(route.params.id);
-const { ticketTypeDetail, priceRulesForType } = storeToRefs(ticketStore);
-const {
-  fetchTicketTypeById,
-  fetchPriceRulesForTicketType,
-  createPriceRule,
-  deletePriceRule,
-} = ticketStore;
+const route = useRoute()
+const ticketStore = useTicketStore()
+const ticketTypeId = Number(route.params.id)
+const { ticketTypeDetail, priceRulesForType } = storeToRefs(ticketStore)
+const { fetchTicketTypeById, fetchPriceRulesForTicketType, createPriceRule, deletePriceRule } =
+  ticketStore
 
-const loading = ref(false);
-const isSubmitting = ref(false);
-const dialogVisible = ref(false);
-const dialogMode = ref("create");
-const formRef = ref(null);
+const loading = ref(false)
+const isSubmitting = ref(false)
+const dialogVisible = ref(false)
+const dialogMode = ref('create')
+const formRef = ref(null)
 
 const dialogTitle = computed(() =>
-  dialogMode.value === "create" ? "新增价格规则" : "编辑价格规则"
-);
+  dialogMode.value === 'create' ? '新增价格规则' : '编辑价格规则',
+)
 
 // 2. 表单数据和规则
 const form = reactive({
   ruleId: null,
-  ruleName: "",
+  ruleName: '',
   price: 0.0,
   startDate: null,
   endDate: null,
   ticketTypeId: ticketTypeId,
-});
+})
 
 const rules = reactive({
-  ruleName: [{ required: true, message: "请选择规则描述", trigger: "change" }], // [已修正]
-  price: [{ required: true, message: "请输入价格", trigger: "blur" }],
-  startDate: [{ required: true, message: "请选择生效日期", trigger: "change" }],
-});
+  ruleName: [{ required: true, message: '请选择规则描述', trigger: 'change' }], // [已修正]
+  price: [{ required: true, message: '请输入价格', trigger: 'blur' }],
+  startDate: [{ required: true, message: '请选择生效日期', trigger: 'change' }],
+})
 
 // 3. 方法
 const loadData = async () => {
-  loading.value = true;
-  await Promise.all([
-    fetchTicketTypeById(ticketTypeId),
-    fetchPriceRulesForTicketType(ticketTypeId),
-  ]);
-  loading.value = false;
-};
+  loading.value = true
+  await Promise.all([fetchTicketTypeById(ticketTypeId), fetchPriceRulesForTicketType(ticketTypeId)])
+  loading.value = false
+}
 
 const resetForm = () => {
   if (formRef.value) {
-    formRef.value.resetFields();
+    formRef.value.resetFields()
   }
   // [已修正] 手动重置所有字段，确保表单干净
   Object.assign(form, {
     ruleId: null,
-    ruleName: "",
+    ruleName: '',
     price: 0.0,
     startDate: null,
     endDate: null,
     ticketTypeId: ticketTypeId,
-  });
-};
+  })
+}
 
 const openDialog = (mode, rowData = null) => {
-  resetForm();
-  dialogMode.value = mode;
-  if (mode === "edit" && rowData) {
-    const { description, ...rest } = rowData;
-    Object.assign(form, { ...rest, ruleName: description });
+  resetForm()
+  dialogMode.value = mode
+  if (mode === 'edit' && rowData) {
+    const { description, ...rest } = rowData
+    Object.assign(form, { ...rest, ruleName: description })
   }
-  dialogVisible.value = true;
-};
+  dialogVisible.value = true
+}
 
 const handleSubmit = async () => {
-  if (!formRef.value) return;
+  if (!formRef.value) return
   await formRef.value.validate(async (valid) => {
     if (valid) {
-      isSubmitting.value = true;
-      let success = false;
-      if (dialogMode.value === "create") {
-        success = await createPriceRule(form);
+      isSubmitting.value = true
+      let success = false
+      if (dialogMode.value === 'create') {
+        success = await createPriceRule(form)
       } else {
         // success = await ticketStore.updatePriceRule(form);
-        console.warn("更新价格规则功能待实现");
-        success = true; // 模拟成功
+        console.warn('更新价格规则功能待实现')
+        success = true // 模拟成功
       }
 
       if (success) {
-        dialogVisible.value = false;
-        await loadData();
+        dialogVisible.value = false
+        await loadData()
       }
-      isSubmitting.value = false;
+      isSubmitting.value = false
     }
-  });
-};
+  })
+}
 
 const handleDelete = async (row) => {
   try {
-    await ElMessageBox.confirm(
-      `确定要删除规则 "${row.description}" 吗？`,
-      "警告",
-      {
-        confirmButtonText: "确定删除",
-        cancelButtonText: "取消",
-        type: "warning",
-      }
-    );
+    await ElMessageBox.confirm(`确定要删除规则 "${row.description}" 吗？`, '警告', {
+      confirmButtonText: '确定删除',
+      cancelButtonText: '取消',
+      type: 'warning',
+    })
     // [已修正] 调用真实的 action
-    const success = await deletePriceRule(ticketTypeId, row.ruleId);
+    const success = await deletePriceRule(ticketTypeId, row.ruleId)
     if (success) {
-      await loadData(); // 成功后刷新列表
+      await loadData() // 成功后刷新列表
     }
   } catch (e) {
-    if (e !== "cancel") {
-      console.error("删除失败:", e);
+    if (e !== 'cancel') {
+      console.error('删除失败:', e)
     }
   }
-};
+}
 
 // 4. 生命周期
-onMounted(loadData);
+onMounted(loadData)
 </script>
 
 <style scoped>

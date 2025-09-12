@@ -8,9 +8,7 @@
         <el-descriptions-item label="预订号">{{
           currentReservation.reservationId
         }}</el-descriptions-item>
-        <el-descriptions-item label="状态">{{
-          currentReservation.status
-        }}</el-descriptions-item>
+        <el-descriptions-item label="状态">{{ currentReservation.status }}</el-descriptions-item>
         <el-descriptions-item label="预订时间">{{
           currentReservation.reservationTime
         }}</el-descriptions-item>
@@ -30,22 +28,22 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
-import { useRoute } from "vue-router";
-import { useReservationStore } from "@/stores/tickets.js";
-import { storeToRefs } from "pinia";
-import PageTemplate from "@/components/PageTemplate.vue";
+import { ref, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
+import { useReservationStore } from '@/stores/tickets.js'
+import { storeToRefs } from 'pinia'
+import PageTemplate from '@/components/PageTemplate.vue'
 
-const route = useRoute();
-const reservationStore = useReservationStore();
-const reservationId = ref(route.params.id);
-const { currentReservation } = storeToRefs(reservationStore);
-const { fetchReservationById } = reservationStore;
-const loading = ref(false);
+const route = useRoute()
+const reservationStore = useReservationStore()
+const reservationId = ref(route.params.id)
+const { currentReservation } = storeToRefs(reservationStore)
+const { fetchReservationById } = reservationStore
+const loading = ref(false)
 
 onMounted(async () => {
-  loading.value = true;
-  await fetchReservationById(reservationId.value);
+  loading.value = true
+  await fetchReservationById(reservationId.value)
   // [模拟数据] 用于UI展示
   // if (!currentReservation.value) {
   //   currentReservation.value = {
@@ -58,6 +56,6 @@ onMounted(async () => {
   //     },
   //   };
   // }
-  loading.value = false;
-});
+  loading.value = false
+})
 </script>

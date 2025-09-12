@@ -235,3 +235,28 @@ export function updateVisitorBlacklistStatus(id, data) {
     return unblacklistVisitor(id)
   }
 }
+
+// 兼容性函数 - 保持向后兼容
+export function searchVisitorsByName(name) {
+  return searchVisitors({ keyword: name })
+}
+
+export function searchVisitorsByPhone(phone) {
+  return searchVisitors({ keyword: phone })
+}
+
+export function getVisitorsByBlacklistStatus(isBlacklisted) {
+  return searchVisitors({ isBlacklisted })
+}
+
+export function getVisitorsByType(visitorType) {
+  return searchVisitors({ visitorType })
+}
+
+export function updateVisitorBlacklistStatus(id, data) {
+  if (data.isBlacklisted) {
+    return blacklistVisitor(id, { reason: data.reason || '违规行为' })
+  } else {
+    return unblacklistVisitor(id)
+  }
+}

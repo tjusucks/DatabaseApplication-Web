@@ -1,12 +1,12 @@
-import { defineStore } from "pinia";
-import { ElMessage } from "element-plus";
+import { defineStore } from 'pinia'
+import { ElMessage } from 'element-plus'
 
 // 统一导入 API 层的所有函数
-import * as ticketApi from "@/api/ticket";
+import * as ticketApi from '@/api/ticket'
 
 // --- 票务核心 Store ---
 // 负责：票种、价格、销售、统计
-export const useTicketStore = defineStore("ticket", {
+export const useTicketStore = defineStore('ticket', {
   state: () => ({
     ticketTypes: [],
     // [修正] 将 pricingRules 移到更合适的地方管理，或根据具体票种动态获取
@@ -18,107 +18,99 @@ export const useTicketStore = defineStore("ticket", {
   actions: {
     async fetchTicketTypes() {
       try {
-        const response = await ticketApi.getTicketTypes();
-        this.ticketTypes = response || [];
+        const response = await ticketApi.getTicketTypes()
+        this.ticketTypes = response || []
       } catch (error) {
-        ElMessage.error("获取票种列表失败");
+        ElMessage.error('获取票种列表失败')
       }
     },
     async createTicketType(typeData) {
       try {
-        await ticketApi.createTicketType(typeData);
-        ElMessage.success("新增票种成功！");
-        return true;
+        await ticketApi.createTicketType(typeData)
+        ElMessage.success('新增票种成功！')
+        return true
       } catch (error) {
-        ElMessage.error("新增票种失败");
-        return false;
+        ElMessage.error('新增票种失败')
+        return false
       }
     },
     // [新增] 获取单个票种详情
     async fetchTicketTypeById(id) {
       try {
-        const response = await ticketApi.getTicketTypeById(id);
-        this.ticketTypeDetail = response;
+        const response = await ticketApi.getTicketTypeById(id)
+        this.ticketTypeDetail = response
       } catch (error) {
-        ElMessage.error("获取票种详情失败");
+        ElMessage.error('获取票种详情失败')
       }
     },
     // [新增] 获取指定票种的价格规则
     async fetchPriceRulesForTicketType(ticketTypeId) {
       try {
-        const response = await ticketApi.getPriceRulesForTicketType(
-          ticketTypeId
-        );
-        this.priceRulesForType = response ?? [];
+        const response = await ticketApi.getPriceRulesForTicketType(ticketTypeId)
+        this.priceRulesForType = response ?? []
       } catch (error) {
-        ElMessage.error("获取价格规则失败");
+        ElMessage.error('获取价格规则失败')
       }
     },
     async createPriceRule(ruleData) {
       try {
-        await ticketApi.createPriceRule(ruleData);
-        ElMessage.success("新增价格规则成功！");
-        return true;
+        await ticketApi.createPriceRule(ruleData)
+        ElMessage.success('新增价格规则成功！')
+        return true
       } catch (error) {
-        ElMessage.error(
-          "新增价格规则失败：" + (error.response?.message || "未知错误")
-        );
-        return false;
+        ElMessage.error('新增价格规则失败：' + (error.response?.message || '未知错误'))
+        return false
       }
     },
     async fetchPricingRules() {
       try {
-        const ticketTypesResponse = await ticketApi.getTicketTypes();
+        const ticketTypesResponse = await ticketApi.getTicketTypes()
         // [修正] 从 ticketTypesResponse 中正确提取数组
-        const ticketTypes = ticketTypesResponse ?? [];
+        const ticketTypes = ticketTypesResponse ?? []
 
         const priceRulePromises = ticketTypes.map(async (type) => {
           // [最终修正] 正确解析 getPriceRulesForTicketType 的响应
-          const priceRulesResponse = await ticketApi.getPriceRulesForTicketType(
-            type.ticketTypeId
-          );
+          const priceRulesResponse = await ticketApi.getPriceRulesForTicketType(type.ticketTypeId)
 
           // 假设后端返回的是一个数组，如果不是，需要在这里解构
           // 例如：const rules = priceRulesResponse.rules || [];
           // 为了健壮性，我们先假设它可能直接返回数组
-          const rules = Array.isArray(priceRulesResponse)
-            ? priceRulesResponse
-            : [];
+          const rules = Array.isArray(priceRulesResponse) ? priceRulesResponse : []
 
           return rules.map((rule) => ({
             ...rule,
             ticketTypeName: type.typeName,
-          }));
-        });
+          }))
+        })
 
-        const results = await Promise.all(priceRulePromises);
-        this.pricingRules = results.flat();
+        const results = await Promise.all(priceRulePromises)
+        this.pricingRules = results.flat()
 
         if (this.pricingRules.length === 0) {
           console.log(
-            "价格规则为空，可能是数据库中没有数据，或者 getPriceRulesForTicketType API 返回的结构不正确。"
-          );
+            '价格规则为空，可能是数据库中没有数据，或者 getPriceRulesForTicketType API 返回的结构不正确。',
+          )
         }
       } catch (error) {
-        ElMessage.error("获取价格规则失败");
-        console.error("fetchPricingRules failed:", error); // 打印详细错误
-        this.pricingRules = [];
+        ElMessage.error('获取价格规则失败')
+        console.error('fetchPricingRules failed:', error) // 打印详细错误
+        this.pricingRules = []
       }
     },
     async fetchStatistics() {
       try {
-        const response = await ticketApi.getSalesStatistics();
-        this.statistics = response;
+        const response = await ticketApi.getSalesStatistics()
+        this.statistics = response
       } catch (error) {
-        ElMessage.error("获取统计数据失败");
+        ElMessage.error('获取统计数据失败')
       }
     },
   },
-});
+})
 
 // --- 预订管理 Store ---
 // 负责：预订列表、预订详情
-export const useReservationStore = defineStore("reservation", {
+export const useReservationStore = defineStore('reservation', {
   state: () => ({
     reservations: {
       list: [],
@@ -153,48 +145,40 @@ export const useReservationStore = defineStore("reservation", {
 
           // 4. 可选字段
           promotionId: null, // 如果有促销活动，可以在此传入ID
-          specialRequests: "", // 特殊要求
-        };
+          specialRequests: '', // 特殊要求
+        }
 
         // --- 调用 API ---
 
         // 步骤一：创建预订
-        console.log("正在创建预订，Payload:", reservationPayload);
-        const createResponse = await ticketApi.createReservation(
-          reservationPayload
-        );
+        console.log('正在创建预订，Payload:', reservationPayload)
+        const createResponse = await ticketApi.createReservation(reservationPayload)
 
         // 从返回的 CreateReservationResponseDto 中解构数据
-        const { reservationId, totalAmount } = createResponse;
+        const { reservationId, totalAmount } = createResponse
 
         if (!reservationId) {
-          throw new Error("创建预订失败，未返回预订ID");
+          throw new Error('创建预订失败，未返回预订ID')
         }
-        console.log(
-          `预订创建成功，ID: ${reservationId}, 总金额: ${totalAmount}`
-        );
+        console.log(`预订创建成功，ID: ${reservationId}, 总金额: ${totalAmount}`)
 
         // 步骤二：处理支付
         const paymentPayload = {
-          paymentMethod: "Cash", // 假设现场销售为现金支付
+          paymentMethod: 'Cash', // 假设现场销售为现金支付
           amount: totalAmount, // 使用后端计算返回的总金额
-        };
+        }
 
-        console.log("正在处理支付，Payload:", paymentPayload);
-        await ticketApi.processReservationPayment(
-          reservationId,
-          paymentPayload
-        );
+        console.log('正在处理支付，Payload:', paymentPayload)
+        await ticketApi.processReservationPayment(reservationId, paymentPayload)
 
-        ElMessage.success("销售成功！");
-        return true;
+        ElMessage.success('销售成功！')
+        return true
       } catch (error) {
         ElMessage.error(
-          "销售失败：" +
-            (error.response?.data?.message || error.message || "未知错误")
-        );
-        console.error("createSale 过程出错:", error);
-        return false;
+          '销售失败：' + (error.response?.data?.message || error.message || '未知错误'),
+        )
+        console.error('createSale 过程出错:', error)
+        return false
       }
     },
     /**
@@ -203,12 +187,12 @@ export const useReservationStore = defineStore("reservation", {
      */
     async fetchReservations(params) {
       try {
-        const response = await ticketApi.getReservations(params);
+        const response = await ticketApi.getReservations(params)
         // [最终修正] 匹配后端返回的数据结构
-        this.reservations.list = response.reservations ?? [];
-        this.reservations.total = response.totalCount ?? 0;
+        this.reservations.list = response.reservations ?? []
+        this.reservations.total = response.totalCount ?? 0
       } catch (error) {
-        ElMessage.error("获取预订列表失败");
+        ElMessage.error('获取预订列表失败')
       }
     },
     /**
@@ -216,21 +200,21 @@ export const useReservationStore = defineStore("reservation", {
      * @param {string} id - 预订ID
      */
     async fetchReservationById(id) {
-      this.currentReservation = null; // 先清空
+      this.currentReservation = null // 先清空
       try {
-        const response = await ticketApi.getReservationById(id);
-        this.currentReservation = response;
+        const response = await ticketApi.getReservationById(id)
+        this.currentReservation = response
       } catch (error) {
-        ElMessage.error("获取预订详情失败");
+        ElMessage.error('获取预订详情失败')
       }
     },
   },
-});
+})
 
 // /src/stores/ticket.js
 
 // --- 退票管理 Store ---
-export const useRefundStore = defineStore("refund", {
+export const useRefundStore = defineStore('refund', {
   state: () => ({
     refunds: {
       list: [],
@@ -245,12 +229,12 @@ export const useRefundStore = defineStore("refund", {
      */
     async fetchRefunds(params) {
       try {
-        const response = await ticketApi.searchRefunds(params);
+        const response = await ticketApi.searchRefunds(params)
         // 假设后端返回 { records: [...], totalCount: ... }
-        this.refunds.list = response.records ?? [];
-        this.refunds.total = response.totalCount ?? 0;
+        this.refunds.list = response.records ?? []
+        this.refunds.total = response.totalCount ?? 0
       } catch (error) {
-        ElMessage.error("获取退票记录失败");
+        ElMessage.error('获取退票记录失败')
       }
     },
 
@@ -260,14 +244,12 @@ export const useRefundStore = defineStore("refund", {
      */
     async createRefundRequest(refundData) {
       try {
-        await ticketApi.requestRefund(refundData);
-        ElMessage.success("退票申请提交成功！");
-        return true;
+        await ticketApi.requestRefund(refundData)
+        ElMessage.success('退票申请提交成功！')
+        return true
       } catch (error) {
-        ElMessage.error(
-          "退票申请失败：" + (error.response?.data?.message || "未知错误")
-        );
-        return false;
+        ElMessage.error('退票申请失败：' + (error.response?.data?.message || '未知错误'))
+        return false
       }
     },
 
@@ -277,23 +259,21 @@ export const useRefundStore = defineStore("refund", {
      */
     async processRefundRequest(processData) {
       try {
-        await ticketApi.processRefund(processData);
-        ElMessage.success("处理成功！");
+        await ticketApi.processRefund(processData)
+        ElMessage.success('处理成功！')
         // 刷新当前列表
-        await this.fetchRefunds({});
-        return true;
+        await this.fetchRefunds({})
+        return true
       } catch (error) {
-        ElMessage.error(
-          "处理失败：" + (error.response?.data?.message || "未知错误")
-        );
-        return false;
+        ElMessage.error('处理失败：' + (error.response?.data?.message || '未知错误'))
+        return false
       }
     },
   },
-});
+})
 // --- 促销管理 Store ---
 // 负责：促销活动列表、创建活动
-export const usePromotionStore = defineStore("promotion", {
+export const usePromotionStore = defineStore('promotion', {
   state: () => ({
     promotions: {
       list: [],
@@ -307,21 +287,21 @@ export const usePromotionStore = defineStore("promotion", {
     async fetchPromotions(params) {
       try {
         // [最终修正] 经过拦截器后，response 直接就是后端的业务数据
-        const response = await ticketApi.getPromotions(params);
+        const response = await ticketApi.getPromotions(params)
 
         // 判断后端返回的是否是一个数组
         if (Array.isArray(response)) {
           // 如果是数组，直接赋值
-          this.promotions.list = response;
-          this.promotions.total = response.length;
+          this.promotions.list = response
+          this.promotions.total = response.length
         } else {
           // 如果是分页对象（为了兼容性），则按对象解析
-          this.promotions.list = response.items || [];
-          this.promotions.total = response.totalCount || 0;
+          this.promotions.list = response.items || []
+          this.promotions.total = response.totalCount || 0
         }
       } catch (error) {
-        ElMessage.error("获取活动列表失败");
-        console.error("fetchPromotions failed:", error);
+        ElMessage.error('获取活动列表失败')
+        console.error('fetchPromotions failed:', error)
       }
     },
     /**
@@ -330,13 +310,13 @@ export const usePromotionStore = defineStore("promotion", {
      */
     async createPromotion(promotionData) {
       try {
-        await ticketApi.createPromotion(promotionData);
-        ElMessage.success("创建成功");
-        return true; // 返回成功状态，方便UI跳转
+        await ticketApi.createPromotion(promotionData)
+        ElMessage.success('创建成功')
+        return true // 返回成功状态，方便UI跳转
       } catch (error) {
-        ElMessage.error("创建活动失败");
-        return false;
+        ElMessage.error('创建活动失败')
+        return false
       }
     },
   },
-});
+})

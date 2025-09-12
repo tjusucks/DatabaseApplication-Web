@@ -1,21 +1,9 @@
 <template>
-  <PageTemplate
-    title="优惠活动"
-    description="管理所有营销和促销活动"
-    icon="Present"
-  >
+  <PageTemplate title="优惠活动" description="管理所有营销和促销活动" icon="Present">
     <div class="action-bar">
-      <el-button type="primary" icon="Plus" @click="handleCreate">
-        创建新活动
-      </el-button>
+      <el-button type="primary" icon="Plus" @click="handleCreate"> 创建新活动 </el-button>
     </div>
-    <el-table
-      :data="promotions.list"
-      v-loading="loading"
-      border
-      stripe
-      style="width: 100%"
-    >
+    <el-table :data="promotions.list" v-loading="loading" border stripe style="width: 100%">
       <el-table-column prop="promotionName" label="活动名称" min-width="180" />
       <el-table-column prop="promotionType" label="活动类型" width="120">
         <template #default="{ row }">
@@ -27,7 +15,7 @@
       <el-table-column label="状态" width="100" align="center">
         <template #default="{ row }">
           <el-tag :type="row.isActive ? 'success' : 'info'">
-            {{ row.isActive ? "进行中" : "已结束" }}
+            {{ row.isActive ? '进行中' : '已结束' }}
           </el-tag>
         </template>
       </el-table-column>
@@ -42,12 +30,8 @@
           >
             详情
           </el-button>
-          <el-button size="small" type="primary" link icon="Edit">
-            编辑
-          </el-button>
-          <el-button size="small" type="danger" link icon="Delete">
-            删除
-          </el-button>
+          <el-button size="small" type="primary" link icon="Edit"> 编辑 </el-button>
+          <el-button size="small" type="danger" link icon="Delete"> 删除 </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -67,32 +51,32 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from "vue";
-import { useRouter } from "vue-router";
-import { storeToRefs } from "pinia";
-import { usePromotionStore } from "@/stores/tickets.js";
-import PageTemplate from "@/components/PageTemplate.vue";
+import { ref, reactive, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { storeToRefs } from 'pinia'
+import { usePromotionStore } from '@/stores/tickets.js'
+import PageTemplate from '@/components/PageTemplate.vue'
 
-const router = useRouter();
-const promotionStore = usePromotionStore();
-const { promotions } = storeToRefs(promotionStore);
-const { fetchPromotions } = promotionStore;
-const loading = ref(false);
+const router = useRouter()
+const promotionStore = usePromotionStore()
+const { promotions } = storeToRefs(promotionStore)
+const { fetchPromotions } = promotionStore
+const loading = ref(false)
 
-const queryParams = reactive({ page: 1, size: 10 });
+const queryParams = reactive({ page: 1, size: 10 })
 
 const loadData = async () => {
-  loading.value = true;
-  await fetchPromotions(queryParams);
-  loading.value = false;
-};
+  loading.value = true
+  await fetchPromotions(queryParams)
+  loading.value = false
+}
 
-const handleCreate = () => router.push("/promotions/create");
+const handleCreate = () => router.push('/promotions/create')
 const managePromotion = (id) => {
-  router.push(`/promotions/detail/${id}`);
-};
+  router.push(`/promotions/detail/${id}`)
+}
 
-onMounted(loadData);
+onMounted(loadData)
 </script>
 
 <style scoped>
