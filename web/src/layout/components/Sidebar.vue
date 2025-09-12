@@ -80,31 +80,31 @@
 </template>
 
 <script setup>
-import { computed, ref } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import { useAppStore } from "@/stores/app";
-import { useUserStore } from "@/stores/user";
-import { getMenuList } from "@/utils/menu";
+import { computed, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useAppStore } from '@/stores/app'
+import { useUserStore } from '@/stores/user'
+import { getMenuList } from '@/utils/menu'
 
-const route = useRoute();
-const router = useRouter();
-const appStore = useAppStore();
-const userStore = useUserStore();
+const route = useRoute()
+const router = useRouter()
+const appStore = useAppStore()
+const userStore = useUserStore()
 
 // 当前激活的菜单
-const activeMenu = computed(() => route.path);
+const activeMenu = computed(() => route.path)
 
 // 根据用户角色获取菜单列表
 const menuList = computed(() => {
-  return getMenuList(userStore.userRole);
-});
+  return getMenuList(userStore.userRole)
+})
 
 // 处理菜单点击
 const handleMenuClick = (menuItem) => {
   if (menuItem.path && menuItem.path !== route.path) {
-    router.push(menuItem.path);
+    router.push(menuItem.path)
   }
-};
+}
 </script>
 
 <style scoped>

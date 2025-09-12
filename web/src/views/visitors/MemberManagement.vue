@@ -128,12 +128,8 @@
           <template #default="{ row }">
             <div class="member-info">
               <div><strong>ID:</strong> {{ row.visitorId }}</div>
-              <div>
-                <strong>姓名:</strong> {{ row.user?.displayName || "未知" }}
-              </div>
-              <div>
-                <strong>用户名:</strong> {{ row.user?.username || "未知" }}
-              </div>
+              <div><strong>姓名:</strong> {{ row.user?.displayName || '未知' }}</div>
+              <div><strong>用户名:</strong> {{ row.user?.username || '未知' }}</div>
             </div>
           </template>
         </el-table-column>
@@ -148,10 +144,7 @@
                 <el-icon><Phone /></el-icon>
                 {{ row.user.phoneNumber }}
               </div>
-              <div
-                v-if="!row.user?.email && !row.user?.phoneNumber"
-                class="no-contact"
-              >
+              <div v-if="!row.user?.email && !row.user?.phoneNumber" class="no-contact">
                 无联系方式
               </div>
             </div>
@@ -180,34 +173,22 @@
         <el-table-column label="状态" width="100" align="center">
           <template #default="{ row }">
             <el-tag :type="row.isBlacklisted ? 'danger' : 'success'">
-              {{ row.isBlacklisted ? "已拉黑" : "正常" }}
+              {{ row.isBlacklisted ? '已拉黑' : '正常' }}
             </el-tag>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="280" fixed="right">
           <template #default="{ row }">
             <div class="action-buttons">
-              <el-button
-                type="primary"
-                size="small"
-                @click="handlePointsOperation(row, 'add')"
-              >
+              <el-button type="primary" size="small" @click="handlePointsOperation(row, 'add')">
                 <el-icon><Plus /></el-icon>
                 加积分
               </el-button>
-              <el-button
-                type="warning"
-                size="small"
-                @click="handlePointsOperation(row, 'deduct')"
-              >
+              <el-button type="warning" size="small" @click="handlePointsOperation(row, 'deduct')">
                 <el-icon><Minus /></el-icon>
                 扣积分
               </el-button>
-              <el-button
-                type="info"
-                size="small"
-                @click="handleViewDetail(row)"
-              >
+              <el-button type="info" size="small" @click="handleViewDetail(row)">
                 <el-icon><View /></el-icon>
                 详情
               </el-button>
@@ -237,29 +218,18 @@
       width="500px"
       @close="resetPointsForm"
     >
-      <el-form
-        ref="pointsFormRef"
-        :model="pointsForm"
-        :rules="pointsRules"
-        label-width="100px"
-      >
+      <el-form ref="pointsFormRef" :model="pointsForm" :rules="pointsRules" label-width="100px">
         <el-form-item label="会员信息">
           <div class="member-summary">
-            <div>
-              <strong>姓名:</strong> {{ selectedMember?.user?.displayName }}
-            </div>
-            <div>
-              <strong>当前积分:</strong> {{ selectedMember?.points || 0 }}
-            </div>
+            <div><strong>姓名:</strong> {{ selectedMember?.user?.displayName }}</div>
+            <div><strong>当前积分:</strong> {{ selectedMember?.points || 0 }}</div>
           </div>
         </el-form-item>
         <el-form-item label="积分数量" prop="points">
           <el-input-number
             v-model="pointsForm.points"
             :min="1"
-            :max="
-              pointsOperation === 'deduct' ? selectedMember?.points || 0 : 99999
-            "
+            :max="pointsOperation === 'deduct' ? selectedMember?.points || 0 : 99999"
             style="width: 100%"
           />
         </el-form-item>
@@ -274,12 +244,8 @@
       </el-form>
       <template #footer>
         <el-button @click="pointsDialogVisible = false">取消</el-button>
-        <el-button
-          type="primary"
-          @click="handlePointsSubmit"
-          :loading="pointsSubmitting"
-        >
-          确定{{ pointsOperation === "add" ? "添加" : "扣除" }}
+        <el-button type="primary" @click="handlePointsSubmit" :loading="pointsSubmitting">
+          确定{{ pointsOperation === 'add' ? '添加' : '扣除' }}
         </el-button>
       </template>
     </el-dialog>
@@ -287,260 +253,244 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, computed } from "vue";
-import { useRouter } from "vue-router";
-import { ElMessage, ElMessageBox } from "element-plus";
-import {
-  Search,
-  Refresh,
-  User,
-  Star,
-  TrendCharts,
-  Plus,
-  Minus,
-} from "@element-plus/icons-vue";
-import { searchVisitors, addPoints, deductPoints } from "@/api/visitors";
+import { ref, reactive, onMounted, computed } from 'vue'
+import { useRouter } from 'vue-router'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { Search, Refresh, User, Star, TrendCharts, Plus, Minus } from '@element-plus/icons-vue'
+import { searchVisitors, addPoints, deductPoints } from '@/api/visitors'
 
-const router = useRouter();
+const router = useRouter()
 
 // 响应式数据
-const loading = ref(false);
-const members = ref([]);
+const loading = ref(false)
+const members = ref([])
 const stats = reactive({
   totalMembers: 0,
   totalPoints: 0,
   avgPoints: 0,
   activeMembers: 0,
-});
+})
 
 // 搜索表单
 const searchForm = reactive({
-  visitorId: "",
-  visitorName: "",
-  memberLevel: "",
+  visitorId: '',
+  visitorName: '',
+  memberLevel: '',
   minPoints: null,
   maxPoints: null,
-});
+})
 
 // 分页
 const pagination = reactive({
   currentPage: 1,
   pageSize: 20,
   total: 0,
-});
+})
 
 // 积分操作
-const pointsDialogVisible = ref(false);
-const pointsSubmitting = ref(false);
-const pointsOperation = ref("add"); // 'add' or 'deduct'
-const selectedMember = ref(null);
-const pointsFormRef = ref();
+const pointsDialogVisible = ref(false)
+const pointsSubmitting = ref(false)
+const pointsOperation = ref('add') // 'add' or 'deduct'
+const selectedMember = ref(null)
+const pointsFormRef = ref()
 
 const pointsForm = reactive({
   points: 1,
-  reason: "",
-});
+  reason: '',
+})
 
 const pointsRules = {
   points: [
-    { required: true, message: "请输入积分数量", trigger: "blur" },
-    { type: "number", min: 1, message: "积分数量必须大于0", trigger: "blur" },
+    { required: true, message: '请输入积分数量', trigger: 'blur' },
+    { type: 'number', min: 1, message: '积分数量必须大于0', trigger: 'blur' },
   ],
   reason: [
-    { required: true, message: "请输入操作原因", trigger: "blur" },
+    { required: true, message: '请输入操作原因', trigger: 'blur' },
     {
       min: 2,
       max: 200,
-      message: "原因长度在 2 到 200 个字符",
-      trigger: "blur",
+      message: '原因长度在 2 到 200 个字符',
+      trigger: 'blur',
     },
   ],
-};
+}
 
 // 计算属性
 const pointsDialogTitle = computed(() => {
-  return pointsOperation.value === "add" ? "添加积分" : "扣除积分";
-});
+  return pointsOperation.value === 'add' ? '添加积分' : '扣除积分'
+})
 
 // 获取会员等级类型
 const getMemberLevelType = (level) => {
   const types = {
-    Bronze: "info",
-    Silver: "primary",
-    Gold: "warning",
-    Platinum: "success",
-  };
-  return types[level] || "info";
-};
+    Bronze: 'info',
+    Silver: 'primary',
+    Gold: 'warning',
+    Platinum: 'success',
+  }
+  return types[level] || 'info'
+}
 
 // 获取会员等级文本
 const getMemberLevelText = (level) => {
   const texts = {
-    Bronze: "青铜会员",
-    Silver: "白银会员",
-    Gold: "黄金会员",
-    Platinum: "铂金会员",
-  };
-  return texts[level] || level;
-};
+    Bronze: '青铜会员',
+    Silver: '白银会员',
+    Gold: '黄金会员',
+    Platinum: '铂金会员',
+  }
+  return texts[level] || level
+}
 
 // 格式化日期
 const formatDate = (dateString) => {
-  if (!dateString) return "-";
-  return new Date(dateString).toLocaleString("zh-CN");
-};
+  if (!dateString) return '-'
+  return new Date(dateString).toLocaleString('zh-CN')
+}
 
 // 加载会员数据
 const loadMembers = async () => {
   try {
-    loading.value = true;
+    loading.value = true
 
     const params = {
       pageNumber: pagination.currentPage,
       pageSize: pagination.pageSize,
       visitorType: 1, // 只查询会员 (Member = 1)
-    };
+    }
 
     // 添加搜索条件
     if (searchForm.visitorId) {
-      params.visitorId = searchForm.visitorId;
+      params.visitorId = searchForm.visitorId
     }
     if (searchForm.visitorName) {
-      params.displayName = searchForm.visitorName;
+      params.displayName = searchForm.visitorName
     }
     if (searchForm.memberLevel) {
-      params.memberLevel = searchForm.memberLevel;
+      params.memberLevel = searchForm.memberLevel
     }
 
-    const response = await searchVisitors(params);
+    const response = await searchVisitors(params)
 
     if (response && response.items) {
-      members.value = response.items;
-      pagination.total = response.totalCount;
+      members.value = response.items
+      pagination.total = response.totalCount
 
       // 计算统计数据
-      calculateStats(response.items);
+      calculateStats(response.items)
     } else {
-      members.value = [];
-      pagination.total = 0;
+      members.value = []
+      pagination.total = 0
     }
   } catch (error) {
-    console.error("加载会员数据失败:", error);
-    ElMessage.error("加载会员数据失败：" + error.message);
-    members.value = [];
-    pagination.total = 0;
+    console.error('加载会员数据失败:', error)
+    ElMessage.error('加载会员数据失败：' + error.message)
+    members.value = []
+    pagination.total = 0
   } finally {
-    loading.value = false;
+    loading.value = false
   }
-};
+}
 
 // 计算统计数据
 const calculateStats = (memberList) => {
-  stats.totalMembers = memberList.length;
-  stats.totalPoints = memberList.reduce(
-    (sum, member) => sum + (member.points || 0),
-    0,
-  );
-  stats.avgPoints =
-    stats.totalMembers > 0
-      ? Math.round(stats.totalPoints / stats.totalMembers)
-      : 0;
-  stats.activeMembers = memberList.filter(
-    (member) => !member.isBlacklisted,
-  ).length;
-};
+  stats.totalMembers = memberList.length
+  stats.totalPoints = memberList.reduce((sum, member) => sum + (member.points || 0), 0)
+  stats.avgPoints = stats.totalMembers > 0 ? Math.round(stats.totalPoints / stats.totalMembers) : 0
+  stats.activeMembers = memberList.filter((member) => !member.isBlacklisted).length
+}
 
 // 搜索
 const handleSearch = () => {
-  pagination.currentPage = 1;
-  loadMembers();
-};
+  pagination.currentPage = 1
+  loadMembers()
+}
 
 // 重置搜索
 const handleReset = () => {
   Object.assign(searchForm, {
-    visitorId: "",
-    visitorName: "",
-    memberLevel: "",
+    visitorId: '',
+    visitorName: '',
+    memberLevel: '',
     minPoints: null,
     maxPoints: null,
-  });
-  pagination.currentPage = 1;
-  loadMembers();
-};
+  })
+  pagination.currentPage = 1
+  loadMembers()
+}
 
 // 刷新数据
 const handleRefresh = () => {
-  loadMembers();
-};
+  loadMembers()
+}
 
 // 分页处理
 const handleSizeChange = (size) => {
-  pagination.pageSize = size;
-  pagination.currentPage = 1;
-  loadMembers();
-};
+  pagination.pageSize = size
+  pagination.currentPage = 1
+  loadMembers()
+}
 
 const handleCurrentChange = (page) => {
-  pagination.currentPage = page;
-  loadMembers();
-};
+  pagination.currentPage = page
+  loadMembers()
+}
 
 // 积分操作
 const handlePointsOperation = (member, operation) => {
-  selectedMember.value = member;
-  pointsOperation.value = operation;
-  pointsForm.points = 1;
-  pointsForm.reason = "";
-  pointsDialogVisible.value = true;
-};
+  selectedMember.value = member
+  pointsOperation.value = operation
+  pointsForm.points = 1
+  pointsForm.reason = ''
+  pointsDialogVisible.value = true
+}
 
 // 重置积分表单
 const resetPointsForm = () => {
-  pointsForm.points = 1;
-  pointsForm.reason = "";
-  selectedMember.value = null;
-};
+  pointsForm.points = 1
+  pointsForm.reason = ''
+  selectedMember.value = null
+}
 
 // 提交积分操作
 const handlePointsSubmit = async () => {
   try {
-    await pointsFormRef.value.validate();
+    await pointsFormRef.value.validate()
 
-    pointsSubmitting.value = true;
+    pointsSubmitting.value = true
 
     const data = {
       points: pointsForm.points,
       reason: pointsForm.reason,
-    };
-
-    if (pointsOperation.value === "add") {
-      await addPoints(selectedMember.value.visitorId, data);
-      ElMessage.success("积分添加成功");
-    } else {
-      await deductPoints(selectedMember.value.visitorId, data);
-      ElMessage.success("积分扣除成功");
     }
 
-    pointsDialogVisible.value = false;
-    await loadMembers(); // 重新加载数据
+    if (pointsOperation.value === 'add') {
+      await addPoints(selectedMember.value.visitorId, data)
+      ElMessage.success('积分添加成功')
+    } else {
+      await deductPoints(selectedMember.value.visitorId, data)
+      ElMessage.success('积分扣除成功')
+    }
+
+    pointsDialogVisible.value = false
+    await loadMembers() // 重新加载数据
   } catch (error) {
-    console.error("积分操作失败:", error);
-    ElMessage.error("积分操作失败：" + error.message);
+    console.error('积分操作失败:', error)
+    ElMessage.error('积分操作失败：' + error.message)
   } finally {
-    pointsSubmitting.value = false;
+    pointsSubmitting.value = false
   }
-};
+}
 
 // 查看详情
 const handleViewDetail = (member) => {
-  router.push(`/visitors/${member.visitorId}`);
-};
+  router.push(`/visitors/${member.visitorId}`)
+}
 
 // 组件挂载时加载数据
 onMounted(() => {
-  loadMembers();
-});
+  loadMembers()
+})
 </script>
 
 <style scoped>

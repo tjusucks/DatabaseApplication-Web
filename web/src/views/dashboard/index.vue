@@ -20,13 +20,7 @@
     <!-- 数据统计卡片 -->
     <div class="stats-section">
       <el-row :gutter="20">
-        <el-col
-          :xs="24"
-          :sm="12"
-          :md="6"
-          v-for="stat in statsData"
-          :key="stat.title"
-        >
+        <el-col :xs="24" :sm="12" :md="6" v-for="stat in statsData" :key="stat.title">
           <el-card class="stat-card" :class="stat.type">
             <div class="stat-content">
               <div class="stat-icon">
@@ -85,11 +79,7 @@
         <!-- 最近活动 -->
         <el-card title="最近活动" class="recent-activities-card">
           <div class="activities">
-            <div
-              v-for="activity in recentActivities"
-              :key="activity.id"
-              class="activity-item"
-            >
+            <div v-for="activity in recentActivities" :key="activity.id" class="activity-item">
               <div class="activity-icon">
                 <el-icon :color="activity.color">
                   <component :is="activity.icon" />
@@ -108,149 +98,149 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
-import { useRouter } from "vue-router";
-import { useUserStore } from "@/stores/user";
-import { ElMessage } from "element-plus";
+import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { useUserStore } from '@/stores/user'
+import { ElMessage } from 'element-plus'
 
-const router = useRouter();
-const userStore = useUserStore();
+const router = useRouter()
+const userStore = useUserStore()
 
 // 当前日期
 const currentDate = computed(() => {
-  return new Date().toLocaleDateString("zh-CN", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    weekday: "long",
-  });
-});
+  return new Date().toLocaleDateString('zh-CN', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    weekday: 'long',
+  })
+})
 
 // 统计数据
 const statsData = ref([
   {
-    title: "今日游客",
-    value: "1,234",
-    change: "+12.5%",
-    trend: "up",
-    icon: "User",
-    type: "primary",
+    title: '今日游客',
+    value: '1,234',
+    change: '+12.5%',
+    trend: 'up',
+    icon: 'User',
+    type: 'primary',
   },
   {
-    title: "今日收入",
-    value: "¥45,678",
-    change: "+8.2%",
-    trend: "up",
-    icon: "Money",
-    type: "success",
+    title: '今日收入',
+    value: '¥45,678',
+    change: '+8.2%',
+    trend: 'up',
+    icon: 'Money',
+    type: 'success',
   },
   {
-    title: "设施运行",
-    value: "28/30",
-    change: "-2",
-    trend: "down",
-    icon: "OfficeBuilding",
-    type: "warning",
+    title: '设施运行',
+    value: '28/30',
+    change: '-2',
+    trend: 'down',
+    icon: 'OfficeBuilding',
+    type: 'warning',
   },
   {
-    title: "员工在岗",
-    value: "156",
-    change: "+3",
-    trend: "up",
-    icon: "Avatar",
-    type: "info",
+    title: '员工在岗',
+    value: '156',
+    change: '+3',
+    trend: 'up',
+    icon: 'Avatar',
+    type: 'info',
   },
-]);
+])
 
 // 快捷操作
 const quickActions = computed(() => {
-  const actions = [];
+  const actions = []
 
-  if (userStore.hasAnyRole(["super_admin", "ticket_manager"])) {
+  if (userStore.hasAnyRole(['super_admin', 'ticket_manager'])) {
     actions.push({
-      name: "门票销售",
-      type: "primary",
-      icon: "Ticket",
-      path: "/tickets/sales",
-    });
+      name: '门票销售',
+      type: 'primary',
+      icon: 'Ticket',
+      path: '/tickets/sales',
+    })
   }
 
-  if (userStore.hasAnyRole(["super_admin", "customer_service"])) {
+  if (userStore.hasAnyRole(['super_admin', 'customer_service'])) {
     actions.push({
-      name: "游客管理",
-      type: "success",
-      icon: "User",
-      path: "/visitors/list",
-    });
+      name: '游客管理',
+      type: 'success',
+      icon: 'User',
+      path: '/visitors/list',
+    })
   }
 
-  if (userStore.hasAnyRole(["super_admin", "operations_manager"])) {
+  if (userStore.hasAnyRole(['super_admin', 'operations_manager'])) {
     actions.push({
-      name: "设施监控",
-      type: "warning",
-      icon: "Monitor",
-      path: "/facilities/monitoring",
-    });
+      name: '设施监控',
+      type: 'warning',
+      icon: 'Monitor',
+      path: '/facilities/monitoring',
+    })
   }
 
-  if (userStore.hasAnyRole(["super_admin", "finance_manager"])) {
+  if (userStore.hasAnyRole(['super_admin', 'finance_manager'])) {
     actions.push({
-      name: "财务报表",
-      type: "info",
-      icon: "Document",
-      path: "/finance/reports",
-    });
+      name: '财务报表',
+      type: 'info',
+      icon: 'Document',
+      path: '/finance/reports',
+    })
   }
 
-  return actions;
-});
+  return actions
+})
 
 // 最近活动
 const recentActivities = ref([
   {
     id: 1,
-    title: "新增游客预订",
-    time: "5分钟前",
-    icon: "Calendar",
-    color: "#409EFF",
+    title: '新增游客预订',
+    time: '5分钟前',
+    icon: 'Calendar',
+    color: '#409EFF',
   },
   {
     id: 2,
-    title: "设施维护完成",
-    time: "15分钟前",
-    icon: "Tools",
-    color: "#67C23A",
+    title: '设施维护完成',
+    time: '15分钟前',
+    icon: 'Tools',
+    color: '#67C23A',
   },
   {
     id: 3,
-    title: "员工考勤异常",
-    time: "30分钟前",
-    icon: "Warning",
-    color: "#E6A23C",
+    title: '员工考勤异常',
+    time: '30分钟前',
+    icon: 'Warning',
+    color: '#E6A23C',
   },
   {
     id: 4,
-    title: "系统备份完成",
-    time: "1小时前",
-    icon: "FolderOpened",
-    color: "#909399",
+    title: '系统备份完成',
+    time: '1小时前',
+    icon: 'FolderOpened',
+    color: '#909399',
   },
-]);
+])
 
 // 处理快捷操作
 const handleQuickAction = (action) => {
   if (action.path) {
-    router.push(action.path);
+    router.push(action.path)
   } else {
-    ElMessage.info(`${action.name}功能开发中...`);
+    ElMessage.info(`${action.name}功能开发中...`)
   }
-};
+}
 
 // 组件挂载时获取数据
 onMounted(() => {
   // 这里可以调用 API 获取实际的统计数据
-  console.log("Dashboard mounted, loading data...");
-});
+  console.log('Dashboard mounted, loading data...')
+})
 </script>
 
 <style scoped>

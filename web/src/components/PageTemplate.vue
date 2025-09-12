@@ -29,13 +29,13 @@ defineProps({
   },
   description: {
     type: String,
-    default: "",
+    default: '',
   },
   icon: {
     type: String,
-    default: "Document",
+    default: 'Document',
   },
-});
+})
 </script>
 
 <style scoped>

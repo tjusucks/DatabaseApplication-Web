@@ -1,4 +1,4 @@
-import request from "@/utils/request";
+import request from '@/utils/request'
 
 // 财务管理 API
 
@@ -10,10 +10,10 @@ import request from "@/utils/request";
  */
 export function searchFinancialRecords(params) {
   return request({
-    url: "/api/FinancialRecords/search",
-    method: "get",
+    url: '/api/FinancialRecords/search',
+    method: 'get',
     params,
-  });
+  })
 }
 
 /**
@@ -23,8 +23,8 @@ export function searchFinancialRecords(params) {
 export function getFinancialRecordById(recordId) {
   return request({
     url: `/api/FinancialRecords/${recordId}`,
-    method: "get",
-  });
+    method: 'get',
+  })
 }
 
 /**
@@ -32,9 +32,9 @@ export function getFinancialRecordById(recordId) {
  */
 export function getFinancialStats() {
   return request({
-    url: "/api/FinancialRecords/stats",
-    method: "get",
-  });
+    url: '/api/FinancialRecords/stats',
+    method: 'get',
+  })
 }
 
 /**
@@ -43,10 +43,10 @@ export function getFinancialStats() {
  */
 export function getGroupedFinancialStats(params) {
   return request({
-    url: "/api/FinancialRecords/stats/grouped",
-    method: "get",
+    url: '/api/FinancialRecords/stats/grouped',
+    method: 'get',
     params,
-  });
+  })
 }
 
 /**
@@ -54,9 +54,9 @@ export function getGroupedFinancialStats(params) {
  */
 export function getFinancialOverview() {
   return request({
-    url: "/api/FinancialRecords/overview",
-    method: "get",
-  });
+    url: '/api/FinancialRecords/overview',
+    method: 'get',
+  })
 }
 
 /**
@@ -67,9 +67,9 @@ export function getFinancialOverview() {
 export function getFinancialRecordsByType(transactionType, params) {
   return request({
     url: `/api/FinancialRecords/by-type/${transactionType}`,
-    method: "get",
+    method: 'get',
     params,
-  });
+  })
 }
 
 /**
@@ -78,10 +78,10 @@ export function getFinancialRecordsByType(transactionType, params) {
  */
 export function createFinancialRecord(data) {
   return request({
-    url: "/api/FinancialRecords",
-    method: "post",
+    url: '/api/FinancialRecords',
+    method: 'post',
     data,
-  });
+  })
 }
 
 /**
@@ -92,9 +92,9 @@ export function createFinancialRecord(data) {
 export function updateFinancialRecord(recordId, data) {
   return request({
     url: `/api/FinancialRecords/${recordId}`,
-    method: "put",
+    method: 'put',
     data,
-  });
+  })
 }
 
 /**
@@ -104,8 +104,8 @@ export function updateFinancialRecord(recordId, data) {
 export function deleteFinancialRecord(recordId) {
   return request({
     url: `/api/FinancialRecords/${recordId}`,
-    method: "delete",
-  });
+    method: 'delete',
+  })
 }
 
 // ========== 薪资记录管理 ==========
@@ -116,10 +116,10 @@ export function deleteFinancialRecord(recordId) {
  */
 export function searchSalaryRecords(params) {
   return request({
-    url: "/api/resource/salary-records/search",
-    method: "get",
+    url: '/api/resource/salary-records/search',
+    method: 'get',
     params,
-  });
+  })
 }
 
 /**
@@ -129,8 +129,8 @@ export function searchSalaryRecords(params) {
 export function getSalaryRecordById(salaryRecordId) {
   return request({
     url: `/api/resource/salary-records/${salaryRecordId}`,
-    method: "get",
-  });
+    method: 'get',
+  })
 }
 
 /**
@@ -138,9 +138,9 @@ export function getSalaryRecordById(salaryRecordId) {
  */
 export function getSalaryStats() {
   return request({
-    url: "/api/resource/salary-records/stats",
-    method: "get",
-  });
+    url: '/api/resource/salary-records/stats',
+    method: 'get',
+  })
 }
 
 /**
@@ -149,10 +149,10 @@ export function getSalaryStats() {
  */
 export function getGroupedSalaryStats(params) {
   return request({
-    url: "/api/resource/salary-records/stats/grouped",
-    method: "get",
+    url: '/api/resource/salary-records/stats/grouped',
+    method: 'get',
     params,
-  });
+  })
 }
 
 /**
@@ -162,8 +162,8 @@ export function getGroupedSalaryStats(params) {
 export function getSalaryRecordsByEmployee(employeeId) {
   return request({
     url: `/api/resource/salary-records/employee/${employeeId}`,
-    method: "get",
-  });
+    method: 'get',
+  })
 }
 
 /**
@@ -173,8 +173,8 @@ export function getSalaryRecordsByEmployee(employeeId) {
 export function getEmployeeSalarySummary(employeeId) {
   return request({
     url: `/api/resource/salary-records/employee/${employeeId}/summary`,
-    method: "get",
-  });
+    method: 'get',
+  })
 }
 
 /**
@@ -183,10 +183,10 @@ export function getEmployeeSalarySummary(employeeId) {
  */
 export function getMonthlySalaryReport(params) {
   return request({
-    url: "/api/resource/salary-records/reports/monthly",
-    method: "get",
+    url: '/api/resource/salary-records/reports/monthly',
+    method: 'get',
     params,
-  });
+  })
 }
 
 /**
@@ -195,10 +195,10 @@ export function getMonthlySalaryReport(params) {
  */
 export function getPayroll(params) {
   return request({
-    url: "/api/resource/salary-records/payroll",
-    method: "get",
+    url: '/api/resource/salary-records/payroll',
+    method: 'get',
     params,
-  });
+  })
 }
 
 /**
@@ -207,10 +207,10 @@ export function getPayroll(params) {
  */
 export function createSalaryRecord(data) {
   return request({
-    url: "/api/resource/salary-records",
-    method: "post",
+    url: '/api/resource/salary-records',
+    method: 'post',
     data,
-  });
+  })
 }
 
 /**
@@ -219,10 +219,10 @@ export function createSalaryRecord(data) {
  */
 export function batchCreateSalaryRecords(data) {
   return request({
-    url: "/api/resource/salary-records/batch",
-    method: "post",
+    url: '/api/resource/salary-records/batch',
+    method: 'post',
     data,
-  });
+  })
 }
 
 /**
@@ -233,9 +233,9 @@ export function batchCreateSalaryRecords(data) {
 export function updateSalaryRecord(salaryRecordId, data) {
   return request({
     url: `/api/resource/salary-records/${salaryRecordId}`,
-    method: "put",
+    method: 'put',
     data,
-  });
+  })
 }
 
 /**
@@ -245,6 +245,6 @@ export function updateSalaryRecord(salaryRecordId, data) {
 export function deleteSalaryRecord(salaryRecordId) {
   return request({
     url: `/api/resource/salary-records/${salaryRecordId}`,
-    method: "delete",
-  });
+    method: 'delete',
+  })
 }

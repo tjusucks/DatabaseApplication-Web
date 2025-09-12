@@ -78,9 +78,7 @@
             <div class="stat-value">{{ stats.totalEntries }}</div>
             <div class="stat-label">总入园次数</div>
           </div>
-          <el-icon class="stat-icon" color="#409eff"
-            ><LocationInformation
-          /></el-icon>
+          <el-icon class="stat-icon" color="#409eff"><LocationInformation /></el-icon>
         </el-card>
       </el-col>
       <el-col :span="6">
@@ -138,7 +136,7 @@
         </el-table-column>
         <el-table-column label="出园时间" width="180">
           <template #default="{ row }">
-            {{ row.exitTime ? formatDate(row.exitTime) : "未出园" }}
+            {{ row.exitTime ? formatDate(row.exitTime) : '未出园' }}
           </template>
         </el-table-column>
         <el-table-column prop="entryGate" label="入园门" width="120" />
@@ -151,17 +149,13 @@
         <el-table-column label="状态" width="100">
           <template #default="{ row }">
             <el-tag :type="row.exitTime ? 'info' : 'success'">
-              {{ row.exitTime ? "已出园" : "在园中" }}
+              {{ row.exitTime ? '已出园' : '在园中' }}
             </el-tag>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="200" fixed="right">
           <template #default="{ row }">
-            <el-button
-              type="primary"
-              size="small"
-              @click="handleViewEntryDetail(row)"
-            >
+            <el-button type="primary" size="small" @click="handleViewEntryDetail(row)">
               查看详情
             </el-button>
             <el-button
@@ -212,23 +206,21 @@
           </el-descriptions-item>
           <el-descriptions-item label="出园时间" :span="2">
             {{
-              currentDetailRecord.exitTime
-                ? formatDateTime(currentDetailRecord.exitTime)
-                : "未出园"
+              currentDetailRecord.exitTime ? formatDateTime(currentDetailRecord.exitTime) : '未出园'
             }}
           </el-descriptions-item>
           <el-descriptions-item label="入园门">
             {{ currentDetailRecord.entryGate }}
           </el-descriptions-item>
           <el-descriptions-item label="出园门">
-            {{ currentDetailRecord.exitGate || "未出园" }}
+            {{ currentDetailRecord.exitGate || '未出园' }}
           </el-descriptions-item>
           <el-descriptions-item label="门票ID">
-            {{ currentDetailRecord.ticketId || "无" }}
+            {{ currentDetailRecord.ticketId || '无' }}
           </el-descriptions-item>
           <el-descriptions-item label="状态">
             <el-tag :type="currentDetailRecord.isActive ? 'success' : 'info'">
-              {{ currentDetailRecord.isActive ? "在园中" : "已出园" }}
+              {{ currentDetailRecord.isActive ? '在园中' : '已出园' }}
             </el-tag>
           </el-descriptions-item>
           <el-descriptions-item label="游玩时长" :span="2">
@@ -245,11 +237,7 @@
 
       <template #footer>
         <el-button @click="detailDialogVisible = false">关闭</el-button>
-        <el-button
-          v-if="currentDetailRecord?.isActive"
-          type="warning"
-          @click="handleQuickExit"
-        >
+        <el-button v-if="currentDetailRecord?.isActive" type="warning" @click="handleQuickExit">
           快速出园
         </el-button>
       </template>
@@ -259,11 +247,7 @@
     <el-dialog v-model="exitDialogVisible" title="手动出园" width="400px">
       <el-form :model="exitForm" label-width="80px">
         <el-form-item label="出园门">
-          <el-select
-            v-model="exitForm.exitGate"
-            placeholder="请选择出园门"
-            style="width: 100%"
-          >
+          <el-select v-model="exitForm.exitGate" placeholder="请选择出园门" style="width: 100%">
             <el-option label="主门" value="main" />
             <el-option label="东门" value="east" />
             <el-option label="西门" value="west" />
@@ -290,11 +274,7 @@
 
       <template #footer>
         <el-button @click="exitDialogVisible = false">取消</el-button>
-        <el-button
-          type="primary"
-          @click="handleExitSubmit"
-          :loading="exitSubmitting"
-        >
+        <el-button type="primary" @click="handleExitSubmit" :loading="exitSubmitting">
           确定
         </el-button>
       </template>
@@ -303,22 +283,18 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, computed } from "vue";
-import { ElMessage, ElMessageBox } from "element-plus";
-import {
-  searchEntryRecords,
-  updateEntryRecord,
-  getEntryRecordStats,
-} from "@/api/entryRecords";
-import { searchVisitors } from "@/api/visitors";
+import { ref, reactive, onMounted, computed } from 'vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { searchEntryRecords, updateEntryRecord, getEntryRecordStats } from '@/api/entryRecords'
+import { searchVisitors } from '@/api/visitors'
 
 // 搜索表单
 const searchForm = reactive({
-  visitorId: "",
-  visitorName: "",
-  recordType: "",
+  visitorId: '',
+  visitorName: '',
+  recordType: '',
   dateRange: [],
-});
+})
 
 // 统计数据
 const stats = reactive({
@@ -326,292 +302,288 @@ const stats = reactive({
   currentInPark: 0,
   todayEntries: 0,
   avgDuration: 0,
-});
+})
 
 // 入园记录
-const entryRecords = ref([]);
-const entryLoading = ref(false);
+const entryRecords = ref([])
+const entryLoading = ref(false)
 const entryPagination = reactive({
   currentPage: 1,
   pageSize: 20,
   total: 0,
-});
+})
 
 // 详情对话框
-const detailDialogVisible = ref(false);
-const currentDetailRecord = ref(null);
+const detailDialogVisible = ref(false)
+const currentDetailRecord = ref(null)
 
 // 手动出园对话框
-const exitDialogVisible = ref(false);
-const exitSubmitting = ref(false);
-const currentExitRecord = ref(null);
+const exitDialogVisible = ref(false)
+const exitSubmitting = ref(false)
+const currentExitRecord = ref(null)
 const exitForm = reactive({
-  exitGate: "",
+  exitGate: '',
   exitTime: new Date(),
-  remarks: "",
-});
+  remarks: '',
+})
 
 // 格式化日期
 const formatDate = (dateString) => {
-  if (!dateString) return "-";
-  return new Date(dateString).toLocaleString("zh-CN");
-};
+  if (!dateString) return '-'
+  return new Date(dateString).toLocaleString('zh-CN')
+}
 
 // 格式化日期时间（详细版本）
 const formatDateTime = (dateString) => {
-  if (!dateString) return "-";
-  return new Date(dateString).toLocaleString("zh-CN", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-  });
-};
+  if (!dateString) return '-'
+  return new Date(dateString).toLocaleString('zh-CN', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  })
+}
 
 // 格式化时长
 const formatDuration = (minutes) => {
-  if (!minutes || minutes === 0) return "-";
-  const hours = Math.floor(minutes / 60);
-  const mins = minutes % 60;
+  if (!minutes || minutes === 0) return '-'
+  const hours = Math.floor(minutes / 60)
+  const mins = minutes % 60
   if (hours > 0) {
-    return `${hours}小时${mins}分钟`;
+    return `${hours}小时${mins}分钟`
   } else {
-    return `${mins}分钟`;
+    return `${mins}分钟`
   }
-};
+}
 
 // 计算游玩时长（支持记录对象和单独参数）
 const calculateDuration = (entryTimeOrRecord, exitTime = null) => {
-  let entryTime, actualExitTime;
+  let entryTime, actualExitTime
 
-  if (typeof entryTimeOrRecord === "object" && entryTimeOrRecord !== null) {
+  if (typeof entryTimeOrRecord === 'object' && entryTimeOrRecord !== null) {
     // 传入的是记录对象
-    const record = entryTimeOrRecord;
-    if (!record.entryTime) return "-";
+    const record = entryTimeOrRecord
+    if (!record.entryTime) return '-'
 
-    entryTime = new Date(record.entryTime);
-    actualExitTime = record.exitTime ? new Date(record.exitTime) : new Date();
+    entryTime = new Date(record.entryTime)
+    actualExitTime = record.exitTime ? new Date(record.exitTime) : new Date()
 
-    const duration = Math.floor((actualExitTime - entryTime) / (1000 * 60)); // 转换为分钟
+    const duration = Math.floor((actualExitTime - entryTime) / (1000 * 60)) // 转换为分钟
 
-    if (duration < 0) return "-";
+    if (duration < 0) return '-'
 
-    const hours = Math.floor(duration / 60);
-    const minutes = duration % 60;
+    const hours = Math.floor(duration / 60)
+    const minutes = duration % 60
 
     if (record.exitTime) {
       // 已出园，显示实际时长
       if (hours > 0) {
-        return `${hours}小时${minutes}分钟`;
+        return `${hours}小时${minutes}分钟`
       } else {
-        return `${minutes}分钟`;
+        return `${minutes}分钟`
       }
     } else {
       // 在园中，显示当前时长
       if (hours > 0) {
-        return `${hours}小时${minutes}分钟 (在园中)`;
+        return `${hours}小时${minutes}分钟 (在园中)`
       } else {
-        return `${minutes}分钟 (在园中)`;
+        return `${minutes}分钟 (在园中)`
       }
     }
   } else {
     // 传入的是单独的时间参数（兼容原有调用）
-    if (!exitTime) return "-";
+    if (!exitTime) return '-'
 
-    const entry = new Date(entryTimeOrRecord);
-    const exit = new Date(exitTime);
-    const duration = exit - entry;
+    const entry = new Date(entryTimeOrRecord)
+    const exit = new Date(exitTime)
+    const duration = exit - entry
 
-    const hours = Math.floor(duration / (1000 * 60 * 60));
-    const minutes = Math.floor((duration % (1000 * 60 * 60)) / (1000 * 60));
+    const hours = Math.floor(duration / (1000 * 60 * 60))
+    const minutes = Math.floor((duration % (1000 * 60 * 60)) / (1000 * 60))
 
     if (hours > 0) {
-      return `${hours}小时${minutes}分钟`;
+      return `${hours}小时${minutes}分钟`
     } else {
-      return `${minutes}分钟`;
+      return `${minutes}分钟`
     }
   }
-};
+}
 
 // 格式化会员等级
 const formatMemberLevel = (level) => {
   const levelMap = {
-    Bronze: "青铜",
-    Silver: "白银",
-    Gold: "黄金",
-    Platinum: "铂金",
-  };
-  return levelMap[level] || level;
-};
+    Bronze: '青铜',
+    Silver: '白银',
+    Gold: '黄金',
+    Platinum: '铂金',
+  }
+  return levelMap[level] || level
+}
 
 // 获取会员等级标签类型
 const getMemberLevelType = (level) => {
   const typeMap = {
-    Bronze: "",
-    Silver: "info",
-    Gold: "warning",
-    Platinum: "success",
-  };
-  return typeMap[level] || "";
-};
+    Bronze: '',
+    Silver: 'info',
+    Gold: 'warning',
+    Platinum: 'success',
+  }
+  return typeMap[level] || ''
+}
 
 // 格式化会员操作
 const formatMembershipOperation = (operation) => {
   const operationMap = {
-    upgrade: "升级会员",
-    downgrade: "降级",
-    cancel: "取消会员",
-    level_change: "等级变更",
-  };
-  return operationMap[operation] || operation;
-};
+    upgrade: '升级会员',
+    downgrade: '降级',
+    cancel: '取消会员',
+    level_change: '等级变更',
+  }
+  return operationMap[operation] || operation
+}
 
 // 获取会员操作类型
 const getMembershipOperationType = (operation) => {
   const typeMap = {
-    upgrade: "success",
-    downgrade: "warning",
-    cancel: "danger",
-    level_change: "info",
-  };
-  return typeMap[operation] || "info";
-};
+    upgrade: 'success',
+    downgrade: 'warning',
+    cancel: 'danger',
+    level_change: 'info',
+  }
+  return typeMap[operation] || 'info'
+}
 
 // 搜索
 const handleSearch = () => {
-  entryPagination.currentPage = 1;
-  loadEntryRecords();
-};
+  entryPagination.currentPage = 1
+  loadEntryRecords()
+}
 
 // 重置搜索
 const handleReset = () => {
   Object.assign(searchForm, {
-    visitorId: "",
-    visitorName: "",
-    recordType: "",
+    visitorId: '',
+    visitorName: '',
+    recordType: '',
     dateRange: [],
-  });
-  handleSearch();
-};
+  })
+  handleSearch()
+}
 
 // 导出记录
 const handleExport = () => {
-  ElMessage.info("导出功能开发中...");
-};
+  ElMessage.info('导出功能开发中...')
+}
 
 // 刷新数据
 const handleRefresh = () => {
-  loadStats();
-  loadEntryRecords();
-};
+  loadStats()
+  loadEntryRecords()
+}
 
 // 查看入园详情
 const handleViewEntryDetail = (row) => {
-  currentDetailRecord.value = row;
-  detailDialogVisible.value = true;
-};
+  currentDetailRecord.value = row
+  detailDialogVisible.value = true
+}
 
 // 快速出园（从详情对话框）
 const handleQuickExit = () => {
-  if (!currentDetailRecord.value) return;
+  if (!currentDetailRecord.value) return
 
-  detailDialogVisible.value = false;
-  currentExitRecord.value = currentDetailRecord.value;
-  exitForm.exitGate = currentDetailRecord.value.entryGate; // 默认使用入园门作为出园门
-  exitForm.exitTime = new Date();
-  exitForm.remarks = "";
-  exitDialogVisible.value = true;
-};
+  detailDialogVisible.value = false
+  currentExitRecord.value = currentDetailRecord.value
+  exitForm.exitGate = currentDetailRecord.value.entryGate // 默认使用入园门作为出园门
+  exitForm.exitTime = new Date()
+  exitForm.remarks = ''
+  exitDialogVisible.value = true
+}
 
 // 手动出园
 const handleManualExit = (row) => {
-  currentExitRecord.value = row;
-  exitForm.exitGate = "";
-  exitForm.exitTime = new Date();
-  exitForm.remarks = "";
-  exitDialogVisible.value = true;
-};
+  currentExitRecord.value = row
+  exitForm.exitGate = ''
+  exitForm.exitTime = new Date()
+  exitForm.remarks = ''
+  exitDialogVisible.value = true
+}
 
 // 提交出园
 const handleExitSubmit = async () => {
   try {
-    exitSubmitting.value = true;
+    exitSubmitting.value = true
 
     await updateEntryRecord(currentExitRecord.value.entryRecordId, {
       EntryRecordId: currentExitRecord.value.entryRecordId,
       ExitGate: exitForm.exitGate,
       // 出园时间由后端自动设置为当前时间
       // remarks字段暂不支持
-    });
+    })
 
-    ElMessage.success("出园记录更新成功");
-    exitDialogVisible.value = false;
-    await loadEntryRecords();
-    await loadStats();
+    ElMessage.success('出园记录更新成功')
+    exitDialogVisible.value = false
+    await loadEntryRecords()
+    await loadStats()
   } catch (error) {
-    ElMessage.error("出园记录更新失败：" + error.message);
+    ElMessage.error('出园记录更新失败：' + error.message)
   } finally {
-    exitSubmitting.value = false;
+    exitSubmitting.value = false
   }
-};
+}
 
 // 入园记录分页
 const handleEntrySizeChange = (size) => {
-  entryPagination.pageSize = size;
-  entryPagination.currentPage = 1;
-  loadEntryRecords();
-};
+  entryPagination.pageSize = size
+  entryPagination.currentPage = 1
+  loadEntryRecords()
+}
 
 const handleEntryCurrentChange = (page) => {
-  entryPagination.currentPage = page;
-  loadEntryRecords();
-};
+  entryPagination.currentPage = page
+  loadEntryRecords()
+}
 
 // 加载统计数据
 const loadStats = async () => {
   try {
     // 获取总体统计
-    const totalResponse = await getEntryRecordStats({});
+    const totalResponse = await getEntryRecordStats({})
 
     // 获取今日统计
-    const today = new Date();
-    const todayStart = new Date(
-      today.getFullYear(),
-      today.getMonth(),
-      today.getDate(),
-    );
-    const todayEnd = new Date(todayStart.getTime() + 24 * 60 * 60 * 1000 - 1);
+    const today = new Date()
+    const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate())
+    const todayEnd = new Date(todayStart.getTime() + 24 * 60 * 60 * 1000 - 1)
 
     const todayResponse = await getEntryRecordStats({
       entryTimeStart: todayStart.toISOString(),
       entryTimeEnd: todayEnd.toISOString(),
-    });
+    })
 
     if (totalResponse && todayResponse) {
       // 映射后端字段到前端期望的字段
-      stats.totalEntries = totalResponse.totalEntries || 0;
-      stats.currentInPark = totalResponse.activeEntries || 0; // 当前在园人数
-      stats.todayEntries = todayResponse.totalEntries || 0; // 今日入园次数
+      stats.totalEntries = totalResponse.totalEntries || 0
+      stats.currentInPark = totalResponse.activeEntries || 0 // 当前在园人数
+      stats.todayEntries = todayResponse.totalEntries || 0 // 今日入园次数
 
       // 计算平均游玩时长（基于实际数据）
       if (totalResponse.totalExits > 0) {
         // 获取所有已出园的记录来计算真实的平均时长
-        await calculateAvgDuration();
+        await calculateAvgDuration()
       } else {
-        stats.avgDuration = 0;
+        stats.avgDuration = 0
       }
     }
   } catch (error) {
-    console.error("加载统计数据失败:", error);
+    console.error('加载统计数据失败:', error)
     // 使用模拟数据
-    stats.totalEntries = 0;
-    stats.currentInPark = 0;
-    stats.todayEntries = 0;
-    stats.avgDuration = 0;
+    stats.totalEntries = 0
+    stats.currentInPark = 0
+    stats.todayEntries = 0
+    stats.avgDuration = 0
   }
-};
+}
 
 // 计算平均游玩时长
 const calculateAvgDuration = async () => {
@@ -621,86 +593,86 @@ const calculateAvgDuration = async () => {
       page: 1,
       pageSize: 1000, // 获取足够多的记录
       IsActive: false, // 只获取已出园的记录（注意大写I）
-    });
+    })
 
     if (response && response.items && response.items.length > 0) {
-      let totalDuration = 0;
-      let validRecords = 0;
+      let totalDuration = 0
+      let validRecords = 0
 
       response.items.forEach((record) => {
         if (record.entryTime && record.exitTime) {
-          const entryTime = new Date(record.entryTime);
-          const exitTime = new Date(record.exitTime);
-          const duration = (exitTime - entryTime) / (1000 * 60); // 转换为分钟
+          const entryTime = new Date(record.entryTime)
+          const exitTime = new Date(record.exitTime)
+          const duration = (exitTime - entryTime) / (1000 * 60) // 转换为分钟
 
           if (duration > 0) {
-            totalDuration += duration;
-            validRecords++;
+            totalDuration += duration
+            validRecords++
           }
         }
-      });
+      })
 
       if (validRecords > 0) {
-        stats.avgDuration = Math.round(totalDuration / validRecords);
+        stats.avgDuration = Math.round(totalDuration / validRecords)
       } else {
-        stats.avgDuration = 0;
+        stats.avgDuration = 0
       }
     } else {
-      stats.avgDuration = 0;
+      stats.avgDuration = 0
     }
   } catch (error) {
-    console.error("计算平均游玩时长失败:", error);
-    stats.avgDuration = 0;
+    console.error('计算平均游玩时长失败:', error)
+    stats.avgDuration = 0
   }
-};
+}
 
 // 加载入园记录
 const loadEntryRecords = async () => {
   try {
-    entryLoading.value = true;
+    entryLoading.value = true
 
     const params = {
       page: entryPagination.currentPage,
       pageSize: entryPagination.pageSize,
       includeVisitorInfo: true,
-    };
+    }
 
     // 添加搜索条件
     if (searchForm.visitorId) {
-      params.visitorId = searchForm.visitorId;
+      params.visitorId = searchForm.visitorId
     }
     if (searchForm.visitorName) {
-      params.visitorName = searchForm.visitorName;
+      params.visitorName = searchForm.visitorName
     }
     if (searchForm.dateRange && searchForm.dateRange.length === 2) {
-      params.startDate = searchForm.dateRange[0].toISOString();
-      params.endDate = searchForm.dateRange[1].toISOString();
+      params.startDate = searchForm.dateRange[0].toISOString()
+      params.endDate = searchForm.dateRange[1].toISOString()
     }
 
-    const response = await searchEntryRecords(params);
+    const response = await searchEntryRecords(params)
 
     if (response) {
-      entryRecords.value = response.items || response;
-      entryPagination.total = response.totalCount || response.length || 0;
+      entryRecords.value = response.items || response
+      entryPagination.total = response.totalCount || response.length || 0
     } else {
-      entryRecords.value = [];
-      entryPagination.total = 0;
+      entryRecords.value = []
+      entryPagination.total = 0
     }
   } catch (error) {
-    console.error("加载入园记录失败:", error);
-    ElMessage.error("加载入园记录失败：" + error.message);
-    entryRecords.value = [];
-    entryPagination.total = 0;
+    console.error('加载入园记录失败:', error)
+    ElMessage.error('加载入园记录失败：' + error.message)
+    entryRecords.value = []
+    entryPagination.total = 0
   } finally {
-    entryLoading.value = false;
+    entryLoading.value = false
   }
-};
+}
 
 // 组件挂载时加载数据
 onMounted(() => {
-  loadStats();
-  loadEntryRecords();
-});
+  loadStats()
+  loadEntryRecords()
+})
 </script>
 
 <style scoped>

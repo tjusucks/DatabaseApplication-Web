@@ -10,18 +10,10 @@
     <el-card class="search-card">
       <el-form :model="searchForm" inline class="search-form">
         <el-form-item label="成员姓名">
-          <el-input
-            v-model="searchForm.name"
-            placeholder="请输入成员姓名"
-            clearable
-          />
+          <el-input v-model="searchForm.name" placeholder="请输入成员姓名" clearable />
         </el-form-item>
         <el-form-item label="部门">
-          <el-select
-            v-model="searchForm.department"
-            placeholder="请选择部门"
-            clearable
-          >
+          <el-select v-model="searchForm.department" placeholder="请选择部门" clearable>
             <el-option label="管理部" value="management" />
             <el-option label="财务部" value="finance" />
             <el-option label="人事部" value="hr" />
@@ -31,11 +23,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="角色">
-          <el-select
-            v-model="searchForm.role"
-            placeholder="请选择角色"
-            clearable
-          >
+          <el-select v-model="searchForm.role" placeholder="请选择角色" clearable>
             <el-option label="超级管理员" value="super_admin" />
             <el-option label="财务管理员" value="finance_manager" />
             <el-option label="人事管理员" value="hr_manager" />
@@ -71,13 +59,7 @@
 
     <!-- 数据表格 -->
     <el-card class="table-card">
-      <el-table
-        :data="tableData"
-        v-loading="loading"
-        stripe
-        border
-        style="width: 100%"
-      >
+      <el-table :data="tableData" v-loading="loading" stripe border style="width: 100%">
         <el-table-column prop="id" label="员工ID" width="100" />
         <el-table-column prop="name" label="姓名" width="120" />
         <el-table-column prop="email" label="邮箱" width="200" />
@@ -96,28 +78,22 @@
         <el-table-column prop="status" label="状态" width="100">
           <template #default="{ row }">
             <el-tag :type="row.status === 'active' ? 'success' : 'danger'">
-              {{ row.status === "active" ? "激活" : "禁用" }}
+              {{ row.status === 'active' ? '激活' : '禁用' }}
             </el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="joinDate" label="加入时间" width="160" />
         <el-table-column label="操作" width="250" fixed="right">
           <template #default="{ row }">
-            <el-button type="primary" size="small" @click="handleView(row)">
-              查看
-            </el-button>
-            <el-button type="warning" size="small" @click="handleEdit(row)">
-              编辑
-            </el-button>
-            <el-button type="info" size="small" @click="handlePermissions(row)">
-              权限
-            </el-button>
+            <el-button type="primary" size="small" @click="handleView(row)"> 查看 </el-button>
+            <el-button type="warning" size="small" @click="handleEdit(row)"> 编辑 </el-button>
+            <el-button type="info" size="small" @click="handlePermissions(row)"> 权限 </el-button>
             <el-button
               :type="row.status === 'active' ? 'danger' : 'success'"
               size="small"
               @click="handleToggleStatus(row)"
             >
-              {{ row.status === "active" ? "禁用" : "启用" }}
+              {{ row.status === 'active' ? '禁用' : '启用' }}
             </el-button>
           </template>
         </el-table-column>
@@ -143,12 +119,7 @@
       :title="isEdit ? '编辑成员' : '添加成员'"
       width="600px"
     >
-      <el-form
-        :model="memberForm"
-        :rules="memberRules"
-        ref="memberFormRef"
-        label-width="80px"
-      >
+      <el-form :model="memberForm" :rules="memberRules" ref="memberFormRef" label-width="80px">
         <el-form-item label="姓名" prop="name">
           <el-input v-model="memberForm.name" placeholder="请输入姓名" />
         </el-form-item>
@@ -156,11 +127,7 @@
           <el-input v-model="memberForm.email" placeholder="请输入邮箱" />
         </el-form-item>
         <el-form-item label="部门" prop="department">
-          <el-select
-            v-model="memberForm.department"
-            placeholder="请选择部门"
-            style="width: 100%"
-          >
+          <el-select v-model="memberForm.department" placeholder="请选择部门" style="width: 100%">
             <el-option label="管理部" value="management" />
             <el-option label="财务部" value="finance" />
             <el-option label="人事部" value="hr" />
@@ -170,11 +137,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="角色" prop="role">
-          <el-select
-            v-model="memberForm.role"
-            placeholder="请选择角色"
-            style="width: 100%"
-          >
+          <el-select v-model="memberForm.role" placeholder="请选择角色" style="width: 100%">
             <el-option label="超级管理员" value="super_admin" />
             <el-option label="财务管理员" value="finance_manager" />
             <el-option label="人事管理员" value="hr_manager" />
@@ -200,237 +163,233 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from "vue";
-import { ElMessage, ElMessageBox } from "element-plus";
+import { ref, reactive, onMounted } from 'vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
 
 // 搜索表单
 const searchForm = reactive({
-  name: "",
-  department: "",
-  role: "",
-});
+  name: '',
+  department: '',
+  role: '',
+})
 
 // 表格数据
-const tableData = ref([]);
-const loading = ref(false);
+const tableData = ref([])
+const loading = ref(false)
 
 // 分页信息
 const pagination = reactive({
   currentPage: 1,
   pageSize: 20,
   total: 0,
-});
+})
 
 // 成员对话框
-const memberDialogVisible = ref(false);
-const isEdit = ref(false);
-const memberFormRef = ref();
+const memberDialogVisible = ref(false)
+const isEdit = ref(false)
+const memberFormRef = ref()
 const memberForm = reactive({
-  id: "",
-  name: "",
-  email: "",
-  department: "",
-  role: "",
-  status: "active",
-});
+  id: '',
+  name: '',
+  email: '',
+  department: '',
+  role: '',
+  status: 'active',
+})
 
 // 表单验证规则
 const memberRules = {
-  name: [{ required: true, message: "请输入姓名", trigger: "blur" }],
+  name: [{ required: true, message: '请输入姓名', trigger: 'blur' }],
   email: [
-    { required: true, message: "请输入邮箱", trigger: "blur" },
-    { type: "email", message: "请输入正确的邮箱格式", trigger: "blur" },
+    { required: true, message: '请输入邮箱', trigger: 'blur' },
+    { type: 'email', message: '请输入正确的邮箱格式', trigger: 'blur' },
   ],
-  department: [{ required: true, message: "请选择部门", trigger: "change" }],
-  role: [{ required: true, message: "请选择角色", trigger: "change" }],
-};
+  department: [{ required: true, message: '请选择部门', trigger: 'change' }],
+  role: [{ required: true, message: '请选择角色', trigger: 'change' }],
+}
 
 // 模拟数据
 const mockData = [
   {
-    id: "E001",
-    name: "张三",
-    email: "zhangsan@example.com",
-    department: "management",
-    role: "super_admin",
-    status: "active",
-    joinDate: "2024-01-15",
+    id: 'E001',
+    name: '张三',
+    email: 'zhangsan@example.com',
+    department: 'management',
+    role: 'super_admin',
+    status: 'active',
+    joinDate: '2024-01-15',
   },
   {
-    id: "E002",
-    name: "李四",
-    email: "lisi@example.com",
-    department: "finance",
-    role: "finance_manager",
-    status: "active",
-    joinDate: "2024-01-16",
+    id: 'E002',
+    name: '李四',
+    email: 'lisi@example.com',
+    department: 'finance',
+    role: 'finance_manager',
+    status: 'active',
+    joinDate: '2024-01-16',
   },
   {
-    id: "E003",
-    name: "王五",
-    email: "wangwu@example.com",
-    department: "hr",
-    role: "hr_manager",
-    status: "inactive",
-    joinDate: "2024-01-17",
+    id: 'E003',
+    name: '王五',
+    email: 'wangwu@example.com',
+    department: 'hr',
+    role: 'hr_manager',
+    status: 'inactive',
+    joinDate: '2024-01-17',
   },
-];
+]
 
 // 获取部门文本
 const getDepartmentText = (department) => {
   const departmentMap = {
-    management: "管理部",
-    finance: "财务部",
-    hr: "人事部",
-    operations: "运营部",
-    ticketing: "票务部",
-    customer_service: "客服部",
-  };
-  return departmentMap[department] || "未知";
-};
+    management: '管理部',
+    finance: '财务部',
+    hr: '人事部',
+    operations: '运营部',
+    ticketing: '票务部',
+    customer_service: '客服部',
+  }
+  return departmentMap[department] || '未知'
+}
 
 // 获取角色文本
 const getRoleText = (role) => {
   const roleMap = {
-    super_admin: "超级管理员",
-    finance_manager: "财务管理员",
-    hr_manager: "人事管理员",
-    operations_manager: "运营管理员",
-    ticket_manager: "票务管理员",
-    customer_service: "客服人员",
-    employee: "普通员工",
-  };
-  return roleMap[role] || "未知";
-};
+    super_admin: '超级管理员',
+    finance_manager: '财务管理员',
+    hr_manager: '人事管理员',
+    operations_manager: '运营管理员',
+    ticket_manager: '票务管理员',
+    customer_service: '客服人员',
+    employee: '普通员工',
+  }
+  return roleMap[role] || '未知'
+}
 
 // 获取角色类型
 const getRoleType = (role) => {
   const roleTypeMap = {
-    super_admin: "danger",
-    finance_manager: "warning",
-    hr_manager: "success",
-    operations_manager: "primary",
-    ticket_manager: "info",
-    customer_service: "",
-    employee: "",
-  };
-  return roleTypeMap[role] || "";
-};
+    super_admin: 'danger',
+    finance_manager: 'warning',
+    hr_manager: 'success',
+    operations_manager: 'primary',
+    ticket_manager: 'info',
+    customer_service: '',
+    employee: '',
+  }
+  return roleTypeMap[role] || ''
+}
 
 // 搜索
 const handleSearch = () => {
-  console.log("搜索条件:", searchForm);
-  loadData();
-};
+  console.log('搜索条件:', searchForm)
+  loadData()
+}
 
 // 重置搜索
 const handleReset = () => {
   Object.assign(searchForm, {
-    name: "",
-    department: "",
-    role: "",
-  });
-  loadData();
-};
+    name: '',
+    department: '',
+    role: '',
+  })
+  loadData()
+}
 
 // 添加成员
 const handleAdd = () => {
-  isEdit.value = false;
+  isEdit.value = false
   Object.assign(memberForm, {
-    id: "",
-    name: "",
-    email: "",
-    department: "",
-    role: "",
-    status: "active",
-  });
-  memberDialogVisible.value = true;
-};
+    id: '',
+    name: '',
+    email: '',
+    department: '',
+    role: '',
+    status: 'active',
+  })
+  memberDialogVisible.value = true
+}
 
 // 导出数据
 const handleExport = () => {
-  ElMessage.info("导出功能开发中...");
-};
+  ElMessage.info('导出功能开发中...')
+}
 
 // 查看详情
 const handleView = (row) => {
-  ElMessage.info(`查看成员 ${row.name} 的详细信息`);
-};
+  ElMessage.info(`查看成员 ${row.name} 的详细信息`)
+}
 
 // 编辑成员
 const handleEdit = (row) => {
-  isEdit.value = true;
-  Object.assign(memberForm, { ...row });
-  memberDialogVisible.value = true;
-};
+  isEdit.value = true
+  Object.assign(memberForm, { ...row })
+  memberDialogVisible.value = true
+}
 
 // 权限管理
 const handlePermissions = (row) => {
-  ElMessage.info(`管理成员 ${row.name} 的权限`);
-};
+  ElMessage.info(`管理成员 ${row.name} 的权限`)
+}
 
 // 切换状态
 const handleToggleStatus = async (row) => {
-  const action = row.status === "active" ? "禁用" : "启用";
+  const action = row.status === 'active' ? '禁用' : '启用'
   try {
-    await ElMessageBox.confirm(
-      `确定要${action}成员 ${row.name} 吗？`,
-      "确认操作",
-      {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-      },
-    );
+    await ElMessageBox.confirm(`确定要${action}成员 ${row.name} 吗？`, '确认操作', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning',
+    })
 
-    row.status = row.status === "active" ? "inactive" : "active";
-    ElMessage.success(`${action}成功`);
+    row.status = row.status === 'active' ? 'inactive' : 'active'
+    ElMessage.success(`${action}成功`)
   } catch {
     // 用户取消操作
   }
-};
+}
 
 // 提交成员信息
 const handleSubmitMember = async () => {
   try {
-    await memberFormRef.value.validate();
+    await memberFormRef.value.validate()
     // 这里应该调用API保存成员信息
-    ElMessage.success(isEdit.value ? "编辑成功" : "添加成功");
-    memberDialogVisible.value = false;
-    loadData();
+    ElMessage.success(isEdit.value ? '编辑成功' : '添加成功')
+    memberDialogVisible.value = false
+    loadData()
   } catch (error) {
-    console.log("表单验证失败:", error);
+    console.log('表单验证失败:', error)
   }
-};
+}
 
 // 分页大小改变
 const handleSizeChange = (size) => {
-  pagination.pageSize = size;
-  loadData();
-};
+  pagination.pageSize = size
+  loadData()
+}
 
 // 当前页改变
 const handleCurrentChange = (page) => {
-  pagination.currentPage = page;
-  loadData();
-};
+  pagination.currentPage = page
+  loadData()
+}
 
 // 加载数据
 const loadData = () => {
-  loading.value = true;
+  loading.value = true
 
   // 模拟 API 调用
   setTimeout(() => {
-    tableData.value = mockData;
-    pagination.total = mockData.length;
-    loading.value = false;
-  }, 500);
-};
+    tableData.value = mockData
+    pagination.total = mockData.length
+    loading.value = false
+  }, 500)
+}
 
 // 组件挂载时加载数据
 onMounted(() => {
-  loadData();
-});
+  loadData()
+})
 </script>
 
 <style scoped>

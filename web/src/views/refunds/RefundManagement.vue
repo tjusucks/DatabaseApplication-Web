@@ -10,25 +10,13 @@
     <el-card class="search-card">
       <el-form :model="searchForm" inline class="search-form">
         <el-form-item label="申请单号">
-          <el-input
-            v-model="searchForm.refundId"
-            placeholder="请输入申请单号"
-            clearable
-          />
+          <el-input v-model="searchForm.refundId" placeholder="请输入申请单号" clearable />
         </el-form-item>
         <el-form-item label="游客姓名">
-          <el-input
-            v-model="searchForm.visitorName"
-            placeholder="请输入游客姓名"
-            clearable
-          />
+          <el-input v-model="searchForm.visitorName" placeholder="请输入游客姓名" clearable />
         </el-form-item>
         <el-form-item label="申请状态">
-          <el-select
-            v-model="searchForm.status"
-            placeholder="请选择状态"
-            clearable
-          >
+          <el-select v-model="searchForm.status" placeholder="请选择状态" clearable>
             <el-option label="待审核" value="pending" />
             <el-option label="已通过" value="approved" />
             <el-option label="已拒绝" value="rejected" />
@@ -70,13 +58,7 @@
 
     <!-- 数据表格 -->
     <el-card class="table-card">
-      <el-table
-        :data="tableData"
-        v-loading="loading"
-        stripe
-        border
-        style="width: 100%"
-      >
+      <el-table :data="tableData" v-loading="loading" stripe border style="width: 100%">
         <el-table-column prop="refundId" label="申请单号" width="140" />
         <el-table-column prop="visitorName" label="游客姓名" width="120" />
         <el-table-column prop="ticketType" label="票种" width="120" />
@@ -86,12 +68,7 @@
         <el-table-column prop="refundAmount" label="退款金额" width="100">
           <template #default="{ row }"> ¥{{ row.refundAmount }} </template>
         </el-table-column>
-        <el-table-column
-          prop="reason"
-          label="退票原因"
-          width="150"
-          show-overflow-tooltip
-        />
+        <el-table-column prop="reason" label="退票原因" width="150" show-overflow-tooltip />
         <el-table-column prop="status" label="状态" width="100">
           <template #default="{ row }">
             <el-tag :type="getStatusType(row.status)">
@@ -102,9 +79,7 @@
         <el-table-column prop="applyTime" label="申请时间" width="160" />
         <el-table-column label="操作" width="200" fixed="right">
           <template #default="{ row }">
-            <el-button type="primary" size="small" @click="handleView(row)">
-              查看
-            </el-button>
+            <el-button type="primary" size="small" @click="handleView(row)"> 查看 </el-button>
             <el-button
               v-if="row.status === 'pending'"
               type="success"
@@ -181,126 +156,126 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from "vue";
-import { ElMessage, ElMessageBox } from "element-plus";
+import { ref, reactive, onMounted } from 'vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
 
 // 搜索表单
 const searchForm = reactive({
-  refundId: "",
-  visitorName: "",
-  status: "",
+  refundId: '',
+  visitorName: '',
+  status: '',
   dateRange: [],
-});
+})
 
 // 表格数据
-const tableData = ref([]);
-const loading = ref(false);
+const tableData = ref([])
+const loading = ref(false)
 
 // 分页信息
 const pagination = reactive({
   currentPage: 1,
   pageSize: 20,
   total: 0,
-});
+})
 
 // 审核对话框
-const approveDialogVisible = ref(false);
+const approveDialogVisible = ref(false)
 const approveForm = reactive({
-  refundId: "",
-  visitorName: "",
+  refundId: '',
+  visitorName: '',
   originalAmount: 0,
   refundAmount: 0,
-  result: "approved",
-  remark: "",
-});
+  result: 'approved',
+  remark: '',
+})
 
 // 模拟数据
 const mockData = [
   {
-    refundId: "RF001",
-    visitorName: "张三",
-    ticketType: "成人票",
+    refundId: 'RF001',
+    visitorName: '张三',
+    ticketType: '成人票',
     originalAmount: 150,
     refundAmount: 120,
-    reason: "行程变更",
-    status: "pending",
-    applyTime: "2024-01-15 10:30:00",
+    reason: '行程变更',
+    status: 'pending',
+    applyTime: '2024-01-15 10:30:00',
   },
   {
-    refundId: "RF002",
-    visitorName: "李四",
-    ticketType: "儿童票",
+    refundId: 'RF002',
+    visitorName: '李四',
+    ticketType: '儿童票',
     originalAmount: 80,
     refundAmount: 64,
-    reason: "身体不适",
-    status: "approved",
-    applyTime: "2024-01-16 14:20:00",
+    reason: '身体不适',
+    status: 'approved',
+    applyTime: '2024-01-16 14:20:00',
   },
   {
-    refundId: "RF003",
-    visitorName: "王五",
-    ticketType: "学生票",
+    refundId: 'RF003',
+    visitorName: '王五',
+    ticketType: '学生票',
     originalAmount: 100,
     refundAmount: 0,
-    reason: "重复购买",
-    status: "rejected",
-    applyTime: "2024-01-17 09:15:00",
+    reason: '重复购买',
+    status: 'rejected',
+    applyTime: '2024-01-17 09:15:00',
   },
-];
+]
 
 // 获取状态类型
 const getStatusType = (status) => {
   const statusMap = {
-    pending: "warning",
-    approved: "success",
-    rejected: "danger",
-    refunded: "info",
-  };
-  return statusMap[status] || "info";
-};
+    pending: 'warning',
+    approved: 'success',
+    rejected: 'danger',
+    refunded: 'info',
+  }
+  return statusMap[status] || 'info'
+}
 
 // 获取状态文本
 const getStatusText = (status) => {
   const statusMap = {
-    pending: "待审核",
-    approved: "已通过",
-    rejected: "已拒绝",
-    refunded: "已退款",
-  };
-  return statusMap[status] || "未知";
-};
+    pending: '待审核',
+    approved: '已通过',
+    rejected: '已拒绝',
+    refunded: '已退款',
+  }
+  return statusMap[status] || '未知'
+}
 
 // 搜索
 const handleSearch = () => {
-  console.log("搜索条件:", searchForm);
-  loadData();
-};
+  console.log('搜索条件:', searchForm)
+  loadData()
+}
 
 // 重置搜索
 const handleReset = () => {
   Object.assign(searchForm, {
-    refundId: "",
-    visitorName: "",
-    status: "",
+    refundId: '',
+    visitorName: '',
+    status: '',
     dateRange: [],
-  });
-  loadData();
-};
+  })
+  loadData()
+}
 
 // 导出数据
 const handleExport = () => {
-  ElMessage.info("导出功能开发中...");
-};
+  ElMessage.info('导出功能开发中...')
+}
 
 // 退票统计
 const handleStatistics = () => {
-  ElMessage.info("退票统计功能开发中...");
-};
+  ElMessage.info('退票统计功能开发中...')
+}
 
 // 查看详情
 const handleView = (row) => {
-  ElMessage.info(`查看退票申请 ${row.refundId} 的详细信息`);
-};
+  ElMessage.info(`查看退票申请 ${row.refundId} 的详细信息`)
+}
 
 // 审核退票
 const handleApprove = (row) => {
@@ -309,69 +284,65 @@ const handleApprove = (row) => {
     visitorName: row.visitorName,
     originalAmount: row.originalAmount,
     refundAmount: row.refundAmount,
-    result: "approved",
-    remark: "",
-  });
-  approveDialogVisible.value = true;
-};
+    result: 'approved',
+    remark: '',
+  })
+  approveDialogVisible.value = true
+}
 
 // 提交审核
 const handleSubmitApprove = () => {
   // 这里应该调用API提交审核结果
-  ElMessage.success("审核提交成功");
-  approveDialogVisible.value = false;
-  loadData();
-};
+  ElMessage.success('审核提交成功')
+  approveDialogVisible.value = false
+  loadData()
+}
 
 // 执行退款
 const handleRefund = async (row) => {
   try {
-    await ElMessageBox.confirm(
-      `确定要为申请单 ${row.refundId} 执行退款操作吗？`,
-      "确认退款",
-      {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-      },
-    );
+    await ElMessageBox.confirm(`确定要为申请单 ${row.refundId} 执行退款操作吗？`, '确认退款', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning',
+    })
 
     // 这里应该调用API执行退款
-    ElMessage.success("退款操作成功");
-    loadData();
+    ElMessage.success('退款操作成功')
+    loadData()
   } catch {
     // 用户取消操作
   }
-};
+}
 
 // 分页大小改变
 const handleSizeChange = (size) => {
-  pagination.pageSize = size;
-  loadData();
-};
+  pagination.pageSize = size
+  loadData()
+}
 
 // 当前页改变
 const handleCurrentChange = (page) => {
-  pagination.currentPage = page;
-  loadData();
-};
+  pagination.currentPage = page
+  loadData()
+}
 
 // 加载数据
 const loadData = () => {
-  loading.value = true;
+  loading.value = true
 
   // 模拟 API 调用
   setTimeout(() => {
-    tableData.value = mockData;
-    pagination.total = mockData.length;
-    loading.value = false;
-  }, 500);
-};
+    tableData.value = mockData
+    pagination.total = mockData.length
+    loading.value = false
+  }, 500)
+}
 
 // 组件挂载时加载数据
 onMounted(() => {
-  loadData();
-});
+  loadData()
+})
 </script>
 
 <style scoped>

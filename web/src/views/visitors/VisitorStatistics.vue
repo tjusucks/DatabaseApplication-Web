@@ -21,10 +21,7 @@
           />
         </el-form-item>
         <el-form-item label="快速选择">
-          <el-radio-group
-            v-model="filterForm.quickSelect"
-            @change="handleQuickSelectChange"
-          >
+          <el-radio-group v-model="filterForm.quickSelect" @change="handleQuickSelectChange">
             <el-radio-button label="today">今日</el-radio-button>
             <el-radio-button label="week">本周</el-radio-button>
             <el-radio-button label="month">本月</el-radio-button>
@@ -32,11 +29,7 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item>
-          <el-button
-            type="primary"
-            @click="handleRefreshData"
-            :loading="loading"
-          >
+          <el-button type="primary" @click="handleRefreshData" :loading="loading">
             <el-icon><Refresh /></el-icon>
             刷新数据
           </el-button>
@@ -55,10 +48,7 @@
           <div class="metric-content">
             <div class="metric-value">{{ metrics.totalVisitors }}</div>
             <div class="metric-label">总游客数</div>
-            <div
-              class="metric-change"
-              :class="getChangeClass(metrics.visitorChange)"
-            >
+            <div class="metric-change" :class="getChangeClass(metrics.visitorChange)">
               <el-icon><TrendCharts /></el-icon>
               {{ formatChange(metrics.visitorChange) }}
             </div>
@@ -71,10 +61,7 @@
           <div class="metric-content">
             <div class="metric-value">{{ metrics.totalMembers }}</div>
             <div class="metric-label">会员总数</div>
-            <div
-              class="metric-change"
-              :class="getChangeClass(metrics.memberChange)"
-            >
+            <div class="metric-change" :class="getChangeClass(metrics.memberChange)">
               <el-icon><TrendCharts /></el-icon>
               {{ formatChange(metrics.memberChange) }}
             </div>
@@ -87,17 +74,12 @@
           <div class="metric-content">
             <div class="metric-value">{{ metrics.totalEntries }}</div>
             <div class="metric-label">总入园次数</div>
-            <div
-              class="metric-change"
-              :class="getChangeClass(metrics.entryChange)"
-            >
+            <div class="metric-change" :class="getChangeClass(metrics.entryChange)">
               <el-icon><TrendCharts /></el-icon>
               {{ formatChange(metrics.entryChange) }}
             </div>
           </div>
-          <el-icon class="metric-icon" color="#e6a23c"
-            ><LocationInformation
-          /></el-icon>
+          <el-icon class="metric-icon" color="#e6a23c"><LocationInformation /></el-icon>
         </el-card>
       </el-col>
       <el-col :span="6">
@@ -107,10 +89,7 @@
               {{ formatDuration(metrics.avgStayTime) }}
             </div>
             <div class="metric-label">平均停留时间</div>
-            <div
-              class="metric-change"
-              :class="getChangeClass(metrics.stayTimeChange)"
-            >
+            <div class="metric-change" :class="getChangeClass(metrics.stayTimeChange)">
               <el-icon><TrendCharts /></el-icon>
               {{ formatChange(metrics.stayTimeChange) }}
             </div>
@@ -128,9 +107,7 @@
           <template #header>
             <div class="chart-header">
               <span>游客类型分布</span>
-              <el-tag type="info">{{
-                filterForm.dateRange ? "时间段内" : "全部"
-              }}</el-tag>
+              <el-tag type="info">{{ filterForm.dateRange ? '时间段内' : '全部' }}</el-tag>
             </div>
           </template>
           <div class="chart-container" ref="visitorTypeChartRef">
@@ -140,15 +117,11 @@
               <div class="chart-data">
                 <div class="data-item">
                   <span class="data-label">普通游客:</span>
-                  <span class="data-value">{{
-                    chartData.visitorTypes.regular
-                  }}</span>
+                  <span class="data-value">{{ chartData.visitorTypes.regular }}</span>
                 </div>
                 <div class="data-item">
                   <span class="data-label">会员:</span>
-                  <span class="data-value">{{
-                    chartData.visitorTypes.member
-                  }}</span>
+                  <span class="data-value">{{ chartData.visitorTypes.member }}</span>
                 </div>
               </div>
             </div>
@@ -172,27 +145,19 @@
               <div class="chart-data">
                 <div class="data-item">
                   <span class="data-label">青铜:</span>
-                  <span class="data-value">{{
-                    chartData.memberLevels.bronze
-                  }}</span>
+                  <span class="data-value">{{ chartData.memberLevels.bronze }}</span>
                 </div>
                 <div class="data-item">
                   <span class="data-label">白银:</span>
-                  <span class="data-value">{{
-                    chartData.memberLevels.silver
-                  }}</span>
+                  <span class="data-value">{{ chartData.memberLevels.silver }}</span>
                 </div>
                 <div class="data-item">
                   <span class="data-label">黄金:</span>
-                  <span class="data-value">{{
-                    chartData.memberLevels.gold
-                  }}</span>
+                  <span class="data-value">{{ chartData.memberLevels.gold }}</span>
                 </div>
                 <div class="data-item">
                   <span class="data-label">铂金:</span>
-                  <span class="data-value">{{
-                    chartData.memberLevels.platinum
-                  }}</span>
+                  <span class="data-value">{{ chartData.memberLevels.platinum }}</span>
                 </div>
               </div>
             </div>
@@ -252,9 +217,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="revenue" label="相关收入" width="120">
-          <template #default="{ row }">
-            ¥{{ row.revenue.toLocaleString() }}
-          </template>
+          <template #default="{ row }"> ¥{{ row.revenue.toLocaleString() }} </template>
         </el-table-column>
         <el-table-column prop="satisfaction" label="满意度" width="100">
           <template #default="{ row }">
@@ -279,26 +242,23 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, computed } from "vue";
-import { ElMessage } from "element-plus";
-import { getVisitorStats, getGroupedVisitorStats } from "@/api/visitors";
-import {
-  getEntryRecordStats,
-  getGroupedEntryRecordStats,
-} from "@/api/entryRecords";
+import { ref, reactive, onMounted, computed } from 'vue'
+import { ElMessage } from 'element-plus'
+import { getVisitorStats, getGroupedVisitorStats } from '@/api/visitors'
+import { getEntryRecordStats, getGroupedEntryRecordStats } from '@/api/entryRecords'
 
 // 加载状态
-const loading = ref(false);
-const tableLoading = ref(false);
+const loading = ref(false)
+const tableLoading = ref(false)
 
 // 筛选表单
 const filterForm = reactive({
   dateRange: [],
-  quickSelect: "month",
-});
+  quickSelect: 'month',
+})
 
 // 趋势类型
-const trendType = ref("daily");
+const trendType = ref('daily')
 
 // 核心指标
 const metrics = reactive({
@@ -310,7 +270,7 @@ const metrics = reactive({
   memberChange: 0,
   entryChange: 0,
   stayTimeChange: 0,
-});
+})
 
 // 图表数据
 const chartData = reactive({
@@ -325,214 +285,210 @@ const chartData = reactive({
     platinum: 0,
   },
   trendData: [],
-});
+})
 
 // 统计表格数据
-const statisticsTable = ref([]);
+const statisticsTable = ref([])
 const tablePagination = reactive({
   currentPage: 1,
   pageSize: 20,
   total: 0,
-});
+})
 
 // 图表引用
-const visitorTypeChartRef = ref(null);
-const memberLevelChartRef = ref(null);
-const trendChartRef = ref(null);
+const visitorTypeChartRef = ref(null)
+const memberLevelChartRef = ref(null)
+const trendChartRef = ref(null)
 
 // 格式化时长
 const formatDuration = (minutes) => {
-  if (!minutes || minutes === 0) return "-";
-  const hours = Math.floor(minutes / 60);
-  const mins = minutes % 60;
+  if (!minutes || minutes === 0) return '-'
+  const hours = Math.floor(minutes / 60)
+  const mins = minutes % 60
   if (hours > 0) {
-    return `${hours}小时${mins}分钟`;
+    return `${hours}小时${mins}分钟`
   } else {
-    return `${mins}分钟`;
+    return `${mins}分钟`
   }
-};
+}
 
 // 格式化变化百分比
 const formatChange = (change) => {
-  if (change === 0) return "0%";
-  const sign = change > 0 ? "+" : "";
-  return `${sign}${change.toFixed(1)}%`;
-};
+  if (change === 0) return '0%'
+  const sign = change > 0 ? '+' : ''
+  return `${sign}${change.toFixed(1)}%`
+}
 
 // 获取变化样式类
 const getChangeClass = (change) => {
-  if (change > 0) return "positive";
-  if (change < 0) return "negative";
-  return "neutral";
-};
+  if (change > 0) return 'positive'
+  if (change < 0) return 'negative'
+  return 'neutral'
+}
 
 // 日期范围变化
 const handleDateRangeChange = (dateRange) => {
   if (dateRange) {
-    filterForm.quickSelect = "";
+    filterForm.quickSelect = ''
   }
-  loadAllData();
-};
+  loadAllData()
+}
 
 // 快速选择变化
 const handleQuickSelectChange = (value) => {
-  const now = new Date();
+  const now = new Date()
   let startDate,
-    endDate = new Date();
+    endDate = new Date()
 
   switch (value) {
-    case "today":
-      startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-      break;
-    case "week":
-      const weekStart = new Date(now);
-      weekStart.setDate(now.getDate() - now.getDay());
-      startDate = new Date(
-        weekStart.getFullYear(),
-        weekStart.getMonth(),
-        weekStart.getDate(),
-      );
-      break;
-    case "month":
-      startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-      break;
-    case "quarter":
-      const quarterStart = Math.floor(now.getMonth() / 3) * 3;
-      startDate = new Date(now.getFullYear(), quarterStart, 1);
-      break;
+    case 'today':
+      startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+      break
+    case 'week':
+      const weekStart = new Date(now)
+      weekStart.setDate(now.getDate() - now.getDay())
+      startDate = new Date(weekStart.getFullYear(), weekStart.getMonth(), weekStart.getDate())
+      break
+    case 'month':
+      startDate = new Date(now.getFullYear(), now.getMonth(), 1)
+      break
+    case 'quarter':
+      const quarterStart = Math.floor(now.getMonth() / 3) * 3
+      startDate = new Date(now.getFullYear(), quarterStart, 1)
+      break
     default:
-      return;
+      return
   }
 
-  filterForm.dateRange = [startDate, endDate];
-  loadAllData();
-};
+  filterForm.dateRange = [startDate, endDate]
+  loadAllData()
+}
 
 // 刷新数据
 const handleRefreshData = () => {
-  loadAllData();
-};
+  loadAllData()
+}
 
 // 导出报表
 const handleExportReport = () => {
-  ElMessage.info("导出报表功能开发中...");
-};
+  ElMessage.info('导出报表功能开发中...')
+}
 
 // 导出表格
 const handleExportTable = () => {
-  ElMessage.info("导出表格功能开发中...");
-};
+  ElMessage.info('导出表格功能开发中...')
+}
 
 // 表格分页
 const handleTableSizeChange = (size) => {
-  tablePagination.pageSize = size;
-  tablePagination.currentPage = 1;
-  loadStatisticsTable();
-};
+  tablePagination.pageSize = size
+  tablePagination.currentPage = 1
+  loadStatisticsTable()
+}
 
 const handleTableCurrentChange = (page) => {
-  tablePagination.currentPage = page;
-  loadStatisticsTable();
-};
+  tablePagination.currentPage = page
+  loadStatisticsTable()
+}
 
 // 加载核心指标
 const loadMetrics = async () => {
   try {
-    const params = {};
+    const params = {}
     if (filterForm.dateRange && filterForm.dateRange.length === 2) {
-      params.startDate = filterForm.dateRange[0].toISOString();
-      params.endDate = filterForm.dateRange[1].toISOString();
+      params.startDate = filterForm.dateRange[0].toISOString()
+      params.endDate = filterForm.dateRange[1].toISOString()
     }
 
     const [visitorStatsResponse, entryStatsResponse] = await Promise.all([
       getVisitorStats({ ...params, includeChanges: true }),
       getEntryRecordStats({ ...params, includeChanges: true }),
-    ]);
+    ])
 
     if (visitorStatsResponse) {
-      metrics.totalVisitors = visitorStatsResponse.totalVisitors || 0;
-      metrics.totalMembers = visitorStatsResponse.totalMembers || 0;
-      metrics.visitorChange = visitorStatsResponse.visitorChange || 0;
-      metrics.memberChange = visitorStatsResponse.memberChange || 0;
+      metrics.totalVisitors = visitorStatsResponse.totalVisitors || 0
+      metrics.totalMembers = visitorStatsResponse.totalMembers || 0
+      metrics.visitorChange = visitorStatsResponse.visitorChange || 0
+      metrics.memberChange = visitorStatsResponse.memberChange || 0
     }
 
     if (entryStatsResponse) {
-      metrics.totalEntries = entryStatsResponse.totalEntries || 0;
-      metrics.avgStayTime = entryStatsResponse.avgStayTime || 0;
-      metrics.entryChange = entryStatsResponse.entryChange || 0;
-      metrics.stayTimeChange = entryStatsResponse.stayTimeChange || 0;
+      metrics.totalEntries = entryStatsResponse.totalEntries || 0
+      metrics.avgStayTime = entryStatsResponse.avgStayTime || 0
+      metrics.entryChange = entryStatsResponse.entryChange || 0
+      metrics.stayTimeChange = entryStatsResponse.stayTimeChange || 0
     }
   } catch (error) {
-    console.error("加载核心指标失败:", error);
+    console.error('加载核心指标失败:', error)
     // 使用模拟数据
-    metrics.totalVisitors = 1250;
-    metrics.totalMembers = 380;
-    metrics.totalEntries = 2100;
-    metrics.avgStayTime = 180;
-    metrics.visitorChange = 12.5;
-    metrics.memberChange = 8.3;
-    metrics.entryChange = 15.2;
-    metrics.stayTimeChange = -2.1;
+    metrics.totalVisitors = 1250
+    metrics.totalMembers = 380
+    metrics.totalEntries = 2100
+    metrics.avgStayTime = 180
+    metrics.visitorChange = 12.5
+    metrics.memberChange = 8.3
+    metrics.entryChange = 15.2
+    metrics.stayTimeChange = -2.1
   }
-};
+}
 
 // 加载图表数据
 const loadChartData = async () => {
   try {
-    const params = {};
+    const params = {}
     if (filterForm.dateRange && filterForm.dateRange.length === 2) {
-      params.startDate = filterForm.dateRange[0].toISOString();
-      params.endDate = filterForm.dateRange[1].toISOString();
+      params.startDate = filterForm.dateRange[0].toISOString()
+      params.endDate = filterForm.dateRange[1].toISOString()
     }
 
     const [visitorGroupedResponse, entryGroupedResponse] = await Promise.all([
-      getGroupedVisitorStats({ ...params, groupBy: "type" }),
+      getGroupedVisitorStats({ ...params, groupBy: 'type' }),
       getGroupedEntryRecordStats({ ...params, groupBy: trendType.value }),
-    ]);
+    ])
 
     if (visitorGroupedResponse) {
-      const data = visitorGroupedResponse;
-      chartData.visitorTypes.regular = data.regular || 0;
-      chartData.visitorTypes.member = data.member || 0;
+      const data = visitorGroupedResponse
+      chartData.visitorTypes.regular = data.regular || 0
+      chartData.visitorTypes.member = data.member || 0
 
       if (data.memberLevels) {
-        chartData.memberLevels.bronze = data.memberLevels.bronze || 0;
-        chartData.memberLevels.silver = data.memberLevels.silver || 0;
-        chartData.memberLevels.gold = data.memberLevels.gold || 0;
-        chartData.memberLevels.platinum = data.memberLevels.platinum || 0;
+        chartData.memberLevels.bronze = data.memberLevels.bronze || 0
+        chartData.memberLevels.silver = data.memberLevels.silver || 0
+        chartData.memberLevels.gold = data.memberLevels.gold || 0
+        chartData.memberLevels.platinum = data.memberLevels.platinum || 0
       }
     }
 
     if (entryGroupedResponse) {
-      chartData.trendData = entryGroupedResponse.items || [];
+      chartData.trendData = entryGroupedResponse.items || []
     }
   } catch (error) {
-    console.error("加载图表数据失败:", error);
+    console.error('加载图表数据失败:', error)
     // 使用模拟数据
-    chartData.visitorTypes.regular = 870;
-    chartData.visitorTypes.member = 380;
-    chartData.memberLevels.bronze = 180;
-    chartData.memberLevels.silver = 120;
-    chartData.memberLevels.gold = 60;
-    chartData.memberLevels.platinum = 20;
+    chartData.visitorTypes.regular = 870
+    chartData.visitorTypes.member = 380
+    chartData.memberLevels.bronze = 180
+    chartData.memberLevels.silver = 120
+    chartData.memberLevels.gold = 60
+    chartData.memberLevels.platinum = 20
   }
-};
+}
 
 // 加载统计表格
 const loadStatisticsTable = async () => {
   try {
-    tableLoading.value = true;
+    tableLoading.value = true
 
     // 模拟统计表格数据
-    const mockData = [];
-    const now = new Date();
+    const mockData = []
+    const now = new Date()
 
     for (let i = 0; i < 30; i++) {
-      const date = new Date(now);
-      date.setDate(now.getDate() - i);
+      const date = new Date(now)
+      date.setDate(now.getDate() - i)
 
       mockData.push({
-        date: date.toLocaleDateString("zh-CN"),
+        date: date.toLocaleDateString('zh-CN'),
         totalVisitors: Math.floor(Math.random() * 100) + 50,
         newVisitors: Math.floor(Math.random() * 20) + 5,
         memberVisitors: Math.floor(Math.random() * 40) + 15,
@@ -540,40 +496,40 @@ const loadStatisticsTable = async () => {
         avgStayTime: Math.floor(Math.random() * 120) + 120,
         revenue: Math.floor(Math.random() * 50000) + 20000,
         satisfaction: (Math.random() * 2 + 3).toFixed(1),
-      });
+      })
     }
 
     statisticsTable.value = mockData.slice(
       (tablePagination.currentPage - 1) * tablePagination.pageSize,
       tablePagination.currentPage * tablePagination.pageSize,
-    );
-    tablePagination.total = mockData.length;
+    )
+    tablePagination.total = mockData.length
   } catch (error) {
-    console.error("加载统计表格失败:", error);
-    ElMessage.error("加载统计表格失败：" + error.message);
+    console.error('加载统计表格失败:', error)
+    ElMessage.error('加载统计表格失败：' + error.message)
   } finally {
-    tableLoading.value = false;
+    tableLoading.value = false
   }
-};
+}
 
 // 加载所有数据
 const loadAllData = async () => {
   try {
-    loading.value = true;
-    await Promise.all([loadMetrics(), loadChartData(), loadStatisticsTable()]);
+    loading.value = true
+    await Promise.all([loadMetrics(), loadChartData(), loadStatisticsTable()])
   } catch (error) {
-    console.error("加载数据失败:", error);
-    ElMessage.error("加载数据失败：" + error.message);
+    console.error('加载数据失败:', error)
+    ElMessage.error('加载数据失败：' + error.message)
   } finally {
-    loading.value = false;
+    loading.value = false
   }
-};
+}
 
 // 组件挂载时加载数据
 onMounted(() => {
   // 默认选择本月
-  handleQuickSelectChange("month");
-});
+  handleQuickSelectChange('month')
+})
 </script>
 
 <style scoped>

@@ -26,16 +26,10 @@
           <div class="card-header">
             <span>基本信息</span>
             <div class="status-tags">
-              <el-tag
-                :type="
-                  visitorData.visitorType === 'Member' ? 'success' : 'info'
-                "
-              >
-                {{ visitorData.visitorType === "Member" ? "会员" : "普通游客" }}
+              <el-tag :type="visitorData.visitorType === 'Member' ? 'success' : 'info'">
+                {{ visitorData.visitorType === 'Member' ? '会员' : '普通游客' }}
               </el-tag>
-              <el-tag v-if="visitorData.isBlacklisted" type="danger"
-                >已拉黑</el-tag
-              >
+              <el-tag v-if="visitorData.isBlacklisted" type="danger">已拉黑</el-tag>
             </div>
           </div>
         </template>
@@ -48,15 +42,15 @@
             </div>
             <div class="info-item">
               <label>姓名：</label>
-              <span>{{ visitorData.user?.displayName || "-" }}</span>
+              <span>{{ visitorData.user?.displayName || '-' }}</span>
             </div>
             <div class="info-item">
               <label>邮箱：</label>
-              <span>{{ visitorData.user?.email || "-" }}</span>
+              <span>{{ visitorData.user?.email || '-' }}</span>
             </div>
             <div class="info-item">
               <label>电话：</label>
-              <span>{{ visitorData.user?.phoneNumber || "-" }}</span>
+              <span>{{ visitorData.user?.phoneNumber || '-' }}</span>
             </div>
           </el-col>
           <el-col :span="12">
@@ -81,10 +75,7 @@
       </el-card>
 
       <!-- 会员信息卡片 -->
-      <el-card
-        class="info-card"
-        v-if="visitorData && visitorData.visitorType === 'Member'"
-      >
+      <el-card class="info-card" v-if="visitorData && visitorData.visitorType === 'Member'">
         <template #header>
           <div class="card-header">
             <span>会员信息</span>
@@ -149,7 +140,7 @@
           </el-table-column>
           <el-table-column label="出园时间" width="180">
             <template #default="{ row }">
-              {{ row.exitTime ? formatDate(row.exitTime) : "未出园" }}
+              {{ row.exitTime ? formatDate(row.exitTime) : '未出园' }}
             </template>
           </el-table-column>
           <el-table-column prop="entryGate" label="入园门" width="120" />
@@ -162,7 +153,7 @@
           <el-table-column label="状态" width="100">
             <template #default="{ row }">
               <el-tag :type="row.exitTime ? 'info' : 'success'">
-                {{ row.exitTime ? "已出园" : "在园中" }}
+                {{ row.exitTime ? '已出园' : '在园中' }}
               </el-tag>
             </template>
           </el-table-column>
@@ -213,12 +204,7 @@
     >
       <el-form :model="pointsForm" label-width="80px">
         <el-form-item label="积分数量" required>
-          <el-input-number
-            v-model="pointsForm.points"
-            :min="1"
-            :max="10000"
-            style="width: 100%"
-          />
+          <el-input-number v-model="pointsForm.points" :min="1" :max="10000" style="width: 100%" />
         </el-form-item>
         <el-form-item label="操作原因">
           <el-input
@@ -232,11 +218,7 @@
 
       <template #footer>
         <el-button @click="pointsDialogVisible = false">取消</el-button>
-        <el-button
-          type="primary"
-          @click="handlePointsSubmit"
-          :loading="pointsSubmitting"
-        >
+        <el-button type="primary" @click="handlePointsSubmit" :loading="pointsSubmitting">
           确定
         </el-button>
       </template>
@@ -245,232 +227,227 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, computed } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import { ElMessage, ElMessageBox } from "element-plus";
-import {
-  getVisitorById,
-  addPoints,
-  deductPoints,
-  updateVisitor,
-} from "@/api/visitors";
-import { searchEntryRecords } from "@/api/entryRecords";
+import { ref, reactive, onMounted, computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { getVisitorById, addPoints, deductPoints, updateVisitor } from '@/api/visitors'
+import { searchEntryRecords } from '@/api/entryRecords'
 
-const route = useRoute();
-const router = useRouter();
+const route = useRoute()
+const router = useRouter()
 
 // 数据状态
-const loading = ref(false);
-const visitorData = ref(null);
-const entryRecords = ref([]);
-const entryRecordsLoading = ref(false);
-const operationRecords = ref([]);
+const loading = ref(false)
+const visitorData = ref(null)
+const entryRecords = ref([])
+const entryRecordsLoading = ref(false)
+const operationRecords = ref([])
 
 // 分页
 const entryPagination = reactive({
   currentPage: 1,
   pageSize: 10,
   total: 0,
-});
+})
 
 // 积分操作
-const pointsDialogVisible = ref(false);
-const pointsOperation = ref("add"); // 'add' or 'deduct'
-const pointsSubmitting = ref(false);
+const pointsDialogVisible = ref(false)
+const pointsOperation = ref('add') // 'add' or 'deduct'
+const pointsSubmitting = ref(false)
 const pointsForm = reactive({
   points: 100,
-  reason: "",
-});
+  reason: '',
+})
 
 // 获取游客ID
-const visitorId = computed(() => route.params.id);
+const visitorId = computed(() => route.params.id)
 
 // 格式化日期
 const formatDate = (dateString) => {
-  if (!dateString) return "-";
-  return new Date(dateString).toLocaleString("zh-CN");
-};
+  if (!dateString) return '-'
+  return new Date(dateString).toLocaleString('zh-CN')
+}
 
 // 格式化性别
 const formatGender = (gender) => {
   const genderMap = {
-    0: "男",
-    1: "女",
-    2: "其他",
-  };
-  return genderMap[gender] || "-";
-};
+    0: '男',
+    1: '女',
+    2: '其他',
+  }
+  return genderMap[gender] || '-'
+}
 
 // 格式化会员等级
 const formatMemberLevel = (level) => {
   const levelMap = {
-    Bronze: "青铜",
-    Silver: "白银",
-    Gold: "黄金",
-    Platinum: "铂金",
-  };
-  return levelMap[level] || level;
-};
+    Bronze: '青铜',
+    Silver: '白银',
+    Gold: '黄金',
+    Platinum: '铂金',
+  }
+  return levelMap[level] || level
+}
 
 // 获取会员等级标签类型
 const getMemberLevelType = (level) => {
   const typeMap = {
-    Bronze: "",
-    Silver: "info",
-    Gold: "warning",
-    Platinum: "success",
-  };
-  return typeMap[level] || "";
-};
+    Bronze: '',
+    Silver: 'info',
+    Gold: 'warning',
+    Platinum: 'success',
+  }
+  return typeMap[level] || ''
+}
 
 // 计算游玩时长
 const calculateDuration = (entryTime, exitTime) => {
-  if (!exitTime) return "-";
+  if (!exitTime) return '-'
 
-  const entry = new Date(entryTime);
-  const exit = new Date(exitTime);
-  const duration = exit - entry;
+  const entry = new Date(entryTime)
+  const exit = new Date(exitTime)
+  const duration = exit - entry
 
-  const hours = Math.floor(duration / (1000 * 60 * 60));
-  const minutes = Math.floor((duration % (1000 * 60 * 60)) / (1000 * 60));
+  const hours = Math.floor(duration / (1000 * 60 * 60))
+  const minutes = Math.floor((duration % (1000 * 60 * 60)) / (1000 * 60))
 
   if (hours > 0) {
-    return `${hours}小时${minutes}分钟`;
+    return `${hours}小时${minutes}分钟`
   } else {
-    return `${minutes}分钟`;
+    return `${minutes}分钟`
   }
-};
+}
 
 // 获取操作类型
 const getOperationType = (type) => {
   const typeMap = {
-    create: "primary",
-    update: "info",
-    blacklist: "danger",
-    unblacklist: "success",
-    member: "warning",
-    points: "success",
-  };
-  return typeMap[type] || "info";
-};
+    create: 'primary',
+    update: 'info',
+    blacklist: 'danger',
+    unblacklist: 'success',
+    member: 'warning',
+    points: 'success',
+  }
+  return typeMap[type] || 'info'
+}
 
 // 加载游客数据
 const loadVisitorData = async () => {
   try {
-    loading.value = true;
+    loading.value = true
 
-    const response = await getVisitorById(visitorId.value);
-    visitorData.value = response;
+    const response = await getVisitorById(visitorId.value)
+    visitorData.value = response
 
     // 加载入园记录
-    await loadEntryRecords();
+    await loadEntryRecords()
 
     // 模拟操作记录
     operationRecords.value = [
       {
         id: 1,
-        type: "create",
-        description: "游客注册",
+        type: 'create',
+        description: '游客注册',
         timestamp: visitorData.value.user?.createdAt,
       },
-    ];
+    ]
 
     if (visitorData.value.memberSince) {
       operationRecords.value.push({
         id: 2,
-        type: "member",
-        description: "升级为会员",
+        type: 'member',
+        description: '升级为会员',
         timestamp: visitorData.value.memberSince,
-      });
+      })
     }
   } catch (error) {
-    console.error("加载游客数据失败:", error);
-    ElMessage.error("加载游客数据失败：" + error.message);
+    console.error('加载游客数据失败:', error)
+    ElMessage.error('加载游客数据失败：' + error.message)
   } finally {
-    loading.value = false;
+    loading.value = false
   }
-};
+}
 
 // 加载入园记录
 const loadEntryRecords = async () => {
   try {
-    entryRecordsLoading.value = true;
+    entryRecordsLoading.value = true
     const response = await searchEntryRecords({
       visitorId: visitorId.value,
       page: entryPagination.currentPage,
       pageSize: entryPagination.pageSize,
-    });
+    })
 
     if (response) {
-      entryRecords.value = response.items || response;
-      entryPagination.total = response.totalCount || response.length || 0;
+      entryRecords.value = response.items || response
+      entryPagination.total = response.totalCount || response.length || 0
     }
   } catch (error) {
-    console.error("加载入园记录失败:", error);
-    ElMessage.error("加载入园记录失败：" + error.message);
+    console.error('加载入园记录失败:', error)
+    ElMessage.error('加载入园记录失败：' + error.message)
   } finally {
-    entryRecordsLoading.value = false;
+    entryRecordsLoading.value = false
   }
-};
+}
 
 // 刷新入园记录
 const refreshEntryRecords = () => {
-  entryPagination.currentPage = 1;
-  loadEntryRecords();
-};
+  entryPagination.currentPage = 1
+  loadEntryRecords()
+}
 
 // 入园记录分页
 const handleEntryPageChange = (page) => {
-  entryPagination.currentPage = page;
-  loadEntryRecords();
-};
+  entryPagination.currentPage = page
+  loadEntryRecords()
+}
 
 // 编辑游客
 const handleEdit = () => {
-  router.push(`/visitors/${visitorId.value}/edit`);
-};
+  router.push(`/visitors/${visitorId.value}/edit`)
+}
 
 // 积分操作
 const handlePointsOperation = (operation) => {
-  pointsOperation.value = operation;
-  pointsForm.points = 100;
-  pointsForm.reason = "";
-  pointsDialogVisible.value = true;
-};
+  pointsOperation.value = operation
+  pointsForm.points = 100
+  pointsForm.reason = ''
+  pointsDialogVisible.value = true
+}
 
 // 提交积分操作
 const handlePointsSubmit = async () => {
   try {
-    pointsSubmitting.value = true;
+    pointsSubmitting.value = true
 
     const data = {
       points: pointsForm.points,
       reason: pointsForm.reason,
-    };
-
-    if (pointsOperation.value === "add") {
-      await addPoints(visitorId.value, data);
-      ElMessage.success("积分增加成功");
-    } else {
-      await deductPoints(visitorId.value, data);
-      ElMessage.success("积分扣除成功");
     }
 
-    pointsDialogVisible.value = false;
-    await loadVisitorData(); // 重新加载数据
+    if (pointsOperation.value === 'add') {
+      await addPoints(visitorId.value, data)
+      ElMessage.success('积分增加成功')
+    } else {
+      await deductPoints(visitorId.value, data)
+      ElMessage.success('积分扣除成功')
+    }
+
+    pointsDialogVisible.value = false
+    await loadVisitorData() // 重新加载数据
   } catch (error) {
-    ElMessage.error("积分操作失败：" + error.message);
+    ElMessage.error('积分操作失败：' + error.message)
   } finally {
-    pointsSubmitting.value = false;
+    pointsSubmitting.value = false
   }
-};
+}
 
 // 组件挂载时加载数据
 onMounted(() => {
   if (visitorId.value) {
-    loadVisitorData();
+    loadVisitorData()
   }
-});
+})
 </script>
 
 <style scoped>

@@ -53,7 +53,7 @@
             @click="handleLogin"
             class="login-btn"
           >
-            {{ loading ? "登录中..." : "登录" }}
+            {{ loading ? '登录中...' : '登录' }}
           </el-button>
         </el-form-item>
       </el-form>
@@ -82,83 +82,83 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from "vue";
-import { useRouter } from "vue-router";
-import { ElMessage } from "element-plus";
-import { useUserStore } from "@/stores/user";
+import { ref, reactive, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus'
+import { useUserStore } from '@/stores/user'
 
-const router = useRouter();
-const userStore = useUserStore();
+const router = useRouter()
+const userStore = useUserStore()
 
 // 表单引用
-const loginFormRef = ref();
+const loginFormRef = ref()
 
 // 加载状态
-const loading = ref(false);
+const loading = ref(false)
 
 // 登录表单数据
 const loginForm = reactive({
-  username: "",
-  password: "",
+  username: '',
+  password: '',
   remember: false,
-});
+})
 
 // 表单验证规则
 const loginRules = {
   username: [
-    { required: true, message: "请输入用户名", trigger: "blur" },
+    { required: true, message: '请输入用户名', trigger: 'blur' },
     {
       min: 2,
       max: 20,
-      message: "用户名长度在 2 到 20 个字符",
-      trigger: "blur",
+      message: '用户名长度在 2 到 20 个字符',
+      trigger: 'blur',
     },
   ],
   password: [
-    { required: true, message: "请输入密码", trigger: "blur" },
-    { min: 6, max: 20, message: "密码长度在 6 到 20 个字符", trigger: "blur" },
+    { required: true, message: '请输入密码', trigger: 'blur' },
+    { min: 6, max: 20, message: '密码长度在 6 到 20 个字符', trigger: 'blur' },
   ],
-};
+}
 
 // 处理登录
 const handleLogin = async () => {
-  if (!loginFormRef.value) return;
+  if (!loginFormRef.value) return
 
   try {
-    const valid = await loginFormRef.value.validate();
-    if (!valid) return;
+    const valid = await loginFormRef.value.validate()
+    if (!valid) return
 
-    loading.value = true;
+    loading.value = true
 
-    await userStore.login(loginForm);
+    await userStore.login(loginForm)
 
-    ElMessage.success("登录成功");
-    router.push("/");
+    ElMessage.success('登录成功')
+    router.push('/')
   } catch (error) {
-    console.error("登录失败:", error);
+    console.error('登录失败:', error)
   } finally {
-    loading.value = false;
+    loading.value = false
   }
-};
+}
 
 // 快速登录
 const quickLogin = (type) => {
-  if (type === "admin") {
-    loginForm.username = "admin";
-    loginForm.password = "123456";
-  } else if (type === "employee") {
-    loginForm.username = "employee";
-    loginForm.password = "123456";
+  if (type === 'admin') {
+    loginForm.username = 'admin'
+    loginForm.password = '123456'
+  } else if (type === 'employee') {
+    loginForm.username = 'employee'
+    loginForm.password = '123456'
   }
-};
+}
 
 // 组件挂载时的初始化
 onMounted(() => {
   // 如果已经登录，直接跳转到首页
   if (userStore.isLoggedIn) {
-    router.push("/");
+    router.push('/')
   }
-});
+})
 </script>
 
 <style scoped>

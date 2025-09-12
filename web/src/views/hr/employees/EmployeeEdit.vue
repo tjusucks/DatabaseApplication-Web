@@ -117,12 +117,7 @@
 
         <div class="form-actions">
           <el-button @click="handleCancel">取消</el-button>
-          <el-button
-            type="primary"
-            @click="handleSubmit"
-            :loading="submitLoading"
-            >保存</el-button
-          >
+          <el-button type="primary" @click="handleSubmit" :loading="submitLoading">保存</el-button>
         </div>
       </el-form>
     </el-card>
@@ -130,91 +125,91 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import { ElMessage } from "element-plus";
-import { getEmployeeById, updateEmployee } from "@/api/hr";
+import { ref, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus'
+import { getEmployeeById, updateEmployee } from '@/api/hr'
 
 // 路由和参数
-const route = useRoute();
-const router = useRouter();
+const route = useRoute()
+const router = useRouter()
 
 // 表单引用
-const formRef = ref();
+const formRef = ref()
 
 // 提交状态
-const submitLoading = ref(false);
+const submitLoading = ref(false)
 
 // 员工表单数据
 const employeeForm = ref({
   employeeId: 0,
-  staffNumber: "",
-  position: "",
-  departmentName: "",
+  staffNumber: '',
+  position: '',
+  departmentName: '',
   staffType: null,
-  hireDate: "",
+  hireDate: '',
   employmentStatus: 0,
-  certification: "",
-  responsibilityArea: "",
+  certification: '',
+  responsibilityArea: '',
   teamId: null,
   managerId: null,
-});
+})
 
 // 员工类型选项
 const staffTypeOptions = [
-  { value: 0, label: "普通员工" },
-  { value: 1, label: "检查员" },
-  { value: 2, label: "技工" },
-  { value: 3, label: "管理人员" },
-];
+  { value: 0, label: '普通员工' },
+  { value: 1, label: '检查员' },
+  { value: 2, label: '技工' },
+  { value: 3, label: '管理人员' },
+]
 
 // 工作状态选项
 const employmentStatusOptions = [
-  { value: 0, label: "在职" },
-  { value: 1, label: "已离职" },
-  { value: 2, label: "休假中" },
-];
+  { value: 0, label: '在职' },
+  { value: 1, label: '已离职' },
+  { value: 2, label: '休假中' },
+]
 
 // 表单验证规则
 const formRules = {
-  staffNumber: [{ required: true, message: "请输入员工编号", trigger: "blur" }],
-  position: [{ required: true, message: "请输入职位", trigger: "blur" }],
-};
+  staffNumber: [{ required: true, message: '请输入员工编号', trigger: 'blur' }],
+  position: [{ required: true, message: '请输入职位', trigger: 'blur' }],
+}
 
 // 获取员工详情
 const fetchEmployeeDetail = async (id) => {
   try {
-    const response = await getEmployeeById(id);
-    const employeeData = response.data || response;
+    const response = await getEmployeeById(id)
+    const employeeData = response.data || response
 
     // 填充表单数据
     employeeForm.value = {
       employeeId: employeeData.employeeId,
       staffNumber: employeeData.staffNumber,
       position: employeeData.position,
-      departmentName: employeeData.departmentName || "",
+      departmentName: employeeData.departmentName || '',
       staffType: employeeData.staffType,
       hireDate: employeeData.hireDate,
       employmentStatus: employeeData.employmentStatus,
-      certification: employeeData.certification || "",
-      responsibilityArea: employeeData.responsibilityArea || "",
+      certification: employeeData.certification || '',
+      responsibilityArea: employeeData.responsibilityArea || '',
       teamId: employeeData.teamId,
       managerId: employeeData.managerId,
-    };
+    }
   } catch (error) {
-    console.error("获取员工详情失败:", error);
-    ElMessage.error("获取员工详情失败: " + (error.message || "未知错误"));
+    console.error('获取员工详情失败:', error)
+    ElMessage.error('获取员工详情失败: ' + (error.message || '未知错误'))
   }
-};
+}
 
 // 处理表单提交
 const handleSubmit = async () => {
-  if (!formRef.value) return;
+  if (!formRef.value) return
 
   await formRef.value.validate(async (valid) => {
-    if (!valid) return;
+    if (!valid) return
 
-    submitLoading.value = true;
+    submitLoading.value = true
     try {
       // 准备更新数据
       const updateData = {
@@ -226,34 +221,34 @@ const handleSubmit = async () => {
         managerId: employeeForm.value.managerId,
         certification: employeeForm.value.certification,
         responsibilityArea: employeeForm.value.responsibilityArea,
-      };
+      }
 
       // 调用API更新员工信息
-      await updateEmployee(employeeForm.value.employeeId, updateData);
+      await updateEmployee(employeeForm.value.employeeId, updateData)
 
-      ElMessage.success("员工信息更新成功");
-      router.push("/hr/employees/list");
+      ElMessage.success('员工信息更新成功')
+      router.push('/hr/employees/list')
     } catch (error) {
-      console.error("更新员工信息失败:", error);
-      ElMessage.error("更新员工信息失败: " + (error.message || "未知错误"));
+      console.error('更新员工信息失败:', error)
+      ElMessage.error('更新员工信息失败: ' + (error.message || '未知错误'))
     } finally {
-      submitLoading.value = false;
+      submitLoading.value = false
     }
-  });
-};
+  })
+}
 
 // 处理取消操作
 const handleCancel = () => {
-  router.go(-1);
-};
+  router.go(-1)
+}
 
 // 组件挂载时获取数据
 onMounted(() => {
-  const employeeId = route.params.id || route.params.employeeId;
+  const employeeId = route.params.id || route.params.employeeId
   if (employeeId) {
-    fetchEmployeeDetail(employeeId);
+    fetchEmployeeDetail(employeeId)
   }
-});
+})
 </script>
 
 <style scoped>
