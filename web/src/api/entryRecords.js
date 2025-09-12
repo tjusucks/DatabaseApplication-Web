@@ -8,7 +8,7 @@ import request from '@/utils/request'
  */
 export function createEntryRecord(data) {
   return request({
-    url: '/api/user/entries',
+    url: '/user/entries', // 移除/api前缀，因为baseURL已经包含了
     method: 'post',
     data,
   })

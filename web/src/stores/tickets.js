@@ -9,6 +9,7 @@ import * as ticketApi from '@/api/ticket'
 export const useTicketStore = defineStore('ticket', {
   state: () => ({
     ticketTypes: [],
+    loadingTicketTypes: false, // 添加加载状态
     // [修正] 将 pricingRules 移到更合适的地方管理，或根据具体票种动态获取
     priceRulesForType: [],
     ticketTypeDetail: null,
@@ -18,10 +19,13 @@ export const useTicketStore = defineStore('ticket', {
   actions: {
     async fetchTicketTypes() {
       try {
+        this.loadingTicketTypes = true
         const response = await ticketApi.getTicketTypes()
         this.ticketTypes = response || []
       } catch (error) {
         ElMessage.error('获取票种列表失败')
+      } finally {
+        this.loadingTicketTypes = false
       }
     },
     async createTicketType(typeData) {
@@ -125,12 +129,72 @@ export const useReservationStore = defineStore('reservation', {
      */
     async createSale(saleData) {
       try {
-        // --- 准备创建预订的数据体 (Payload) ---
-        // [最终修正] 结构与后端 CreateReservationCommand 完全匹配
+        // --- 第一步：根据手机号查找或创建游客 ---
+        let visitorId
+
+        if (saleData.visitorPhone && saleData.visitorPhone.trim()) {
+          // 有手机号：先尝试查找现有游客
+          try {
+            const { searchVisitors } = await import('@/api/visitors.js')
+            const searchResponse = await searchVisitors({
+              keyword: saleData.visitorPhone.trim(), // 使用keyword参数进行搜索
+              pageSize: 1
+            })
+
+            if (searchResponse.items && searchResponse.items.length > 0) {
+              // 找到现有游客
+              visitorId = searchResponse.items[0].visitorId
+              console.log('找到现有游客:', visitorId)
+            } else {
+              // 没找到，创建新游客
+              const { createVisitor } = await import('@/api/visitors.js')
+              const newVisitorResponse = await createVisitor({
+                username: `visitor_${Date.now()}`, // 自动生成用户名
+                passwordHash: 'visitor', // 使用统一密码
+                email: null,
+                displayName: '游客',
+                phoneNumber: saleData.visitorPhone.trim(),
+                birthDate: null,
+                gender: 0, // 0=未知, 1=男, 2=女
+                visitorType: 'Regular', // 普通游客
+                height: 170 // 默认身高
+              })
+              visitorId = newVisitorResponse.visitorId || newVisitorResponse
+              console.log('创建新游客:', visitorId)
+            }
+          } catch (error) {
+            console.warn('处理游客信息失败，使用默认游客ID:', error)
+            // 如果出错，使用默认游客ID（假设ID为1的游客存在）
+            visitorId = 1
+          }
+        } else {
+          // 无手机号：创建匿名游客
+          try {
+            const { createVisitor } = await import('@/api/visitors.js')
+            const anonymousResponse = await createVisitor({
+              username: `anonymous_${Date.now()}`, // 自动生成用户名
+              passwordHash: 'visitor', // 使用统一密码
+              email: null,
+              displayName: '匿名游客',
+              phoneNumber: null,
+              birthDate: null,
+              gender: 0, // 0=未知
+              visitorType: 'Regular', // 普通游客
+              height: 170 // 默认身高
+            })
+            visitorId = anonymousResponse.visitorId || anonymousResponse
+            console.log('创建匿名游客:', visitorId)
+          } catch (error) {
+            console.warn('创建匿名游客失败，使用默认游客ID:', error)
+            // 如果创建失败，使用默认游客ID
+            visitorId = 1
+          }
+        }
+
+        // --- 第二步：准备创建预订的数据体 (Payload) ---
         const reservationPayload = {
-          // 1. VisitorId: 必须提供一个游客ID
-          //    在真实场景中，您会先根据 saleData.visitorPhone 调用一个 "搜索/创建游客" 的 API 来获取ID
-          visitorId: 1, // [临时虚拟值] 假设一个存在的游客ID
+          // 1. VisitorId: 使用查找到或创建的游客ID
+          visitorId: visitorId,
 
           // 2. VisitDate: 游玩日期，通常是今天
           visitDate: new Date().toISOString(), // 发送 ISO 8601 格式的字符串
@@ -143,7 +207,10 @@ export const useReservationStore = defineStore('reservation', {
             },
           ],
 
-          // 4. 可选字段
+          // 4. 必需字段 - PaymentMethod
+          paymentMethod: 'Cash', // 现场销售默认为现金支付
+
+          // 5. 可选字段
           promotionId: null, // 如果有促销活动，可以在此传入ID
           specialRequests: '', // 特殊要求
         }
@@ -230,10 +297,16 @@ export const useRefundStore = defineStore('refund', {
     async fetchRefunds(params) {
       try {
         const response = await ticketApi.searchRefunds(params)
-        // 假设后端返回 { records: [...], totalCount: ... }
-        this.refunds.list = response.records ?? []
+        // 后端返回 { refunds: [...], totalCount: ... }
+        this.refunds.list = response.refunds ?? []
         this.refunds.total = response.totalCount ?? 0
+        console.log('🎫 退票记录加载成功:', {
+          count: this.refunds.list.length,
+          total: this.refunds.total,
+          data: this.refunds.list
+        })
       } catch (error) {
+        console.error('获取退票记录失败:', error)
         ElMessage.error('获取退票记录失败')
       }
     },

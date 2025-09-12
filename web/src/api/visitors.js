@@ -8,7 +8,7 @@ import request from '@/utils/request'
  */
 export function createVisitor(data) {
   return request({
-    url: '/api/user/visitors',
+    url: '/user/visitors',
     method: 'post',
     data,
   })
@@ -20,7 +20,7 @@ export function createVisitor(data) {
  */
 export function getVisitors(params) {
   return request({
-    url: '/api/user/visitors',
+    url: '/user/visitors',
     method: 'get',
     params,
   })
@@ -32,7 +32,7 @@ export function getVisitors(params) {
  */
 export function getVisitorById(id) {
   return request({
-    url: `/api/user/visitors/${id}`,
+    url: `/user/visitors/${id}`,
     method: 'get',
   })
 }
@@ -44,7 +44,7 @@ export function getVisitorById(id) {
  */
 export function updateVisitor(id, data) {
   return request({
-    url: `/api/user/visitors/${id}`,
+    url: `/user/visitors/${id}`,
     method: 'put',
     data,
   })
@@ -57,7 +57,7 @@ export function updateVisitor(id, data) {
  */
 export function updateVisitorContact(id, data) {
   return request({
-    url: `/api/user/visitors/${id}/contact`,
+    url: `/user/visitors/${id}/contact`,
     method: 'put',
     data,
   })
@@ -69,7 +69,7 @@ export function updateVisitorContact(id, data) {
  */
 export function deleteVisitor(id) {
   return request({
-    url: `/api/user/visitors/${id}`,
+    url: `/user/visitors/${id}`,
     method: 'delete',
   })
 }
@@ -82,7 +82,7 @@ export function deleteVisitor(id) {
  */
 export function upgradeToMember(id) {
   return request({
-    url: `/api/user/visitors/${id}/membership`,
+    url: `/user/visitors/${id}/membership`,
     method: 'post',
   })
 }
@@ -93,7 +93,7 @@ export function upgradeToMember(id) {
  */
 export function removeMembership(id) {
   return request({
-    url: `/api/user/visitors/${id}/membership`,
+    url: `/user/visitors/${id}/membership`,
     method: 'delete',
   })
 }
@@ -105,7 +105,7 @@ export function removeMembership(id) {
  */
 export function addPoints(id, data) {
   return request({
-    url: `/api/user/visitors/${id}/points/add`,
+    url: `/user/visitors/${id}/points/add`,
     method: 'post',
     data,
   })
@@ -118,7 +118,7 @@ export function addPoints(id, data) {
  */
 export function deductPoints(id, data) {
   return request({
-    url: `/api/user/visitors/${id}/points/deduct`,
+    url: `/user/visitors/${id}/points/deduct`,
     method: 'post',
     data,
   })
@@ -130,7 +130,7 @@ export function deductPoints(id, data) {
  */
 export function addPointsByContact(data) {
   return request({
-    url: `/api/user/visitors/points/add-by-contact`,
+    url: `/user/visitors/points/add-by-contact`,
     method: 'post',
     data,
   })
@@ -142,7 +142,7 @@ export function addPointsByContact(data) {
  */
 export function deductPointsByContact(data) {
   return request({
-    url: `/api/user/visitors/points/deduct-by-contact`,
+    url: `/user/visitors/points/deduct-by-contact`,
     method: 'post',
     data,
   })
@@ -154,7 +154,7 @@ export function deductPointsByContact(data) {
  */
 export function searchVisitors(params) {
   return request({
-    url: '/api/user/visitors/search',
+    url: '/user/visitors/search',
     method: 'get',
     params,
   })
@@ -166,7 +166,7 @@ export function searchVisitors(params) {
  */
 export function getVisitorStats(params) {
   return request({
-    url: '/api/user/visitors/stats',
+    url: '/user/visitors/stats',
     method: 'get',
     params,
   })
@@ -178,7 +178,7 @@ export function getVisitorStats(params) {
  */
 export function getGroupedVisitorStats(params) {
   return request({
-    url: '/api/user/visitors/stats/grouped',
+    url: '/user/visitors/stats/grouped',
     method: 'get',
     params,
   })
@@ -191,7 +191,7 @@ export function getGroupedVisitorStats(params) {
  */
 export function blacklistVisitor(id, data) {
   return request({
-    url: `/api/user/visitors/${id}/blacklist`,
+    url: `/user/visitors/${id}/blacklist`,
     method: 'post',
     data: {
       visitorId: parseInt(id),
@@ -206,7 +206,7 @@ export function blacklistVisitor(id, data) {
  */
 export function unblacklistVisitor(id) {
   return request({
-    url: `/api/user/visitors/${id}/blacklist`,
+    url: `/user/visitors/${id}/blacklist`,
     method: 'delete',
   })
 }
@@ -235,3 +235,31 @@ export function updateVisitorBlacklistStatus(id, data) {
     return unblacklistVisitor(id)
   }
 }
+
+// ==================== 入园检票相关 API ====================
+
+/**
+ * 创建入园记录
+ * @param {Object} data - { visitorId, gateName, ticketId? }
+ */
+export function createEntry(data) {
+  return request({
+    url: '/user/visitors/entry',
+    method: 'post',
+    data,
+  })
+}
+
+/**
+ * 创建出园记录
+ * @param {Object} data - { visitorId, gateName }
+ */
+export function createExit(data) {
+  return request({
+    url: '/user/visitors/exit',
+    method: 'post',
+    data,
+  })
+}
+
+
