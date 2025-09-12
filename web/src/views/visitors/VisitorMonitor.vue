@@ -24,9 +24,13 @@
           <div class="stat-content">
             <div class="stat-value">{{ realtimeStats.currentInPark }}</div>
             <div class="stat-label">当前在园人数</div>
-            <div class="stat-trend" :class="getTrendClass(realtimeStats.parkTrend)">
+            <div
+              class="stat-trend"
+              :class="getTrendClass(realtimeStats.parkTrend)"
+            >
               <el-icon><TrendCharts /></el-icon>
-              {{ realtimeStats.parkTrend > 0 ? '+' : '' }}{{ realtimeStats.parkTrend }}
+              {{ realtimeStats.parkTrend > 0 ? "+" : ""
+              }}{{ realtimeStats.parkTrend }}
             </div>
           </div>
           <el-icon class="stat-icon" color="#67c23a"><UserFilled /></el-icon>
@@ -42,7 +46,9 @@
               +{{ realtimeStats.recentEntries }}
             </div>
           </div>
-          <el-icon class="stat-icon" color="#409eff"><LocationInformation /></el-icon>
+          <el-icon class="stat-icon" color="#409eff"
+            ><LocationInformation
+          /></el-icon>
         </el-card>
       </el-col>
       <el-col :span="6">
@@ -55,13 +61,17 @@
               +{{ realtimeStats.recentExits }}
             </div>
           </div>
-          <el-icon class="stat-icon" color="#e6a23c"><LocationInformation /></el-icon>
+          <el-icon class="stat-icon" color="#e6a23c"
+            ><LocationInformation
+          /></el-icon>
         </el-card>
       </el-col>
       <el-col :span="6">
         <el-card class="stat-card">
           <div class="stat-content">
-            <div class="stat-value">{{ formatDuration(realtimeStats.avgStayTime) }}</div>
+            <div class="stat-value">
+              {{ formatDuration(realtimeStats.avgStayTime) }}
+            </div>
             <div class="stat-label">平均停留时间</div>
             <div class="stat-trend">
               <el-icon><Timer /></el-icon>
@@ -83,7 +93,7 @@
               <el-tag type="success">实时更新</el-tag>
             </div>
           </template>
-          
+
           <div class="gate-stats">
             <div v-for="gate in gateStats" :key="gate.name" class="gate-item">
               <div class="gate-info">
@@ -111,7 +121,7 @@
           </div>
         </el-card>
       </el-col>
-      
+
       <el-col :span="12">
         <el-card class="activity-card">
           <template #header>
@@ -123,15 +133,17 @@
               </el-button>
             </div>
           </template>
-          
+
           <div class="activity-log" ref="activityLogRef">
-            <div 
-              v-for="activity in activityLog" 
-              :key="activity.id" 
+            <div
+              v-for="activity in activityLog"
+              :key="activity.id"
               class="activity-item"
               :class="activity.type"
             >
-              <div class="activity-time">{{ formatTime(activity.timestamp) }}</div>
+              <div class="activity-time">
+                {{ formatTime(activity.timestamp) }}
+              </div>
               <div class="activity-content">
                 <el-icon>
                   <LocationInformation v-if="activity.type === 'entry'" />
@@ -141,7 +153,7 @@
                 <span>{{ activity.message }}</span>
               </div>
             </div>
-            
+
             <div v-if="activityLog.length === 0" class="no-activity">
               <el-icon><Clock /></el-icon>
               <span>暂无活动记录</span>
@@ -165,7 +177,7 @@
               </el-radio-group>
             </div>
           </template>
-          
+
           <div class="chart-container" ref="chartRef">
             <!-- 这里可以集成 ECharts 或其他图表库 -->
             <div class="chart-placeholder">
@@ -201,12 +213,16 @@
           </div>
         </div>
       </template>
-      
-      <el-table :data="filteredCurrentVisitors" v-loading="currentVisitorsLoading" stripe>
+
+      <el-table
+        :data="filteredCurrentVisitors"
+        v-loading="currentVisitorsLoading"
+        stripe
+      >
         <el-table-column prop="visitorId" label="游客ID" width="100" />
         <el-table-column label="姓名" width="120">
           <template #default="{ row }">
-            {{ row.visitor?.user?.displayName || '-' }}
+            {{ row.visitor?.user?.displayName || "-" }}
           </template>
         </el-table-column>
         <el-table-column label="入园时间" width="180">
@@ -222,23 +238,33 @@
         </el-table-column>
         <el-table-column label="游客类型" width="100">
           <template #default="{ row }">
-            <el-tag :type="row.visitor?.visitorType === 'Member' ? 'success' : 'info'">
-              {{ row.visitor?.visitorType === 'Member' ? '会员' : '普通' }}
+            <el-tag
+              :type="row.visitor?.visitorType === 'Member' ? 'success' : 'info'"
+            >
+              {{ row.visitor?.visitorType === "Member" ? "会员" : "普通" }}
             </el-tag>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="150" fixed="right">
           <template #default="{ row }">
-            <el-button type="primary" size="small" @click="handleViewVisitor(row)">
+            <el-button
+              type="primary"
+              size="small"
+              @click="handleViewVisitor(row)"
+            >
               查看详情
             </el-button>
-            <el-button type="warning" size="small" @click="handleManualExit(row)">
+            <el-button
+              type="warning"
+              size="small"
+              @click="handleManualExit(row)"
+            >
               手动出园
             </el-button>
           </template>
         </el-table-column>
       </el-table>
-      
+
       <div class="pagination-container" v-if="currentVisitors.length > 10">
         <el-pagination
           :current-page="currentVisitorPage"
@@ -253,22 +279,22 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, onUnmounted, computed, nextTick } from 'vue'
-import { useRouter } from 'vue-router'
-import { ElMessage } from 'element-plus'
+import { ref, reactive, onMounted, onUnmounted, computed, nextTick } from "vue";
+import { useRouter } from "vue-router";
+import { ElMessage } from "element-plus";
 import {
   getCurrentVisitors,
   getCurrentVisitorCount,
-  getEntryRecordStats
-} from '@/api/entryRecords'
-import { updateEntryRecord } from '@/api/entryRecords'
+  getEntryRecordStats,
+} from "@/api/entryRecords";
+import { updateEntryRecord } from "@/api/entryRecords";
 
-const router = useRouter()
+const router = useRouter();
 
 // 自动刷新
-const autoRefresh = ref(true)
-const refreshing = ref(false)
-const refreshInterval = ref(null)
+const autoRefresh = ref(true);
+const refreshing = ref(false);
+const refreshInterval = ref(null);
 
 // 实时统计数据
 const realtimeStats = reactive({
@@ -278,182 +304,188 @@ const realtimeStats = reactive({
   avgStayTime: 0,
   parkTrend: 0,
   recentEntries: 0,
-  recentExits: 0
-})
+  recentExits: 0,
+});
 
 // 门口统计数据
 const gateStats = ref([
   {
-    name: '主门',
-    status: 'normal',
+    name: "主门",
+    status: "normal",
     todayEntries: 0,
     todayExits: 0,
-    currentFlow: 0
+    currentFlow: 0,
   },
   {
-    name: '东门',
-    status: 'normal',
+    name: "东门",
+    status: "normal",
     todayEntries: 0,
     todayExits: 0,
-    currentFlow: 0
+    currentFlow: 0,
   },
   {
-    name: '西门',
-    status: 'busy',
+    name: "西门",
+    status: "busy",
     todayEntries: 0,
     todayExits: 0,
-    currentFlow: 0
+    currentFlow: 0,
   },
   {
-    name: '南门',
-    status: 'normal',
+    name: "南门",
+    status: "normal",
     todayEntries: 0,
     todayExits: 0,
-    currentFlow: 0
-  }
-])
+    currentFlow: 0,
+  },
+]);
 
 // 活动日志
-const activityLog = ref([])
-const activityLogRef = ref(null)
+const activityLog = ref([]);
+const activityLogRef = ref(null);
 
 // 图表相关
-const chartTimeRange = ref('6h')
-const chartRef = ref(null)
+const chartTimeRange = ref("6h");
+const chartRef = ref(null);
 
 // 当前在园游客
-const currentVisitors = ref([])
-const currentVisitorsLoading = ref(false)
-const visitorSearchKeyword = ref('')
-const currentVisitorPage = ref(1)
+const currentVisitors = ref([]);
+const currentVisitorsLoading = ref(false);
+const visitorSearchKeyword = ref("");
+const currentVisitorPage = ref(1);
 
 // 过滤后的当前游客
 const filteredCurrentVisitors = computed(() => {
   if (!visitorSearchKeyword.value) {
-    return currentVisitors.value.slice((currentVisitorPage.value - 1) * 10, currentVisitorPage.value * 10)
+    return currentVisitors.value.slice(
+      (currentVisitorPage.value - 1) * 10,
+      currentVisitorPage.value * 10,
+    );
   }
 
-  const filtered = currentVisitors.value.filter(visitor => {
-    const keyword = visitorSearchKeyword.value.toLowerCase()
+  const filtered = currentVisitors.value.filter((visitor) => {
+    const keyword = visitorSearchKeyword.value.toLowerCase();
     return (
       visitor.visitorId.toString().includes(keyword) ||
-      (visitor.visitor?.user?.displayName && visitor.visitor.user.displayName.toLowerCase().includes(keyword))
-    )
-  })
+      (visitor.visitor?.user?.displayName &&
+        visitor.visitor.user.displayName.toLowerCase().includes(keyword))
+    );
+  });
 
-  return filtered.slice((currentVisitorPage.value - 1) * 10, currentVisitorPage.value * 10)
-})
+  return filtered.slice(
+    (currentVisitorPage.value - 1) * 10,
+    currentVisitorPage.value * 10,
+  );
+});
 
 // 格式化时间
 const formatTime = (timestamp) => {
-  return new Date(timestamp).toLocaleTimeString('zh-CN')
-}
+  return new Date(timestamp).toLocaleTimeString("zh-CN");
+};
 
 // 格式化日期
 const formatDate = (dateString) => {
-  if (!dateString) return '-'
-  return new Date(dateString).toLocaleString('zh-CN')
-}
+  if (!dateString) return "-";
+  return new Date(dateString).toLocaleString("zh-CN");
+};
 
 // 格式化时长
 const formatDuration = (minutes) => {
-  if (!minutes || minutes === 0) return '-'
-  const hours = Math.floor(minutes / 60)
-  const mins = minutes % 60
+  if (!minutes || minutes === 0) return "-";
+  const hours = Math.floor(minutes / 60);
+  const mins = minutes % 60;
   if (hours > 0) {
-    return `${hours}小时${mins}分钟`
+    return `${hours}小时${mins}分钟`;
   } else {
-    return `${mins}分钟`
+    return `${mins}分钟`;
   }
-}
+};
 
 // 计算停留时间
 const calculateStayTime = (entryTime) => {
-  if (!entryTime) return '-'
+  if (!entryTime) return "-";
 
-  const entry = new Date(entryTime)
-  const now = new Date()
-  const duration = now - entry
+  const entry = new Date(entryTime);
+  const now = new Date();
+  const duration = now - entry;
 
-  const hours = Math.floor(duration / (1000 * 60 * 60))
-  const minutes = Math.floor((duration % (1000 * 60 * 60)) / (1000 * 60))
+  const hours = Math.floor(duration / (1000 * 60 * 60));
+  const minutes = Math.floor((duration % (1000 * 60 * 60)) / (1000 * 60));
 
   if (hours > 0) {
-    return `${hours}小时${minutes}分钟`
+    return `${hours}小时${minutes}分钟`;
   } else {
-    return `${minutes}分钟`
+    return `${minutes}分钟`;
   }
-}
+};
 
 // 获取趋势样式类
 const getTrendClass = (trend) => {
-  if (trend > 0) return 'positive'
-  if (trend < 0) return 'negative'
-  return 'neutral'
-}
+  if (trend > 0) return "positive";
+  if (trend < 0) return "negative";
+  return "neutral";
+};
 
 // 获取门口状态文本
 const getGateStatusText = (status) => {
   const statusMap = {
-    'normal': '正常',
-    'busy': '繁忙',
-    'closed': '关闭'
-  }
-  return statusMap[status] || '未知'
-}
+    normal: "正常",
+    busy: "繁忙",
+    closed: "关闭",
+  };
+  return statusMap[status] || "未知";
+};
 
 // 自动刷新切换
 const handleAutoRefreshChange = (value) => {
   if (value) {
-    startAutoRefresh()
+    startAutoRefresh();
   } else {
-    stopAutoRefresh()
+    stopAutoRefresh();
   }
-}
+};
 
 // 手动刷新
 const handleManualRefresh = async () => {
-  refreshing.value = true
-  await loadAllData()
-  refreshing.value = false
-  ElMessage.success('数据已刷新')
-}
+  refreshing.value = true;
+  await loadAllData();
+  refreshing.value = false;
+  ElMessage.success("数据已刷新");
+};
 
 // 清空活动日志
 const clearActivityLog = () => {
-  activityLog.value = []
-  ElMessage.success('活动日志已清空')
-}
+  activityLog.value = [];
+  ElMessage.success("活动日志已清空");
+};
 
 // 查看游客详情
 const handleViewVisitor = (row) => {
-  router.push(`/visitors/${row.visitorId}`)
-}
+  router.push(`/visitors/${row.visitorId}`);
+};
 
 // 手动出园
 const handleManualExit = async (row) => {
   try {
     await updateEntryRecord(row.entryRecordId, {
       exitTime: new Date().toISOString(),
-      exitGate: row.entryGate // 默认使用入园门作为出园门
-    })
+      exitGate: row.entryGate, // 默认使用入园门作为出园门
+    });
 
-    ElMessage.success('出园记录已更新')
-    await loadCurrentVisitors()
-    await loadRealtimeStats()
+    ElMessage.success("出园记录已更新");
+    await loadCurrentVisitors();
+    await loadRealtimeStats();
 
     // 添加活动日志
-    addActivityLog('exit', `游客 ${row.visitorId} 手动出园`)
-
+    addActivityLog("exit", `游客 ${row.visitorId} 手动出园`);
   } catch (error) {
-    ElMessage.error('出园操作失败：' + error.message)
+    ElMessage.error("出园操作失败：" + error.message);
   }
-}
+};
 
 // 当前游客分页
 const handleCurrentVisitorPageChange = (page) => {
-  currentVisitorPage.value = page
-}
+  currentVisitorPage.value = page;
+};
 
 // 添加活动日志
 const addActivityLog = (type, message) => {
@@ -461,40 +493,40 @@ const addActivityLog = (type, message) => {
     id: Date.now(),
     type,
     message,
-    timestamp: new Date().toISOString()
-  }
+    timestamp: new Date().toISOString(),
+  };
 
-  activityLog.value.unshift(activity)
+  activityLog.value.unshift(activity);
 
   // 限制日志数量
   if (activityLog.value.length > 100) {
-    activityLog.value = activityLog.value.slice(0, 100)
+    activityLog.value = activityLog.value.slice(0, 100);
   }
 
   // 滚动到顶部
   nextTick(() => {
     if (activityLogRef.value) {
-      activityLogRef.value.scrollTop = 0
+      activityLogRef.value.scrollTop = 0;
     }
-  })
-}
+  });
+};
 
 // 开始自动刷新
 const startAutoRefresh = () => {
-  if (refreshInterval.value) return
+  if (refreshInterval.value) return;
 
   refreshInterval.value = setInterval(() => {
-    loadAllData()
-  }, 30000) // 30秒刷新一次
-}
+    loadAllData();
+  }, 30000); // 30秒刷新一次
+};
 
 // 停止自动刷新
 const stopAutoRefresh = () => {
   if (refreshInterval.value) {
-    clearInterval(refreshInterval.value)
-    refreshInterval.value = null
+    clearInterval(refreshInterval.value);
+    refreshInterval.value = null;
   }
-}
+};
 
 // 加载实时统计数据
 const loadRealtimeStats = async () => {
@@ -505,30 +537,29 @@ const loadRealtimeStats = async () => {
         includeCurrentCount: true,
         includeTodayStats: true,
         includeAvgDuration: true,
-        includeTrends: true
-      })
-    ])
+        includeTrends: true,
+      }),
+    ]);
 
     if (countResponse) {
-      realtimeStats.currentInPark = countResponse.count || 0
+      realtimeStats.currentInPark = countResponse.count || 0;
     }
 
     if (statsResponse) {
-      Object.assign(realtimeStats, statsResponse)
+      Object.assign(realtimeStats, statsResponse);
     }
-
   } catch (error) {
-    console.error('加载实时统计数据失败:', error)
+    console.error("加载实时统计数据失败:", error);
     // 使用模拟数据
-    realtimeStats.currentInPark = 89
-    realtimeStats.todayEntries = 156
-    realtimeStats.todayExits = 67
-    realtimeStats.avgStayTime = 180
-    realtimeStats.parkTrend = 5
-    realtimeStats.recentEntries = 12
-    realtimeStats.recentExits = 7
+    realtimeStats.currentInPark = 89;
+    realtimeStats.todayEntries = 156;
+    realtimeStats.todayExits = 67;
+    realtimeStats.avgStayTime = 180;
+    realtimeStats.parkTrend = 5;
+    realtimeStats.recentEntries = 12;
+    realtimeStats.recentExits = 7;
   }
-}
+};
 
 // 加载门口统计数据
 const loadGateStats = async () => {
@@ -537,99 +568,100 @@ const loadGateStats = async () => {
     // 目前使用模拟数据
     gateStats.value = [
       {
-        name: '主门',
-        status: 'normal',
+        name: "主门",
+        status: "normal",
         todayEntries: 45,
         todayExits: 23,
-        currentFlow: 3
+        currentFlow: 3,
       },
       {
-        name: '东门',
-        status: 'normal',
+        name: "东门",
+        status: "normal",
         todayEntries: 38,
         todayExits: 19,
-        currentFlow: 2
+        currentFlow: 2,
       },
       {
-        name: '西门',
-        status: 'busy',
+        name: "西门",
+        status: "busy",
         todayEntries: 52,
         todayExits: 18,
-        currentFlow: 8
+        currentFlow: 8,
       },
       {
-        name: '南门',
-        status: 'normal',
+        name: "南门",
+        status: "normal",
         todayEntries: 21,
         todayExits: 7,
-        currentFlow: 1
-      }
-    ]
+        currentFlow: 1,
+      },
+    ];
   } catch (error) {
-    console.error('加载门口统计数据失败:', error)
+    console.error("加载门口统计数据失败:", error);
   }
-}
+};
 
 // 加载当前在园游客
 const loadCurrentVisitors = async () => {
   try {
-    currentVisitorsLoading.value = true
-    const response = await getCurrentVisitors()
+    currentVisitorsLoading.value = true;
+    const response = await getCurrentVisitors();
 
     if (response) {
-      currentVisitors.value = response.items || response
+      currentVisitors.value = response.items || response;
     } else {
-      currentVisitors.value = []
+      currentVisitors.value = [];
     }
   } catch (error) {
-    console.error('加载当前在园游客失败:', error)
-    ElMessage.error('加载当前在园游客失败：' + error.message)
-    currentVisitors.value = []
+    console.error("加载当前在园游客失败:", error);
+    ElMessage.error("加载当前在园游客失败：" + error.message);
+    currentVisitors.value = [];
   } finally {
-    currentVisitorsLoading.value = false
+    currentVisitorsLoading.value = false;
   }
-}
+};
 
 // 模拟实时活动
 const simulateRealtimeActivity = () => {
   const activities = [
-    { type: 'entry', message: '游客 1001 从主门入园' },
-    { type: 'exit', message: '游客 1002 从东门出园' },
-    { type: 'entry', message: '游客 1003 从西门入园' },
-    { type: 'alert', message: '西门流量较大，请注意疏导' }
-  ]
+    { type: "entry", message: "游客 1001 从主门入园" },
+    { type: "exit", message: "游客 1002 从东门出园" },
+    { type: "entry", message: "游客 1003 从西门入园" },
+    { type: "alert", message: "西门流量较大，请注意疏导" },
+  ];
 
   // 随机添加活动
-  if (Math.random() < 0.3) { // 30% 概率
-    const activity = activities[Math.floor(Math.random() * activities.length)]
-    addActivityLog(activity.type, activity.message)
+  if (Math.random() < 0.3) {
+    // 30% 概率
+    const activity = activities[Math.floor(Math.random() * activities.length)];
+    addActivityLog(activity.type, activity.message);
   }
-}
+};
 
 // 加载所有数据
 const loadAllData = async () => {
   await Promise.all([
     loadRealtimeStats(),
     loadGateStats(),
-    loadCurrentVisitors()
-  ])
+    loadCurrentVisitors(),
+  ]);
 
   // 模拟实时活动
-  simulateRealtimeActivity()
-}
+  simulateRealtimeActivity();
+};
 
 // 组件挂载时加载数据
 onMounted(() => {
-  loadAllData()
+  loadAllData();
   if (autoRefresh.value) {
-    startAutoRefresh()
+    startAutoRefresh();
   }
-})
+});
 
 // 组件卸载时清理定时器
 onUnmounted(() => {
-  stopAutoRefresh()
-})
+  stopAutoRefresh();
+});
 </script>
 
 <style scoped>

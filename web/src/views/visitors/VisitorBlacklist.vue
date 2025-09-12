@@ -44,7 +44,11 @@
           <el-icon><Plus /></el-icon>
           添加黑名单
         </el-button>
-        <el-button type="success" @click="handleBatchRemove" :disabled="selectedRows.length === 0">
+        <el-button
+          type="success"
+          @click="handleBatchRemove"
+          :disabled="selectedRows.length === 0"
+        >
           <el-icon><Check /></el-icon>
           批量解除 ({{ selectedRows.length }})
         </el-button>
@@ -63,7 +67,9 @@
             <div class="stat-value">{{ stats.totalBlacklisted }}</div>
             <div class="stat-label">总黑名单数</div>
           </div>
-          <el-icon class="stat-icon" color="#f56c6c"><CircleCloseFilled /></el-icon>
+          <el-icon class="stat-icon" color="#f56c6c"
+            ><CircleCloseFilled
+          /></el-icon>
         </el-card>
       </el-col>
       <el-col :span="8">
@@ -100,21 +106,29 @@
         <el-table-column prop="visitorId" label="游客ID" width="100" />
         <el-table-column label="姓名" width="120">
           <template #default="{ row }">
-            {{ row.user?.displayName || '-' }}
+            {{ row.user?.displayName || "-" }}
           </template>
         </el-table-column>
         <el-table-column label="联系方式" width="180">
           <template #default="{ row }">
             <div v-if="row.user?.email || row.user?.phoneNumber">
-              <div v-if="row.user?.email" class="contact-item">{{ row.user.email }}</div>
-              <div v-if="row.user?.phoneNumber" class="contact-item">{{ row.user.phoneNumber }}</div>
+              <div v-if="row.user?.email" class="contact-item">
+                {{ row.user.email }}
+              </div>
+              <div v-if="row.user?.phoneNumber" class="contact-item">
+                {{ row.user.phoneNumber }}
+              </div>
             </div>
             <span v-else class="text-muted">-</span>
           </template>
         </el-table-column>
         <el-table-column label="拉黑原因" min-width="200">
           <template #default="{ row }">
-            <el-tooltip :content="row.blacklistReason" placement="top" v-if="row.blacklistReason">
+            <el-tooltip
+              :content="row.blacklistReason"
+              placement="top"
+              v-if="row.blacklistReason"
+            >
               <div class="reason-text">{{ row.blacklistReason }}</div>
             </el-tooltip>
             <span v-else class="text-muted">-</span>
@@ -128,19 +142,31 @@
         <el-table-column label="会员状态" width="100">
           <template #default="{ row }">
             <el-tag :type="row.visitorType === 'Member' ? 'warning' : 'info'">
-              {{ row.visitorType === 'Member' ? '会员' : '普通' }}
+              {{ row.visitorType === "Member" ? "会员" : "普通" }}
             </el-tag>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="200" fixed="right">
           <template #default="{ row }">
-            <el-button type="primary" size="small" @click="handleViewDetail(row)">
+            <el-button
+              type="primary"
+              size="small"
+              @click="handleViewDetail(row)"
+            >
               查看详情
             </el-button>
-            <el-button type="success" size="small" @click="handleRemoveFromBlacklist(row)">
+            <el-button
+              type="success"
+              size="small"
+              @click="handleRemoveFromBlacklist(row)"
+            >
               解除拉黑
             </el-button>
-            <el-button type="warning" size="small" @click="handleEditReason(row)">
+            <el-button
+              type="warning"
+              size="small"
+              @click="handleEditReason(row)"
+            >
               编辑原因
             </el-button>
           </template>
@@ -163,7 +189,12 @@
 
     <!-- 添加黑名单对话框 -->
     <el-dialog v-model="addDialogVisible" title="添加黑名单" width="500px">
-      <el-form :model="addForm" :rules="addRules" ref="addFormRef" label-width="100px">
+      <el-form
+        :model="addForm"
+        :rules="addRules"
+        ref="addFormRef"
+        label-width="100px"
+      >
         <el-form-item label="游客ID" prop="visitorId">
           <el-input
             v-model="addForm.visitorId"
@@ -173,9 +204,19 @@
         </el-form-item>
         <el-form-item label="游客信息" v-if="selectedVisitor">
           <div class="visitor-info">
-            <p><strong>姓名：</strong>{{ selectedVisitor.user?.displayName || '-' }}</p>
-            <p><strong>联系方式：</strong>{{ getContactInfo(selectedVisitor) }}</p>
-            <p><strong>类型：</strong>{{ selectedVisitor.visitorType === 'Member' ? '会员' : '普通游客' }}</p>
+            <p>
+              <strong>姓名：</strong
+              >{{ selectedVisitor.user?.displayName || "-" }}
+            </p>
+            <p>
+              <strong>联系方式：</strong>{{ getContactInfo(selectedVisitor) }}
+            </p>
+            <p>
+              <strong>类型：</strong
+              >{{
+                selectedVisitor.visitorType === "Member" ? "会员" : "普通游客"
+              }}
+            </p>
           </div>
         </el-form-item>
         <el-form-item label="拉黑原因" prop="reason">
@@ -190,14 +231,22 @@
 
       <template #footer>
         <el-button @click="addDialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="handleAddSubmit" :loading="addSubmitting">
+        <el-button
+          type="primary"
+          @click="handleAddSubmit"
+          :loading="addSubmitting"
+        >
           确定
         </el-button>
       </template>
     </el-dialog>
 
     <!-- 编辑原因对话框 -->
-    <el-dialog v-model="editReasonDialogVisible" title="编辑拉黑原因" width="400px">
+    <el-dialog
+      v-model="editReasonDialogVisible"
+      title="编辑拉黑原因"
+      width="400px"
+    >
       <el-form :model="editReasonForm" label-width="80px">
         <el-form-item label="拉黑原因">
           <el-input
@@ -211,7 +260,11 @@
 
       <template #footer>
         <el-button @click="editReasonDialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="handleEditReasonSubmit" :loading="editReasonSubmitting">
+        <el-button
+          type="primary"
+          @click="handleEditReasonSubmit"
+          :loading="editReasonSubmitting"
+        >
           确定
         </el-button>
       </template>
@@ -220,9 +273,9 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, computed } from 'vue'
-import { useRouter } from 'vue-router'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ref, reactive, onMounted, computed } from "vue";
+import { useRouter } from "vue-router";
+import { ElMessage, ElMessageBox } from "element-plus";
 import {
   Search,
   Refresh,
@@ -231,353 +284,348 @@ import {
   Download,
   CircleCloseFilled,
   User,
-  PieChart
-} from '@element-plus/icons-vue'
+  PieChart,
+} from "@element-plus/icons-vue";
 import {
   searchVisitors,
   getVisitorById,
   blacklistVisitor,
   unblacklistVisitor,
-  getVisitorStats
-} from '@/api/visitors'
+  getVisitorStats,
+} from "@/api/visitors";
 
-const router = useRouter()
+const router = useRouter();
 
 // 搜索表单
 const searchForm = reactive({
-  keyword: '',
-  dateRange: []
-})
+  keyword: "",
+  dateRange: [],
+});
 
 // 表格数据
-const tableData = ref([])
-const loading = ref(false)
-const selectedRows = ref([])
+const tableData = ref([]);
+const loading = ref(false);
+const selectedRows = ref([]);
 
 // 分页信息
 const pagination = reactive({
   currentPage: 1,
   pageSize: 20,
-  total: 0
-})
+  total: 0,
+});
 
 // 统计数据
 const stats = reactive({
   totalBlacklisted: 0,
   totalVisitors: 0,
-  blacklistRate: 0
-})
+  blacklistRate: 0,
+});
 
 // 添加黑名单对话框
-const addDialogVisible = ref(false)
-const addSubmitting = ref(false)
-const selectedVisitor = ref(null)
-const addFormRef = ref(null)
+const addDialogVisible = ref(false);
+const addSubmitting = ref(false);
+const selectedVisitor = ref(null);
+const addFormRef = ref(null);
 const addForm = reactive({
-  visitorId: '',
-  reason: ''
-})
+  visitorId: "",
+  reason: "",
+});
 
 const addRules = {
-  visitorId: [
-    { required: true, message: '请输入游客ID', trigger: 'blur' }
-  ],
-  reason: [
-    { required: true, message: '请输入拉黑原因', trigger: 'blur' }
-  ]
-}
+  visitorId: [{ required: true, message: "请输入游客ID", trigger: "blur" }],
+  reason: [{ required: true, message: "请输入拉黑原因", trigger: "blur" }],
+};
 
 // 编辑原因对话框
-const editReasonDialogVisible = ref(false)
-const editReasonSubmitting = ref(false)
-const editingVisitor = ref(null)
+const editReasonDialogVisible = ref(false);
+const editReasonSubmitting = ref(false);
+const editingVisitor = ref(null);
 const editReasonForm = reactive({
-  reason: ''
-})
+  reason: "",
+});
 
 // 格式化日期
 const formatDate = (dateString) => {
-  if (!dateString) return '-'
-  return new Date(dateString).toLocaleString('zh-CN')
-}
+  if (!dateString) return "-";
+  return new Date(dateString).toLocaleString("zh-CN");
+};
 
 // 获取联系信息
 const getContactInfo = (visitor) => {
-  const contacts = []
-  if (visitor.user?.email) contacts.push(visitor.user.email)
-  if (visitor.user?.phoneNumber) contacts.push(visitor.user.phoneNumber)
-  return contacts.length > 0 ? contacts.join(', ') : '-'
-}
+  const contacts = [];
+  if (visitor.user?.email) contacts.push(visitor.user.email);
+  if (visitor.user?.phoneNumber) contacts.push(visitor.user.phoneNumber);
+  return contacts.length > 0 ? contacts.join(", ") : "-";
+};
 
 // 搜索
 const handleSearch = () => {
-  pagination.currentPage = 1
-  loadData()
-}
+  pagination.currentPage = 1;
+  loadData();
+};
 
 // 重置搜索
 const handleReset = () => {
   Object.assign(searchForm, {
-    keyword: '',
-    dateRange: []
-  })
-  pagination.currentPage = 1
-  loadData()
-}
+    keyword: "",
+    dateRange: [],
+  });
+  pagination.currentPage = 1;
+  loadData();
+};
 
 // 添加黑名单
 const handleAddToBlacklist = () => {
-  addForm.visitorId = ''
-  addForm.reason = ''
-  selectedVisitor.value = null
-  addDialogVisible.value = true
-}
+  addForm.visitorId = "";
+  addForm.reason = "";
+  selectedVisitor.value = null;
+  addDialogVisible.value = true;
+};
 
 // 游客ID失焦事件
 const handleVisitorIdBlur = async () => {
   if (!addForm.visitorId) {
-    selectedVisitor.value = null
-    return
+    selectedVisitor.value = null;
+    return;
   }
 
   try {
-    const response = await getVisitorById(addForm.visitorId)
-    const visitor = response
+    const response = await getVisitorById(addForm.visitorId);
+    const visitor = response;
 
     if (visitor.isBlacklisted) {
-      ElMessage.warning('该游客已在黑名单中')
-      selectedVisitor.value = null
-      return
+      ElMessage.warning("该游客已在黑名单中");
+      selectedVisitor.value = null;
+      return;
     }
 
-    selectedVisitor.value = visitor
+    selectedVisitor.value = visitor;
   } catch (error) {
-    ElMessage.error('游客不存在')
-    selectedVisitor.value = null
+    ElMessage.error("游客不存在");
+    selectedVisitor.value = null;
   }
-}
+};
 
 // 提交添加黑名单
 const handleAddSubmit = async () => {
   try {
-    await addFormRef.value.validate()
+    await addFormRef.value.validate();
 
     if (!selectedVisitor.value) {
-      ElMessage.error('请先输入有效的游客ID')
-      return
+      ElMessage.error("请先输入有效的游客ID");
+      return;
     }
 
-    addSubmitting.value = true
-    await blacklistVisitor(addForm.visitorId, { reason: addForm.reason })
+    addSubmitting.value = true;
+    await blacklistVisitor(addForm.visitorId, { reason: addForm.reason });
 
-    ElMessage.success('添加黑名单成功')
-    addDialogVisible.value = false
-    await loadData()
-    await loadStats()
-
+    ElMessage.success("添加黑名单成功");
+    addDialogVisible.value = false;
+    await loadData();
+    await loadStats();
   } catch (error) {
     if (error.message) {
-      ElMessage.error('添加失败：' + error.message)
+      ElMessage.error("添加失败：" + error.message);
     }
   } finally {
-    addSubmitting.value = false
+    addSubmitting.value = false;
   }
-}
+};
 
 // 批量解除黑名单
 const handleBatchRemove = async () => {
   try {
     await ElMessageBox.confirm(
       `确定要解除选中的 ${selectedRows.value.length} 个游客的黑名单吗？`,
-      '确认操作',
+      "确认操作",
       {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }
-    )
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      },
+    );
 
-    loading.value = true
+    loading.value = true;
 
     // 并发处理所有解除操作
-    const promises = selectedRows.value.map(row =>
-      unblacklistVisitor(row.visitorId)
-    )
+    const promises = selectedRows.value.map((row) =>
+      unblacklistVisitor(row.visitorId),
+    );
 
-    await Promise.all(promises)
+    await Promise.all(promises);
 
-    ElMessage.success('批量解除黑名单成功')
-    selectedRows.value = []
-    await loadData()
-    await loadStats()
-
+    ElMessage.success("批量解除黑名单成功");
+    selectedRows.value = [];
+    await loadData();
+    await loadStats();
   } catch (error) {
-    if (error !== 'cancel') {
-      ElMessage.error('批量解除失败：' + error.message)
+    if (error !== "cancel") {
+      ElMessage.error("批量解除失败：" + error.message);
     }
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 
 // 导出数据
 const handleExport = () => {
-  ElMessage.info('导出功能开发中...')
-}
+  ElMessage.info("导出功能开发中...");
+};
 
 // 表格选择变化
 const handleSelectionChange = (selection) => {
-  selectedRows.value = selection
-}
+  selectedRows.value = selection;
+};
 
 // 查看详情
 const handleViewDetail = (row) => {
-  router.push(`/visitors/${row.visitorId}`)
-}
+  router.push(`/visitors/${row.visitorId}`);
+};
 
 // 解除黑名单
 const handleRemoveFromBlacklist = async (row) => {
   try {
     await ElMessageBox.confirm(
       `确定要解除游客 ${row.user?.displayName || row.visitorId} 的黑名单吗？`,
-      '确认操作',
+      "确认操作",
       {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }
-    )
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      },
+    );
 
-    loading.value = true
-    await unblacklistVisitor(row.visitorId)
+    loading.value = true;
+    await unblacklistVisitor(row.visitorId);
 
-    ElMessage.success('解除黑名单成功')
-    await loadData()
-    await loadStats()
-
+    ElMessage.success("解除黑名单成功");
+    await loadData();
+    await loadStats();
   } catch (error) {
-    if (error !== 'cancel') {
-      ElMessage.error('解除失败：' + error.message)
+    if (error !== "cancel") {
+      ElMessage.error("解除失败：" + error.message);
     }
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 
 // 编辑拉黑原因
 const handleEditReason = (row) => {
-  editingVisitor.value = row
-  editReasonForm.reason = row.blacklistReason || ''
-  editReasonDialogVisible.value = true
-}
+  editingVisitor.value = row;
+  editReasonForm.reason = row.blacklistReason || "";
+  editReasonDialogVisible.value = true;
+};
 
 // 提交编辑原因
 const handleEditReasonSubmit = async () => {
   try {
-    editReasonSubmitting.value = true
+    editReasonSubmitting.value = true;
 
     // 先解除黑名单，再重新添加（模拟更新原因）
-    await unblacklistVisitor(editingVisitor.value.visitorId)
+    await unblacklistVisitor(editingVisitor.value.visitorId);
     await blacklistVisitor(editingVisitor.value.visitorId, {
-      reason: editReasonForm.reason
-    })
+      reason: editReasonForm.reason,
+    });
 
-    ElMessage.success('更新拉黑原因成功')
-    editReasonDialogVisible.value = false
-    await loadData()
-
+    ElMessage.success("更新拉黑原因成功");
+    editReasonDialogVisible.value = false;
+    await loadData();
   } catch (error) {
-    ElMessage.error('更新失败：' + error.message)
+    ElMessage.error("更新失败：" + error.message);
   } finally {
-    editReasonSubmitting.value = false
+    editReasonSubmitting.value = false;
   }
-}
+};
 
 // 分页大小改变
 const handleSizeChange = (size) => {
-  pagination.pageSize = size
-  pagination.currentPage = 1
-  loadData()
-}
+  pagination.pageSize = size;
+  pagination.currentPage = 1;
+  loadData();
+};
 
 // 当前页改变
 const handleCurrentChange = (page) => {
-  pagination.currentPage = page
-  loadData()
-}
+  pagination.currentPage = page;
+  loadData();
+};
 
 // 加载数据
 const loadData = async () => {
   try {
-    loading.value = true
+    loading.value = true;
 
     // 构建查询参数
     const params = {
       page: pagination.currentPage,
       pageSize: pagination.pageSize,
-      isBlacklisted: true // 只查询黑名单游客
-    }
+      isBlacklisted: true, // 只查询黑名单游客
+    };
 
     // 添加搜索条件
     if (searchForm.keyword) {
-      params.keyword = searchForm.keyword
+      params.keyword = searchForm.keyword;
     }
     if (searchForm.dateRange && searchForm.dateRange.length === 2) {
-      params.startDate = searchForm.dateRange[0].toISOString()
-      params.endDate = searchForm.dateRange[1].toISOString()
+      params.startDate = searchForm.dateRange[0].toISOString();
+      params.endDate = searchForm.dateRange[1].toISOString();
     }
 
-    const response = await searchVisitors(params)
+    const response = await searchVisitors(params);
 
     if (response) {
-      tableData.value = response.items || response
-      pagination.total = response.totalCount || response.length || 0
+      tableData.value = response.items || response;
+      pagination.total = response.totalCount || response.length || 0;
     } else {
-      tableData.value = []
-      pagination.total = 0
+      tableData.value = [];
+      pagination.total = 0;
     }
   } catch (error) {
-    console.error('加载黑名单数据失败:', error)
-    ElMessage.error('加载数据失败：' + error.message)
-    tableData.value = []
-    pagination.total = 0
+    console.error("加载黑名单数据失败:", error);
+    ElMessage.error("加载数据失败：" + error.message);
+    tableData.value = [];
+    pagination.total = 0;
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 
 // 加载统计数据
 const loadStats = async () => {
   try {
     // 获取基本统计数据
-    const response = await getVisitorStats()
+    const response = await getVisitorStats();
 
     if (response) {
       // 基本统计数据
-      stats.totalBlacklisted = response.blacklistedVisitors || 0
-      stats.totalVisitors = response.totalVisitors || 0
+      stats.totalBlacklisted = response.blacklistedVisitors || 0;
+      stats.totalVisitors = response.totalVisitors || 0;
 
       // 计算黑名单比例
       if (stats.totalVisitors > 0) {
-        stats.blacklistRate = Math.round((stats.totalBlacklisted / stats.totalVisitors) * 100 * 10) / 10
+        stats.blacklistRate =
+          Math.round(
+            (stats.totalBlacklisted / stats.totalVisitors) * 100 * 10,
+          ) / 10;
       } else {
-        stats.blacklistRate = 0
+        stats.blacklistRate = 0;
       }
     }
   } catch (error) {
-    console.error('加载统计数据失败:', error)
+    console.error("加载统计数据失败:", error);
     // 使用基于当前表格数据的统计
-    stats.totalBlacklisted = tableData.value.length
-    stats.totalVisitors = 0
-    stats.blacklistRate = 0
+    stats.totalBlacklisted = tableData.value.length;
+    stats.totalVisitors = 0;
+    stats.blacklistRate = 0;
   }
-}
+};
 
 // 组件挂载时加载数据
 onMounted(() => {
-  loadData()
-  loadStats()
-})
+  loadData();
+  loadStats();
+});
 </script>
 
 <style scoped>

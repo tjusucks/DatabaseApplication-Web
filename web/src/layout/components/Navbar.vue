@@ -85,74 +85,70 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { ElMessageBox, ElMessage } from 'element-plus'
-import { useAppStore } from '@/stores/app'
-import { useUserStore } from '@/stores/user'
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+import { ElMessageBox, ElMessage } from "element-plus";
+import { useAppStore } from "@/stores/app";
+import { useUserStore } from "@/stores/user";
 
-const router = useRouter()
-const appStore = useAppStore()
-const userStore = useUserStore()
+const router = useRouter();
+const appStore = useAppStore();
+const userStore = useUserStore();
 
 // 通知数量（模拟数据）
-const notificationCount = ref(3)
+const notificationCount = ref(3);
 
 // 切换侧边栏
 const toggleSidebar = () => {
-  appStore.toggleSidebar()
-}
+  appStore.toggleSidebar();
+};
 
 // 切换主题
 const toggleTheme = () => {
-  appStore.toggleTheme()
-}
+  appStore.toggleTheme();
+};
 
 // 切换全屏
 const toggleFullscreen = () => {
   if (!document.fullscreenElement) {
-    document.documentElement.requestFullscreen()
+    document.documentElement.requestFullscreen();
   } else {
     if (document.exitFullscreen) {
-      document.exitFullscreen()
+      document.exitFullscreen();
     }
   }
-}
+};
 
 // 显示通知
 const showNotifications = () => {
-  ElMessage.info('通知功能开发中...')
-}
+  ElMessage.info("通知功能开发中...");
+};
 
 // 处理用户下拉菜单命令
 const handleUserCommand = async (command) => {
   switch (command) {
-    case 'profile':
-      router.push('/profile')
-      break
-    case 'settings':
-      ElMessage.info('个人设置功能开发中...')
-      break
-    case 'logout':
+    case "profile":
+      router.push("/profile");
+      break;
+    case "settings":
+      ElMessage.info("个人设置功能开发中...");
+      break;
+    case "logout":
       try {
-        await ElMessageBox.confirm(
-          '确定要退出登录吗？',
-          '提示',
-          {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-          }
-        )
+        await ElMessageBox.confirm("确定要退出登录吗？", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        });
 
-        await userStore.logout()
-        router.push('/login')
+        await userStore.logout();
+        router.push("/login");
       } catch (error) {
         // 用户取消操作
       }
-      break
+      break;
   }
-}
+};
 </script>
 
 <style scoped>
@@ -187,7 +183,7 @@ const handleUserCommand = async (command) => {
 }
 
 .action-btn:hover {
-  color: #409EFF;
+  color: #409eff;
 }
 
 .user-dropdown {

@@ -1,7 +1,10 @@
 <template>
   <div class="layout-container">
     <!-- 侧边栏 -->
-    <div class="sidebar-container" :class="{ collapsed: appStore.sidebarCollapsed }">
+    <div
+      class="sidebar-container"
+      :class="{ collapsed: appStore.sidebarCollapsed }"
+    >
       <Sidebar />
     </div>
 
@@ -37,17 +40,17 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
-import { useAppStore } from '@/stores/app'
-import Sidebar from './components/Sidebar.vue'
-import Navbar from './components/Navbar.vue'
-import Breadcrumb from './components/Breadcrumb.vue'
+import { onMounted } from "vue";
+import { useAppStore } from "@/stores/app";
+import Sidebar from "./components/Sidebar.vue";
+import Navbar from "./components/Navbar.vue";
+import Breadcrumb from "./components/Breadcrumb.vue";
 
-const appStore = useAppStore()
+const appStore = useAppStore();
 
 onMounted(() => {
-  appStore.initApp()
-})
+  appStore.initApp();
+});
 </script>
 
 <style scoped>

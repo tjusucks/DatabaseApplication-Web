@@ -1,8 +1,8 @@
 <template>
   <div class="breadcrumb-container">
     <el-breadcrumb separator="/">
-      <el-breadcrumb-item 
-        v-for="(item, index) in breadcrumbs" 
+      <el-breadcrumb-item
+        v-for="(item, index) in breadcrumbs"
         :key="item.path"
         :to="index === breadcrumbs.length - 1 ? undefined : item.path"
       >
@@ -16,34 +16,36 @@
 </template>
 
 <script setup>
-import { computed, watch } from 'vue'
-import { useRoute } from 'vue-router'
-import { useUserStore } from '@/stores/user'
-import { getMenuList, generateBreadcrumbs } from '@/utils/menu'
+import { computed, watch } from "vue";
+import { useRoute } from "vue-router";
+import { useUserStore } from "@/stores/user";
+import { getMenuList, generateBreadcrumbs } from "@/utils/menu";
 
-const route = useRoute()
-const userStore = useUserStore()
+const route = useRoute();
+const userStore = useUserStore();
 
 // 获取当前用户的菜单列表
 const menuList = computed(() => {
-  return getMenuList(userStore.userRole)
-})
+  return getMenuList(userStore.userRole);
+});
 
 // 生成面包屑导航
 const breadcrumbs = computed(() => {
-  const crumbs = generateBreadcrumbs(menuList.value, route.path)
-  
+  const crumbs = generateBreadcrumbs(menuList.value, route.path);
+
   // 如果没有找到匹配的菜单项，使用路由的 meta 信息
   if (crumbs.length === 0 && route.meta.title) {
-    return [{
-      path: route.path,
-      title: route.meta.title,
-      icon: route.meta.icon
-    }]
+    return [
+      {
+        path: route.path,
+        title: route.meta.title,
+        icon: route.meta.icon,
+      },
+    ];
   }
-  
-  return crumbs
-})
+
+  return crumbs;
+});
 
 // 监听路由变化，更新面包屑
 watch(
@@ -51,8 +53,8 @@ watch(
   () => {
     // 这里可以添加额外的逻辑，比如更新页面标题等
   },
-  { immediate: true }
-)
+  { immediate: true },
+);
 </script>
 
 <style scoped>
@@ -81,6 +83,6 @@ watch(
 }
 
 :deep(.el-breadcrumb__item .el-breadcrumb__inner:hover) {
-  color: #409EFF;
+  color: #409eff;
 }
 </style>

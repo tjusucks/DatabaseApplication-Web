@@ -3,14 +3,14 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
-import { useAppStore } from '@/stores/app'
+import { onMounted } from "vue";
+import { useAppStore } from "@/stores/app";
 
-const appStore = useAppStore()
+const appStore = useAppStore();
 
 onMounted(() => {
-  appStore.initApp()
-})
+  appStore.initApp();
+});
 </script>
 
 <style>
@@ -21,7 +21,9 @@ onMounted(() => {
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, sans-serif;
   background-color: #f0f2f5;
   color: #303133;
 }
