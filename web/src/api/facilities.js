@@ -15,8 +15,19 @@ export function createRide(data) {
 }
 
 /**
+ * 获取游乐设施
+ * @param {String} id 设施ID
+ */
+export function getRide(id) {
+  return request({
+    url: `/api/resource/rides/${id}`,
+    method: 'get',
+  })
+}
+
+/**
  * 更新游乐设施
- * @param {string|number} id 设施ID
+ * @param {string} id 设施ID
  * @param {Object} data 更新数据
  */
 export function updateRide(id, data) {
@@ -29,7 +40,7 @@ export function updateRide(id, data) {
 
 /**
  * 删除游乐设施
- * @param {string|number} id 设施ID
+ * @param {string} id 设施ID
  */
 export function deleteRide(id) {
   return request({

@@ -1,28 +1,74 @@
-import axios from 'axios';
+import request from '@/utils/request'
 
-const BASE_URL = '/api/resource/maintenance';
+// 维护记录管理 API
 
-export const createMaintenanceRecord = async (data) => {
-  const response = await axios.post(BASE_URL, data);
-  return response.data;
-};
+/**
+ * 创建维护记录
+ * @param {Object} data 记录数据
+ */
+export function createMaintenanceRecord(data) {
+  return request({
+    url: '/api/resource/maintenance',
+    method: 'post',
+    data,
+  })
+}
 
-export const updateMaintenanceRecord = async (id, data) => {
-  const response = await axios.put(`${BASE_URL}/${id}`, data);
-  return response.data;
-};
+/**
+ * 获取维护记录
+ * @param {string} id 记录ID
+ */
+export function getMaintenanceRecord(id) {
+  return request({
+    url: `/api/resource/maintenance/${id}`,
+    method: 'get',
+  })
+}
 
-export const deleteMaintenanceRecord = async (id) => {
-  const response = await axios.delete(`${BASE_URL}/${id}`);
-  return response.data;
-};
+/**
+ * 更新维护记录
+ * @param {string} id 记录ID
+ * @param {Object} data 更新数据
+ */
+export function updateMaintenanceRecord(id, data) {
+  return request({
+    url: `/api/resource/maintenance/${id}`,
+    method: 'put',
+    data,
+  })
+}
 
-export const searchMaintenanceRecords = async (params) => {
-  const response = await axios.get(`${BASE_URL}/search`, { params });
-  return response.data;
-};
+/**
+ * 删除维护记录
+ * @param {string} id 记录ID
+ */
+export function deleteMaintenanceRecord(id) {
+  return request({
+    url: `/api/resource/maintenance/${id}`,
+    method: 'delete',
+  })
+}
 
-export const getMaintenanceStats = async (params) => {
-  const response = await axios.get(`${BASE_URL}/stats`, { params });
-  return response.data;
-};
+/**
+ * 搜索维护记录，支持多条件筛选和分页
+ * @param {Object} params 搜索参数
+ */
+export function searchMaintenanceRecords(params) {
+  return request({
+    url: '/api/resource/maintenance/search',
+    method: 'get',
+    params,
+  })
+}
+
+/**
+ * 获取维护记录统计数据
+ * @param {Object} params 统计参数
+ */
+export function getMaintenanceStats(params) {
+  return request({
+    url: '/api/resource/maintenance/stats',
+    method: 'get',
+    params,
+  })
+}

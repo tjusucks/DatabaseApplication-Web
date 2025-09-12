@@ -38,7 +38,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { getFacilityDetail, getRideStats } from '@/api/facilities';
+import { getRide, getRideStats } from '@/api/facilities';
 
 const route = useRoute();
 const router = useRouter();
@@ -49,7 +49,7 @@ const dateRange = ref([new Date(), new Date()]);
 
 const fetchFacilityDetail = async () => {
   const id = route.params.id;
-  facilityDetail.value = await getFacilityDetail(id);
+  facilityDetail.value = await getRide(id);
 };
 
 const fetchRideStats = async () => {
