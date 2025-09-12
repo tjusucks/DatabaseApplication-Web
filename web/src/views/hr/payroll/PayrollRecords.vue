@@ -248,7 +248,8 @@ const loadData = async () => {
     // 根据实际的API响应结构调整数据处理
     if (response && response.data) {
       payrollData.value = response.data.salaryRecords || response.data
-      pagination.total = response.data.totalCount || (response.data.length ? response.data.length : 0)
+      pagination.total =
+        response.data.totalCount || (response.data.length ? response.data.length : 0)
     } else {
       payrollData.value = []
       pagination.total = 0
