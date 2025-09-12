@@ -8,14 +8,31 @@
       </div>
 
       <!-- 重置密码表单 -->
-      <el-form ref="resetFormRef" :model="resetForm" :rules="resetRules" class="reset-form" label-position="top">
+      <el-form
+        ref="resetFormRef"
+        :model="resetForm"
+        :rules="resetRules"
+        class="reset-form"
+        label-position="top"
+      >
         <el-form-item label="用户名或邮箱" prop="identifier">
-          <el-input v-model="resetForm.identifier" placeholder="请输入用户名或邮箱地址" size="large" prefix-icon="User"
-            clearable />
+          <el-input
+            v-model="resetForm.identifier"
+            placeholder="请输入用户名或邮箱地址"
+            size="large"
+            prefix-icon="User"
+            clearable
+          />
         </el-form-item>
 
         <el-form-item>
-          <el-button type="primary" size="large" :loading="loading" @click="handleResetPassword" class="reset-button">
+          <el-button
+            type="primary"
+            size="large"
+            :loading="loading"
+            @click="handleResetPassword"
+            class="reset-button"
+          >
             {{ loading ? '发送中...' : '发送重置链接' }}
           </el-button>
         </el-form-item>
@@ -23,9 +40,7 @@
         <el-form-item>
           <div class="reset-footer">
             <el-text>记起密码了？</el-text>
-            <el-link type="primary" :underline="false" @click="goToLogin">
-              返回登录
-            </el-link>
+            <el-link type="primary" :underline="false" @click="goToLogin"> 返回登录 </el-link>
           </div>
         </el-form-item>
       </el-form>
@@ -51,15 +66,15 @@ const loading = ref(false)
 
 // 重置密码表单数据
 const resetForm = reactive({
-  identifier: ''
+  identifier: '',
 })
 
 // 表单验证规则
 const resetRules = {
   identifier: [
     { required: true, message: '请输入用户名或邮箱地址', trigger: 'blur' },
-    { min: 2, max: 100, message: '长度在 2 到 100 个字符', trigger: 'blur' }
-  ]
+    { min: 2, max: 100, message: '长度在 2 到 100 个字符', trigger: 'blur' },
+  ],
 }
 
 // 处理密码重置
@@ -73,7 +88,7 @@ const handleResetPassword = async () => {
     loading.value = true
 
     await resetPassword({
-      identifier: resetForm.identifier
+      identifier: resetForm.identifier,
     })
 
     ElMessage.success('重置链接已发送到您的邮箱，请查收')

@@ -18,8 +18,12 @@
     >
       <template v-for="item in menuList" :key="item.path">
         <!-- 单级菜单 -->
-        <el-menu-item v-if="!item.children || item.children.length === 0" :index="item.path"
-          @click="handleMenuClick(item)" @mouseenter="handleMenuHover(item)">
+        <el-menu-item
+          v-if="!item.children || item.children.length === 0"
+          :index="item.path"
+          @click="handleMenuClick(item)"
+          @mouseenter="handleMenuHover(item)"
+        >
           <el-icon>
             <component :is="item.icon" />
           </el-icon>
@@ -37,8 +41,12 @@
 
           <template v-for="child in item.children" :key="child.path">
             <!-- 二级菜单项 -->
-            <el-menu-item v-if="!child.children || child.children.length === 0" :index="child.path"
-              @click="handleMenuClick(child)" @mouseenter="handleMenuHover(child)">
+            <el-menu-item
+              v-if="!child.children || child.children.length === 0"
+              :index="child.path"
+              @click="handleMenuClick(child)"
+              @mouseenter="handleMenuHover(child)"
+            >
               <el-icon>
                 <component :is="child.icon || 'Document'" />
               </el-icon>
@@ -121,7 +129,7 @@ const getRouteNameFromPath = (path) => {
     '/tickets/pricing': 'TicketPricing',
     '/tickets/sales': 'TicketSales',
     '/tickets/statistics': 'TicketStatistics',
-    '/dashboard': 'Dashboard'
+    '/dashboard': 'Dashboard',
     // 可以根据需要添加更多映射
   }
   return pathToNameMap[path]
@@ -181,8 +189,8 @@ const getRouteNameFromPath = (path) => {
 /* 选中状态样式优化 */
 :deep(.el-menu-item.is-active) {
   background-color: rgba(64, 158, 255, 0.15) !important;
-  border-right: 3px solid #409EFF;
-  color: #409EFF !important;
+  border-right: 3px solid #409eff;
+  color: #409eff !important;
   position: relative;
 }
 
@@ -193,7 +201,7 @@ const getRouteNameFromPath = (path) => {
   top: 0;
   bottom: 0;
   width: 3px;
-  background-color: #409EFF;
+  background-color: #409eff;
 }
 
 /* 悬停状态样式优化 */

@@ -23,11 +23,7 @@
           <transition name="fade-transform" mode="out-in" appear>
             <keep-alive :max="10">
               <ErrorBoundary>
-                <component
-                  :is="Component"
-                  :key="route.fullPath"
-                  v-if="Component"
-                />
+                <component :is="Component" :key="route.fullPath" v-if="Component" />
               </ErrorBoundary>
             </keep-alive>
           </transition>

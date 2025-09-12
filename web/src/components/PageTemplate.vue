@@ -35,22 +35,22 @@
 </template>
 
 <script setup>
-import { defineProps, ref, onMounted, nextTick, computed } from "vue";
+import { defineProps, ref, onMounted, nextTick, computed } from 'vue'
 
 // 接收父组件传递的属性
 const props = defineProps({
   title: {
     type: String,
     required: true,
-    default: "页面标题",
+    default: '页面标题',
   },
   description: {
     type: String,
-    default: "",
+    default: '',
   },
   icon: {
     type: String,
-    default: "",
+    default: '',
   },
   loading: {
     type: Boolean,
@@ -60,22 +60,22 @@ const props = defineProps({
     type: Number,
     default: 100,
   },
-});
+})
 
-const internalLoading = ref(true);
+const internalLoading = ref(true)
 
 onMounted(async () => {
   // 等待DOM渲染完成
-  await nextTick();
+  await nextTick()
 
   // 短暂延迟以确保内容完全加载，减少闪烁
   setTimeout(() => {
-    internalLoading.value = false;
-  }, props.preloadDelay);
-});
+    internalLoading.value = false
+  }, props.preloadDelay)
+})
 
 // 计算最终的加载状态
-const isLoading = computed(() => props.loading || internalLoading.value);
+const isLoading = computed(() => props.loading || internalLoading.value)
 </script>
 
 <style scoped>

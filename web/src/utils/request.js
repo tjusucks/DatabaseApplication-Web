@@ -16,14 +16,11 @@ const service = axios.create({
 
 // 请求拦截器
 service.interceptors.request.use(
-
-  config => {
-
+  (config) => {
     const appStore = useAppStore()
 
     // 显示全局加载状态
     appStore.setGlobalLoading(true)
-
 
     // 添加请求时间戳，防止缓存
     if (config.method === 'get') {
@@ -72,8 +69,7 @@ service.interceptors.response.use(
     return response.data
   },
 
-  async error => {
-
+  async (error) => {
     const appStore = useAppStore()
     const userStore = useUserStore()
 

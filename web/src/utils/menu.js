@@ -117,8 +117,8 @@ const fullMenuList = [
         roles: ['Admin', 'Manager'],
       },
       {
-        path: '/refunds/management',
-        title: '退票管理',
+        path: '/refunds/request',
+        title: '申请退票',
         icon: 'Setting',
         roles: ['Admin', 'Manager'],
       },
@@ -231,78 +231,46 @@ const fullMenuList = [
     roles: ['Admin', 'Manager'],
     children: [
       {
-        path: '/hr/employees',
-        title: '员工管理',
+        path: '/hr/employees/list',
+        title: '员工列表',
         icon: 'UserFilled',
         roles: ['Admin', 'Manager'],
-        children: [
-          {
-            path: '/hr/employees/list',
-            title: '员工列表',
-            icon: 'List',
-            roles: ['Admin', 'Manager'],
-          },
-        ],
       },
       {
-        path: '/hr/payroll',
-        title: '工资管理',
-        icon: 'Money',
+        path: '/hr/payroll/generate',
+        title: '工资单生成',
+        icon: 'DocumentAdd',
         roles: ['Admin', 'Manager'],
-        children: [
-          {
-            path: '/hr/payroll/generate',
-            title: '工资单生成',
-            icon: 'DocumentAdd',
-            roles: ['Admin', 'Manager'],
-          },
-          {
-            path: '/hr/payroll/records',
-            title: '工资记录',
-            icon: 'Document',
-            roles: ['Admin', 'Manager'],
-          },
-        ],
       },
       {
-        path: '/hr/attendance',
-        title: '考勤管理',
+        path: '/hr/payroll/records',
+        title: '工资记录',
+        icon: 'Document',
+        roles: ['Admin', 'Manager'],
+      },
+      {
+        path: '/hr/attendance/records',
+        title: '考勤记录',
         icon: 'Clock',
         roles: ['Admin', 'Manager'],
-        children: [
-          {
-            path: '/hr/attendance/records',
-            title: '考勤记录',
-            icon: 'Document',
-            roles: ['Admin', 'Manager'],
-          },
-          {
-            path: '/hr/attendance/statistics',
-            title: '考勤统计',
-            icon: 'PieChart',
-            roles: ['Admin', 'Manager'],
-          },
-        ],
       },
       {
-        path: '/hr/performance',
-        title: '绩效管理',
+        path: '/hr/attendance/statistics',
+        title: '考勤统计',
+        icon: 'PieChart',
+        roles: ['Admin', 'Manager'],
+      },
+      {
+        path: '/hr/performance/evaluations',
+        title: '绩效评估',
         icon: 'Trophy',
         roles: ['Admin', 'Manager'],
-        children: [
-          {
-            path: '/hr/performance/evaluations',
-            title: '绩效评估',
-            icon: 'Star',
-            roles: ['Admin', 'Manager'],
-          },
-          {
-            path: '/hr/performance/reports',
-            title: '绩效报表',
-            icon: 'Document',
-            roles: ['Admin', 'Manager'],
-          },
-        ],
+      },
+      {
+        path: '/hr/performance/reports',
+        title: '绩效报表',
+        icon: 'Document',
+        roles: ['Admin', 'Manager'],
       },
     ],
   },
@@ -328,36 +296,27 @@ const fullMenuList = [
   },
 ]
 
-// 检查用户是否有权限访问菜单项
+// 权限检查已完全禁用 - 所有登录用户可访问所有菜单
 const hasPermission = (menuItem, userRole) => {
-  if (!menuItem.roles || menuItem.roles.length === 0) {
-    return true
-  }
-  return menuItem.roles.includes(userRole) || userRole === 'Admin'
+  // 始终返回 true，允许所有用户访问所有菜单项
+  return true
 }
 
-// 过滤菜单项
+// 过滤菜单项 - 现在不进行任何过滤
 const filterMenu = (menuList, userRole) => {
-  return menuList.filter((item) => {
-    if (!hasPermission(item, userRole)) {
-      return false
-    }
-
+  // 返回所有菜单项，不进行权限过滤
+  return menuList.map((item) => {
     if (item.children && item.children.length > 0) {
+      // 递归处理子菜单，但不过滤
       item.children = filterMenu(item.children, userRole)
-      return item.children.length > 0
     }
-
-    return true
+    return item
   })
 }
 
 // 根据用户角色获取菜单列表
 export const getMenuList = (userRole) => {
-  if (!userRole) {
-    return []
-  }
-
+  // 不检查用户角色，返回所有菜单项
   return filterMenu(JSON.parse(JSON.stringify(fullMenuList)), userRole)
 }
 
