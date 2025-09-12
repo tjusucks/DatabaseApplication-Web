@@ -595,33 +595,50 @@ const router = createRouter({
 })
 
 // 路由守卫
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const userStore = useUserStore()
 
-  // 设置页面标题
-  document.title = to.meta.title
-    ? `${to.meta.title} - ${import.meta.env.VITE_APP_TITLE}`
-    : import.meta.env.VITE_APP_TITLE
+  try {
+    // 设置页面标题
+    document.title = to.meta.title ? `${to.meta.title} - ${import.meta.env.VITE_APP_TITLE}` : import.meta.env.VITE_APP_TITLE
 
-  // 检查是否需要登录
-  if (to.meta.requiresAuth && !userStore.isLoggedIn) {
-    next('/login')
-    return
-  }
+    // 检查是否需要登录
+    if (to.meta.requiresAuth && !userStore.isLoggedIn) {
+      next('/login')
+      return
+    }
 
-  // 检查角色权限
-  if (to.meta.roles && !userStore.hasAnyRole(to.meta.roles)) {
+    // 检查角色权限
+    if (to.meta.roles && !userStore.hasAnyRole(to.meta.roles)) {
+      next('/404')
+      return
+    }
+
+    // 已登录用户访问登录页面，重定向到首页
+    if (to.path === '/login' && userStore.isLoggedIn) {
+      next('/')
+      return
+    }
+
+    next()
+  } catch (error) {
+    console.error('路由守卫错误:', error)
     next('/404')
-    return
   }
+})
 
-  // 已登录用户访问登录页面，重定向到首页
-  if (to.path === '/login' && userStore.isLoggedIn) {
-    next('/')
-    return
+// 路由后置守卫 - 处理组件加载错误
+router.afterEach((to, from, failure) => {
+  if (failure) {
+    console.error('路由导航失败:', failure)
+    // 可以在这里添加错误处理逻辑
   }
+})
 
-  next()
+// 路由错误处理
+router.onError((error) => {
+  console.error('路由错误:', error)
+  // 可以在这里添加全局错误处理
 })
 
 export default router
