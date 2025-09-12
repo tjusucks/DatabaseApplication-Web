@@ -391,12 +391,12 @@ export const useUserStore = defineStore('user', () => {
 
   // 登出
   const logout = async () => {
-    token.value = "";
-    userInfo.value = {};
-    permissions.value = [];
-    localStorage.clear();
-    ElMessage.success("已退出登录");
-  };
+    token.value = ''
+    userInfo.value = {}
+    permissions.value = []
+    localStorage.clear()
+    ElMessage.success('已退出登录')
+  }
 
   return {
     token,
@@ -408,5 +408,5 @@ export const useUserStore = defineStore('user', () => {
     hasAnyRole,
     login,
     logout,
-  };
-});
+  }
+})
