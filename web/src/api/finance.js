@@ -8,7 +8,7 @@ import request from '@/utils/request'
  */
 export function searchFinancialRecords(params) {
   return request({
-    url: '/resource/financial-records/search',
+    url: '/api/resource/financial-records/search',
     method: 'get',
     params,
   })
@@ -20,7 +20,7 @@ export function searchFinancialRecords(params) {
  */
 export function createFinancialRecord(data) {
   return request({
-    url: '/resource/financial-records',
+    url: '/api/resource/financial-records',
     method: 'post',
     data,
   })
@@ -32,7 +32,7 @@ export function createFinancialRecord(data) {
  */
 export function getFinancialRecordById(id) {
   return request({
-    url: `/resource/financial-records/${id}`,
+    url: '/api/resource/financial-records/${id}',
     method: 'get',
   })
 }
@@ -44,7 +44,7 @@ export function getFinancialRecordById(id) {
  */
 export function updateFinancialRecord(id, data) {
   return request({
-    url: `/resource/financial-records/${id}`,
+    url: '/api/resource/financial-records/${id}',
     method: 'put',
     data,
   })
@@ -56,7 +56,7 @@ export function updateFinancialRecord(id, data) {
  */
 export function deleteFinancialRecord(id) {
   return request({
-    url: `/resource/financial-records/${id}`,
+    url: '/api/resource/financial-records/${id}',
     method: 'delete',
   })
 }
@@ -69,7 +69,7 @@ export function deleteFinancialRecord(id) {
  */
 export function getFinanceOverview(params) {
   return request({
-    url: '/resource/financial-records/overview',
+    url: '/api/resource/financial-records/overview',
     method: 'get',
     params,
   })
@@ -81,7 +81,7 @@ export function getFinanceOverview(params) {
  */
 export function getFinanceGroupedStats(params) {
   return request({
-    url: '/resource/financial-records/stats/grouped',
+    url: '/api/resource/financial-records/stats/grouped',
     method: 'get',
     params,
   })
@@ -93,7 +93,7 @@ export function getFinanceGroupedStats(params) {
  */
 export function getFinanceStats(params) {
   return request({
-    url: '/resource/financial-records/stats',
+    url: '/api/resource/financial-records/stats',
     method: 'get',
     params,
   })
@@ -106,7 +106,7 @@ export function getFinanceStats(params) {
  */
 export function getRecordsByType(transactionType, params) {
   return request({
-    url: `/resource/financial-records/by-type/${transactionType}`,
+    url: '/api/resource/financial-records/by-type/${transactionType}',
     method: 'get',
     params,
   })
@@ -120,7 +120,7 @@ export function getRecordsByType(transactionType, params) {
  */
 export function createSalaryRecord(data) {
   return request({
-    url: '/resource/salary-records',
+    url: '/api/resource/salary-records',
     method: 'post',
     data,
   })
@@ -132,7 +132,7 @@ export function createSalaryRecord(data) {
  */
 export function getSalaryRecord(id) {
   return request({
-    url: `/resource/salary-records/${id}`,
+    url: '/api/resource/salary-records/${id}',
     method: 'get',
   })
 }
@@ -144,7 +144,7 @@ export function getSalaryRecord(id) {
  */
 export function updateSalaryRecord(id, data) {
   return request({
-    url: `/resource/salary-records/${id}`,
+    url: '/api/resource/salary-records/${id}',
     method: 'put',
     data,
   })
@@ -156,7 +156,7 @@ export function updateSalaryRecord(id, data) {
  */
 export function deleteSalaryRecord(id) {
   return request({
-    url: `/resource/salary-records/${id}`,
+    url: '/api/resource/salary-records/${id}',
     method: 'delete',
   })
 }
@@ -167,7 +167,7 @@ export function deleteSalaryRecord(id) {
  */
 export function searchSalaryRecords(query) {
   return request({
-    url: '/resource/salary-records/search',
+    url: '/api/resource/salary-records/search',
     method: 'get',
     params: query,
   })
@@ -179,7 +179,7 @@ export function searchSalaryRecords(query) {
  */
 export function getSalaryStats(query) {
   return request({
-    url: '/resource/salary-records/stats',
+    url: '/api/resource/salary-records/stats',
     method: 'post',
     data: query,
   })
@@ -191,7 +191,7 @@ export function getSalaryStats(query) {
  */
 export function generatePayrolls(data) {
   return request({
-    url: '/resource/salary-records/generate-payrolls',
+    url: '/api/resource/salary-records/generate-payrolls',
     method: 'post',
     data,
   })
@@ -203,7 +203,7 @@ export function generatePayrolls(data) {
  */
 export function processPayroll(data) {
   return request({
-    url: '/resource/salary-records/process-payroll',
+    url: '/api/resource/salary-records/process-payroll',
     method: 'post',
     data,
   })
@@ -217,7 +217,7 @@ export function processPayroll(data) {
  */
 export function searchMaintenanceRecords(query) {
   return request({
-    url: '/resource/maintenance-records/search',
+    url: '/api/resource/maintenance-records/search',
     method: 'get',
     params: query,
   })
@@ -229,7 +229,7 @@ export function searchMaintenanceRecords(query) {
  */
 export function createMaintenanceRecord(data) {
   return request({
-    url: '/resource/maintenance-records',
+    url: '/api/resource/maintenance-records',
     method: 'post',
     data,
   })
@@ -241,7 +241,7 @@ export function createMaintenanceRecord(data) {
  */
 export function getMaintenanceRecord(id) {
   return request({
-    url: `/resource/maintenance-records/${id}`,
+    url: '/api/resource/maintenance-records/${id}',
     method: 'get',
   })
 }
@@ -253,7 +253,7 @@ export function getMaintenanceRecord(id) {
  */
 export function updateMaintenanceRecord(id, data) {
   return request({
-    url: `/resource/maintenance-records/${id}`,
+    url: '/api/resource/maintenance-records/${id}',
     method: 'put',
     data,
   })
@@ -265,7 +265,7 @@ export function updateMaintenanceRecord(id, data) {
  */
 export function deleteMaintenanceRecord(id) {
   return request({
-    url: `/resource/maintenance-records/${id}`,
+    url: '/api/resource/maintenance-records/${id}',
     method: 'delete',
   })
 }
@@ -278,7 +278,7 @@ export function deleteMaintenanceRecord(id) {
  */
 export function searchTicketSales(query) {
   return request({
-    url: '/resource/tickets/search', // 假设这是票务搜索的端点
+    url: '/api/resource/tickets/search', // 假设这是票务搜索的端点
     method: 'get',
     params: query,
   })
@@ -292,7 +292,7 @@ export function searchTicketSales(query) {
  */
 export function searchRefunds(query) {
   return request({
-    url: '/resource/refunds/search', // 假设这是退款搜索的端点
+    url: '/api/resource/refunds/search', // 假设这是退款搜索的端点
     method: 'get',
     params: query,
   })

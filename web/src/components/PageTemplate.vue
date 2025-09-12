@@ -1,28 +1,38 @@
 <template>
-  <div class="page-container">
-    <div class="page-header">
-      <h1 class="page-title">
-        <el-icon v-if="icon" class="title-icon"><component :is="icon" /></el-icon>
-        {{ title }}
-      </h1>
-      <p class="page-description">{{ description }}</p>
-    </div>
-    <div class="page-content">
-      <div class="placeholder">
-        <el-empty description="功能开发中，敬请期待..." />
+  <div class="page-template-container">
+    <el-card shadow="never">
+      <template #header>
+        <div class="page-header">
+          <div class="header-content">
+            <el-icon v-if="icon" :size="24" class="header-icon">
+              <!-- 动态组件来显示Element Plus图标 -->
+              <component :is="icon" />
+            </el-icon>
+            <div>
+              <h2 class="title">{{ title }}</h2>
+              <p class="description">{{ description }}</p>
+            </div>
+          </div>
+        </div>
+      </template>
+
+      <!-- 主内容区域 -->
+      <div class="page-content">
+        <slot></slot>
       </div>
-    </div>
+    </el-card>
   </div>
 </template>
 
 <script setup>
 import { defineProps } from 'vue'
-import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
+// 接收父组件传递的属性
 defineProps({
   title: {
     type: String,
     required: true,
+    default: '页面标题',
   },
   description: {
     type: String,
@@ -36,46 +46,30 @@ defineProps({
 </script>
 
 <style scoped>
-.page-container {
+.page-template-container {
   padding: 20px;
-  background-color: #f5f7fa;
-  height: 100%;
 }
 .page-header {
-  padding-bottom: 20px;
-  border-bottom: 1px solid #dcdfe6;
-  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
-
-.page-title {
-  font-size: 24px;
-  font-weight: 600;
+.header-content {
+  display: flex;
+  align-items: center;
+}
+.header-icon {
+  margin-right: 12px;
+  color: #409eff; /* 主题色 */
+}
+.title {
   margin: 0;
-  display: flex;
-  align-items: center;
+  font-size: 20px;
+  font-weight: 600;
 }
-
-.title-icon {
-  margin-right: 10px;
-}
-
-.page-description {
+.description {
+  margin: 4px 0 0;
+  color: #909399;
   font-size: 14px;
-  color: #606266;
-  margin-top: 8px;
-}
-
-.page-content {
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 4px;
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-}
-
-.placeholder {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 400px;
 }
 </style>
