@@ -1,6 +1,6 @@
-import axios from 'axios';
+import axios from 'axios'
 
-const BASE_URL = '/api/resource/inspections';
+const BASE_URL = '/api/resource/inspections'
 
 /**
  * 创建安全检查记录
@@ -8,9 +8,9 @@ const BASE_URL = '/api/resource/inspections';
  * @returns {Promise<number>} 返回创建的记录ID
  */
 export const createInspectionRecord = async (data) => {
-  const response = await axios.post(BASE_URL, data);
-  return response.data; // 返回记录ID (int32)
-};
+  const response = await axios.post(BASE_URL, data)
+  return response.data // 返回记录ID (int32)
+}
 
 /**
  * 根据ID获取单个检查记录
@@ -18,9 +18,9 @@ export const createInspectionRecord = async (data) => {
  * @returns {Promise<Object>} 返回 InspectionRecordSummaryDto
  */
 export const getInspectionRecord = async (id) => {
-  const response = await axios.get(`${BASE_URL}/${id}`);
-  return response.data;
-};
+  const response = await axios.get(`${BASE_URL}/${id}`)
+  return response.data
+}
 
 /**
  * 更新检查记录
@@ -29,8 +29,8 @@ export const getInspectionRecord = async (id) => {
  * @returns {Promise<void>}
  */
 export const updateInspectionRecord = async (id, data) => {
-  await axios.put(`${BASE_URL}/${id}`, data);
-};
+  await axios.put(`${BASE_URL}/${id}`, data)
+}
 
 /**
  * 删除检查记录
@@ -38,8 +38,8 @@ export const updateInspectionRecord = async (id, data) => {
  * @returns {Promise<void>}
  */
 export const deleteInspectionRecord = async (id) => {
-  await axios.delete(`${BASE_URL}/${id}`);
-};
+  await axios.delete(`${BASE_URL}/${id}`)
+}
 
 /**
  * 搜索检查记录（带分页和筛选）
@@ -56,9 +56,9 @@ export const deleteInspectionRecord = async (id) => {
  * @returns {Promise<Object>} 返回 InspectionRecordResult
  */
 export const searchInspectionRecords = async (params = {}) => {
-  const response = await axios.get(`${BASE_URL}/search`, { params });
-  return response.data;
-};
+  const response = await axios.get(`${BASE_URL}/search`, { params })
+  return response.data
+}
 
 /**
  * 获取检查记录统计信息
@@ -69,11 +69,11 @@ export const searchInspectionRecords = async (params = {}) => {
  * @returns {Promise<Object>} 返回 InspectionRecordStatsDto
  */
 export const getInspectionStats = async (params = {}) => {
-  const response = await axios.get(`${BASE_URL}/stats`, { params });
-  return response.data;
-};
+  const response = await axios.get(`${BASE_URL}/stats`, { params })
+  return response.data
+}
 
 // 为了保持向后兼容，可以保留一些旧的函数名作为别名
-export const getSafetyInspections = searchInspectionRecords;
-export const addSafetyInspection = createInspectionRecord;
-export const deleteSafetyInspection = deleteInspectionRecord;
+export const getSafetyInspections = searchInspectionRecords
+export const addSafetyInspection = createInspectionRecord
+export const deleteSafetyInspection = deleteInspectionRecord

@@ -12,16 +12,32 @@
         <el-descriptions-item label="设施ID">{{ facilityDetail?.id }}</el-descriptions-item>
         <el-descriptions-item label="设施名称">{{ facilityDetail?.name }}</el-descriptions-item>
         <el-descriptions-item label="状态">{{ facilityDetail?.status }}</el-descriptions-item>
-        <el-descriptions-item label="创建时间">{{ facilityDetail?.createdAt }}</el-descriptions-item>
+        <el-descriptions-item label="创建时间">{{
+          facilityDetail?.createdAt
+        }}</el-descriptions-item>
         <el-descriptions-item label="位置">{{ facilityDetail?.location }}</el-descriptions-item>
-        <el-descriptions-item label="描述">{{ facilityDetail?.description || '无' }}</el-descriptions-item>
+        <el-descriptions-item label="描述">{{
+          facilityDetail?.description || '无'
+        }}</el-descriptions-item>
         <el-descriptions-item label="容量">{{ facilityDetail?.capacity }}</el-descriptions-item>
-        <el-descriptions-item label="运行时长">{{ facilityDetail?.duration }} 分钟</el-descriptions-item>
-        <el-descriptions-item label="最小高度限制">{{ facilityDetail?.heightLimitMin }} cm</el-descriptions-item>
-        <el-descriptions-item label="最大高度限制">{{ facilityDetail?.heightLimitMax }} cm</el-descriptions-item>
-        <el-descriptions-item label="开放日期">{{ facilityDetail?.openDate || '未设置' }}</el-descriptions-item>
-        <el-descriptions-item label="负责人">{{ facilityDetail?.managerName || '未指定' }}</el-descriptions-item>
-        <el-descriptions-item label="更新时间">{{ facilityDetail?.updatedAt }}</el-descriptions-item>
+        <el-descriptions-item label="运行时长"
+          >{{ facilityDetail?.duration }} 分钟</el-descriptions-item
+        >
+        <el-descriptions-item label="最小高度限制"
+          >{{ facilityDetail?.heightLimitMin }} cm</el-descriptions-item
+        >
+        <el-descriptions-item label="最大高度限制"
+          >{{ facilityDetail?.heightLimitMax }} cm</el-descriptions-item
+        >
+        <el-descriptions-item label="开放日期">{{
+          facilityDetail?.openDate || '未设置'
+        }}</el-descriptions-item>
+        <el-descriptions-item label="负责人">{{
+          facilityDetail?.managerName || '未指定'
+        }}</el-descriptions-item>
+        <el-descriptions-item label="更新时间">{{
+          facilityDetail?.updatedAt
+        }}</el-descriptions-item>
       </el-descriptions>
 
       <el-card class="status-card" shadow="hover">
@@ -36,43 +52,43 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import { getFacilityDetail, getRideStats } from '@/api/facilities';
+import { ref, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { getFacilityDetail, getRideStats } from '@/api/facilities'
 
-const route = useRoute();
-const router = useRouter();
-const facilityDetail = ref(null);
-const rideStats = ref(null);
-const loading = ref(false);
-const dateRange = ref([new Date(), new Date()]);
+const route = useRoute()
+const router = useRouter()
+const facilityDetail = ref(null)
+const rideStats = ref(null)
+const loading = ref(false)
+const dateRange = ref([new Date(), new Date()])
 
 const fetchFacilityDetail = async () => {
-  const id = route.params.id;
-  facilityDetail.value = await getFacilityDetail(id);
-};
+  const id = route.params.id
+  facilityDetail.value = await getFacilityDetail(id)
+}
 
 const fetchRideStats = async () => {
-  loading.value = true;
+  loading.value = true
   try {
     const stats = await getRideStats({
       startDate: dateRange.value[0],
       endDate: dateRange.value[1],
-    });
-    rideStats.value = stats;
+    })
+    rideStats.value = stats
   } finally {
-    loading.value = false;
+    loading.value = false
   }
-};
+}
 
 const goBack = () => {
-  router.push('/facilities');
-};
+  router.push('/facilities')
+}
 
 onMounted(() => {
-  fetchFacilityDetail();
-  fetchRideStats();
-});
+  fetchFacilityDetail()
+  fetchRideStats()
+})
 </script>
 
 <style scoped>
