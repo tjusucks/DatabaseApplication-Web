@@ -363,8 +363,8 @@ const goToRideDetail = (rideId) => {
 
 // 实时更新相关
 const refreshInterval = ref(null)
-const isAutoRefresh = ref(true)
-const refreshIntervalTime = ref(5000) // 5秒刷新一次
+const isAutoRefresh = ref(false)
+const refreshIntervalTime = ref(1000) // 1秒刷新一次
 
 // Lifecycle
 onMounted(() => {

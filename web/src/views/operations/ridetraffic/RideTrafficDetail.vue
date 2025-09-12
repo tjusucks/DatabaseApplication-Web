@@ -121,29 +121,19 @@
           <div class="card-header">
             <span>流量趋势</span>
             <div class="chart-controls">
-              <el-date-picker
-                v-model="dateRange"
-                type="daterange"
-                range-separator="至"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-                value-format="YYYY-MM-DD"
-                @change="fetchHistoricalData"
-                size="small"
-              />
               <el-button 
-                @click="fetchHistoricalData" 
-                size="small" 
-                style="margin-left: 10px;"
+                @click="refreshChart" 
+                size="small"
               >
-                查询
+                <el-icon><Refresh /></el-icon>
+                刷新图表
               </el-button>
             </div>
           </div>
         </template>
 
         <div class="chart-container">
-          <div ref="chartContainer" style="width: 100%; height: 400px;"></div>
+          <div ref="chartContainer" style="width: 100%; height: 500px;"></div>
         </div>
       </el-card>
 
@@ -152,17 +142,139 @@
         <template #header>
           <div class="card-header">
             <span>历史流量数据</span>
-            <el-button @click="exportHistoryData" size="small">
-              <el-icon><Download /></el-icon>
-              导出
-            </el-button>
+            <div class="table-controls">
+              <el-button @click="exportHistoryData" size="small">
+                <el-icon><Download /></el-icon>
+                导出
+              </el-button>
+            </div>
           </div>
         </template>
+        
+        <!-- 搜索和过滤控件 -->
+        <div class="search-filters">
+          <el-row :gutter="10" class="filter-row">
+            <el-col :span="4">
+              <el-input
+                v-model="searchFilters.keyword"
+                placeholder="关键词搜索"
+                clearable
+                @keyup.enter="fetchHistoricalData"
+              />
+            </el-col>
+            <el-col :span="3">
+              <el-select
+                v-model="searchFilters.isCrowded"
+                placeholder="拥挤状态"
+                clearable
+                @change="fetchHistoricalData"
+              >
+                <el-option label="拥挤" :value="true" />
+                <el-option label="正常" :value="false" />
+              </el-select>
+            </el-col>
+            <el-col :span="3">
+              <el-select
+                v-model="searchFilters.sortOrder"
+                placeholder="排序方式"
+                @change="fetchHistoricalData"
+              >
+                <el-option label="时间倒序" value="desc" />
+                <el-option label="时间正序" value="asc" />
+              </el-select>
+            </el-col>
+            <el-col :span="6">
+              <el-input
+                v-model.number="searchFilters.minVisitorCount"
+                placeholder="最小游客数"
+                type="number"
+                @change="fetchHistoricalData"
+              />
+            </el-col>
+            <el-col :span="6">
+              <el-input
+                v-model.number="searchFilters.maxVisitorCount"
+                placeholder="最大游客数"
+                type="number"
+                @change="fetchHistoricalData"
+              />
+            </el-col>
+            <el-col :span="2">
+              <el-button type="primary" @click="fetchHistoricalData">
+                <el-icon><Search /></el-icon>
+              </el-button>
+            </el-col>
+          </el-row>
+          
+          <el-row :gutter="10" class="filter-row">
+            <el-col :span="4">
+              <el-date-picker
+                v-model="searchFilters.recordTimeFrom"
+                type="datetime"
+                placeholder="开始时间"
+                value-format="YYYY-MM-DD HH:mm:ss"
+                @change="fetchHistoricalData"
+              />
+            </el-col>
+            <el-col :span="4">
+              <el-date-picker
+                v-model="searchFilters.recordTimeTo"
+                type="datetime"
+                placeholder="结束时间"
+                value-format="YYYY-MM-DD HH:mm:ss"
+                @change="fetchHistoricalData"
+              />
+            </el-col>
+            <el-col :span="4">
+              <el-input
+                v-model.number="searchFilters.minQueueLength"
+                placeholder="最小队列长度"
+                type="number"
+                @change="fetchHistoricalData"
+              />
+            </el-col>
+            <el-col :span="4">
+              <el-input
+                v-model.number="searchFilters.maxQueueLength"
+                placeholder="最大队列长度"
+                type="number"
+                @change="fetchHistoricalData"
+              />
+            </el-col>
+            <el-col :span="4">
+              <el-input
+                v-model.number="searchFilters.minWaitingTime"
+                placeholder="最小等待时间"
+                type="number"
+                @change="fetchHistoricalData"
+              />
+            </el-col>
+            <el-col :span="4">
+              <el-input
+                v-model.number="searchFilters.maxWaitingTime"
+                placeholder="最大等待时间"
+                type="number"
+                @change="fetchHistoricalData"
+              />
+            </el-col>
+          </el-row>
+          
+          <el-row :gutter="10" class="filter-row">
+            <el-col :span="24">
+              <div class="filter-actions">
+                <el-button @click="resetFilters" size="small">
+                  重置筛选
+                </el-button>
+              </div>
+            </el-col>
+          </el-row>
+        </div>
 
         <el-table 
           :data="historicalData" 
           stripe
           style="width: 100%"
+          height="400"
         >
           <el-table-column prop="recordTime" label="记录时间" width="180">
             <template #default="{ row }">
@@ -226,10 +338,28 @@ const historyPage = ref(1)
 const historyPageSize = ref(20)
 const historyTotal = ref(0)
 
+// Search and filter data
+const searchFilters = ref({
+  keyword: '',
+  isCrowded: null,
+  sortOrder: 'desc',
+  minVisitorCount: null,
+  maxVisitorCount: null,
+  minQueueLength: null,
+  maxQueueLength: null,
+  minWaitingTime: null,
+  maxWaitingTime: null,
+  recordTimeFrom: null,
+  recordTimeTo: null
+})
+
+// Chart date range
+const chartDateRange = ref([])
+
 // 实时更新相关
 const refreshInterval = ref(null)
-const isAutoRefresh = ref(true)
-const refreshIntervalTime = ref(5000) // 5秒刷新一次
+const isAutoRefresh = ref(false)
+const refreshIntervalTime = ref(1000) // 1秒刷新一次
 const isUpdating = ref(false) // 防抖标志
 
 // Computed
@@ -362,12 +492,56 @@ const fetchHistoricalData = async () => {
     const params = {
       rideId: rideId.value,
       page: historyPage.value,
-      pageSize: historyPageSize.value
+      pageSize: historyPageSize.value,
+      // Add sorting parameter
+      descending: searchFilters.value.sortOrder === 'desc'
     }
     
+    // Add search filters
+    if (searchFilters.value.keyword) {
+      params.keyword = searchFilters.value.keyword
+    }
+    
+    if (searchFilters.value.isCrowded !== null) {
+      params.isCrowded = searchFilters.value.isCrowded
+    }
+    
+    if (searchFilters.value.minVisitorCount !== null) {
+      params.minVisitorCount = searchFilters.value.minVisitorCount
+    }
+    
+    if (searchFilters.value.maxVisitorCount !== null) {
+      params.maxVisitorCount = searchFilters.value.maxVisitorCount
+    }
+    
+    if (searchFilters.value.minQueueLength !== null) {
+      params.minQueueLength = searchFilters.value.minQueueLength
+    }
+    
+    if (searchFilters.value.maxQueueLength !== null) {
+      params.maxQueueLength = searchFilters.value.maxQueueLength
+    }
+    
+    if (searchFilters.value.minWaitingTime !== null) {
+      params.minWaitingTime = searchFilters.value.minWaitingTime
+    }
+    
+    if (searchFilters.value.maxWaitingTime !== null) {
+      params.maxWaitingTime = searchFilters.value.maxWaitingTime
+    }
+    
+    if (searchFilters.value.recordTimeFrom) {
+      params.recordTimeFrom = searchFilters.value.recordTimeFrom
+    }
+    
+    if (searchFilters.value.recordTimeTo) {
+      params.recordTimeTo = searchFilters.value.recordTimeTo
+    }
+    
+    // Also check dateRange for backward compatibility
     if (dateRange.value && dateRange.value.length === 2) {
-      params.recordTimeFrom = dateRange.value[0]
-      params.recordTimeTo = dateRange.value[1]
+      if (!params.recordTimeFrom) params.recordTimeFrom = dateRange.value[0]
+      if (!params.recordTimeTo) params.recordTimeTo = dateRange.value[1]
     }
     
     const response = await rideTrafficApi.searchRideTraffic(params)
@@ -380,6 +554,28 @@ const fetchHistoricalData = async () => {
   } finally {
     loading.value = false
   }
+}
+
+const resetFilters = () => {
+  searchFilters.value = {
+    keyword: '',
+    isCrowded: null,
+    sortOrder: 'desc',
+    minVisitorCount: null,
+    maxVisitorCount: null,
+    minQueueLength: null,
+    maxQueueLength: null,
+    minWaitingTime: null,
+    maxWaitingTime: null,
+    recordTimeFrom: null,
+    recordTimeTo: null
+  }
+  dateRange.value = []
+  fetchHistoricalData()
+}
+
+const refreshChart = () => {
+  updateChart()
 }
 
 const updateRideData = async () => {
@@ -425,13 +621,26 @@ const initChart = () => {
 const updateChart = () => {
   if (!chart.value || !historicalData.value.length) return
   
-  const xAxisData = historicalData.value.map(item => 
-    new Date(item.recordTime).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })
+  // Always sort data by recordTime to ensure proper chronological order
+  // regardless of how history data is sorted
+  const sortedData = [...historicalData.value].sort((a, b) => 
+    new Date(a.recordTime) - new Date(b.recordTime)
   )
   
-  const visitorData = historicalData.value.map(item => item.visitorCount)
-  const queueData = historicalData.value.map(item => item.queueLength)
-  const waitData = historicalData.value.map(item => item.waitingTime)
+  const xAxisData = sortedData.map(item => {
+    const date = new Date(item.recordTime)
+    // Include both date and time in the label
+    return date.toLocaleString('zh-CN', { 
+      month: 'numeric', 
+      day: 'numeric', 
+      hour: '2-digit', 
+      minute: '2-digit' 
+    })
+  })
+  
+  const visitorData = sortedData.map(item => item.visitorCount)
+  const queueData = sortedData.map(item => item.queueLength)
+  const waitData = sortedData.map(item => item.waitingTime)
   
   const option = {
     tooltip: {
@@ -441,37 +650,58 @@ const updateChart = () => {
       data: ['游客数量', '队列长度', '等待时间']
     },
     grid: {
-      left: '3%',
-      right: '4%',
-      bottom: '3%',
+      left: '8%',
+      right: '8%',
+      bottom: '20%',
+      top: '15%',
       containLabel: true
     },
     xAxis: {
       type: 'category',
       boundaryGap: false,
-      data: xAxisData
+      data: xAxisData,
+      axisLabel: {
+        rotate: 45,
+        interval: 0,
+        fontSize: 12
+      }
     },
     yAxis: {
-      type: 'value'
+      type: 'value',
+      axisLabel: {
+        fontSize: 12
+      }
     },
     series: [
       {
         name: '游客数量',
         type: 'line',
         data: visitorData,
-        smooth: true
+        smooth: true,
+        symbolSize: 6,
+        lineStyle: {
+          width: 2
+        }
       },
       {
         name: '队列长度',
         type: 'line',
         data: queueData,
-        smooth: true
+        smooth: true,
+        symbolSize: 6,
+        lineStyle: {
+          width: 2
+        }
       },
       {
         name: '等待时间',
         type: 'line',
         data: waitData,
-        smooth: true
+        smooth: true,
+        symbolSize: 6,
+        lineStyle: {
+          width: 2
+        }
       }
     ]
   }
@@ -490,6 +720,12 @@ onMounted(() => {
   const startDate = new Date()
   startDate.setDate(startDate.getDate() - 7)
   dateRange.value = [
+    startDate.toISOString().split('T')[0],
+    endDate.toISOString().split('T')[0]
+  ]
+  
+  // Set chart date range (can be same as history data or different)
+  chartDateRange.value = [
     startDate.toISOString().split('T')[0],
     endDate.toISOString().split('T')[0]
   ]
@@ -607,6 +843,23 @@ window.addEventListener('resize', () => {
 
 .history-table-card {
   border-radius: 8px;
+}
+
+.search-filters {
+  margin-bottom: 15px;
+  padding: 10px;
+  background-color: #f5f7fa;
+  border-radius: 4px;
+}
+
+.filter-row {
+  margin-bottom: 10px;
+}
+
+.filter-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
 }
 
 .table-pagination {
