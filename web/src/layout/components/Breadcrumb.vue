@@ -1,8 +1,8 @@
 <template>
   <div class="breadcrumb-container">
     <el-breadcrumb separator="/">
-      <el-breadcrumb-item 
-        v-for="(item, index) in breadcrumbs" 
+      <el-breadcrumb-item
+        v-for="(item, index) in breadcrumbs"
         :key="item.path"
         :to="index === breadcrumbs.length - 1 ? undefined : item.path"
       >
@@ -32,16 +32,18 @@ const menuList = computed(() => {
 // 生成面包屑导航
 const breadcrumbs = computed(() => {
   const crumbs = generateBreadcrumbs(menuList.value, route.path)
-  
+
   // 如果没有找到匹配的菜单项，使用路由的 meta 信息
   if (crumbs.length === 0 && route.meta.title) {
-    return [{
-      path: route.path,
-      title: route.meta.title,
-      icon: route.meta.icon
-    }]
+    return [
+      {
+        path: route.path,
+        title: route.meta.title,
+        icon: route.meta.icon,
+      },
+    ]
   }
-  
+
   return crumbs
 })
 
@@ -51,7 +53,7 @@ watch(
   () => {
     // 这里可以添加额外的逻辑，比如更新页面标题等
   },
-  { immediate: true }
+  { immediate: true },
 )
 </script>
 
@@ -81,6 +83,6 @@ watch(
 }
 
 :deep(.el-breadcrumb__item .el-breadcrumb__inner:hover) {
-  color: #409EFF;
+  color: #409eff;
 }
 </style>

@@ -4,19 +4,19 @@ import { ref } from 'vue'
 export const useAppStore = defineStore('app', () => {
   // 侧边栏状态
   const sidebarCollapsed = ref(false)
-  
+
   // 主题设置
   const theme = ref(localStorage.getItem('theme') || 'light')
-  
+
   // 语言设置
   const language = ref(localStorage.getItem('language') || 'zh-cn')
-  
+
   // 页面加载状态
   const pageLoading = ref(false)
-  
+
   // 全局加载状态
   const globalLoading = ref(false)
-  
+
   // 面包屑导航
   const breadcrumbs = ref([])
 
@@ -97,6 +97,6 @@ export const useAppStore = defineStore('app', () => {
     setPageLoading,
     setGlobalLoading,
     setBreadcrumbs,
-    initApp
+    initApp,
   }
 })

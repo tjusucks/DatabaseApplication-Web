@@ -10,7 +10,7 @@ export function createUser(data) {
   return request({
     url: '/api/Users',
     method: 'post',
-    data
+    data,
   })
 }
 
@@ -21,7 +21,7 @@ export function createUser(data) {
 export function getUserById(id) {
   return request({
     url: `/api/Users/${id}`,
-    method: 'get'
+    method: 'get',
   })
 }
 
@@ -34,7 +34,7 @@ export function updateUser(id, data) {
   return request({
     url: `/api/Users/${id}`,
     method: 'put',
-    data
+    data,
   })
 }
 
@@ -45,7 +45,7 @@ export function updateUser(id, data) {
 export function deleteUser(id) {
   return request({
     url: `/api/Users/${id}`,
-    method: 'delete'
+    method: 'delete',
   })
 }
 
@@ -57,6 +57,6 @@ export function getAllUsers(params) {
   return request({
     url: '/api/Users',
     method: 'get',
-    params
+    params,
   })
 }

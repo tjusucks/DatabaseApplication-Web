@@ -10,11 +10,7 @@
     <el-card class="search-card">
       <el-form :model="searchForm" inline class="search-form">
         <el-form-item label="成员姓名">
-          <el-input 
-            v-model="searchForm.name" 
-            placeholder="请输入成员姓名"
-            clearable
-          />
+          <el-input v-model="searchForm.name" placeholder="请输入成员姓名" clearable />
         </el-form-item>
         <el-form-item label="部门">
           <el-select v-model="searchForm.department" placeholder="请选择部门" clearable>
@@ -48,7 +44,7 @@
           </el-button>
         </el-form-item>
       </el-form>
-      
+
       <div class="action-buttons">
         <el-button type="primary" @click="handleAdd">
           <el-icon><Plus /></el-icon>
@@ -63,13 +59,7 @@
 
     <!-- 数据表格 -->
     <el-card class="table-card">
-      <el-table 
-        :data="tableData" 
-        v-loading="loading"
-        stripe
-        border
-        style="width: 100%"
-      >
+      <el-table :data="tableData" v-loading="loading" stripe border style="width: 100%">
         <el-table-column prop="id" label="员工ID" width="100" />
         <el-table-column prop="name" label="姓名" width="120" />
         <el-table-column prop="email" label="邮箱" width="200" />
@@ -95,18 +85,12 @@
         <el-table-column prop="joinDate" label="加入时间" width="160" />
         <el-table-column label="操作" width="250" fixed="right">
           <template #default="{ row }">
-            <el-button type="primary" size="small" @click="handleView(row)">
-              查看
-            </el-button>
-            <el-button type="warning" size="small" @click="handleEdit(row)">
-              编辑
-            </el-button>
-            <el-button type="info" size="small" @click="handlePermissions(row)">
-              权限
-            </el-button>
-            <el-button 
-              :type="row.status === 'active' ? 'danger' : 'success'" 
-              size="small" 
+            <el-button type="primary" size="small" @click="handleView(row)"> 查看 </el-button>
+            <el-button type="warning" size="small" @click="handleEdit(row)"> 编辑 </el-button>
+            <el-button type="info" size="small" @click="handlePermissions(row)"> 权限 </el-button>
+            <el-button
+              :type="row.status === 'active' ? 'danger' : 'success'"
+              size="small"
               @click="handleToggleStatus(row)"
             >
               {{ row.status === 'active' ? '禁用' : '启用' }}
@@ -130,7 +114,11 @@
     </el-card>
 
     <!-- 添加/编辑成员对话框 -->
-    <el-dialog v-model="memberDialogVisible" :title="isEdit ? '编辑成员' : '添加成员'" width="600px">
+    <el-dialog
+      v-model="memberDialogVisible"
+      :title="isEdit ? '编辑成员' : '添加成员'"
+      width="600px"
+    >
       <el-form :model="memberForm" :rules="memberRules" ref="memberFormRef" label-width="80px">
         <el-form-item label="姓名" prop="name">
           <el-input v-model="memberForm.name" placeholder="请输入姓名" />
@@ -182,7 +170,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 const searchForm = reactive({
   name: '',
   department: '',
-  role: ''
+  role: '',
 })
 
 // 表格数据
@@ -193,7 +181,7 @@ const loading = ref(false)
 const pagination = reactive({
   currentPage: 1,
   pageSize: 20,
-  total: 0
+  total: 0,
 })
 
 // 成员对话框
@@ -206,24 +194,18 @@ const memberForm = reactive({
   email: '',
   department: '',
   role: '',
-  status: 'active'
+  status: 'active',
 })
 
 // 表单验证规则
 const memberRules = {
-  name: [
-    { required: true, message: '请输入姓名', trigger: 'blur' }
-  ],
+  name: [{ required: true, message: '请输入姓名', trigger: 'blur' }],
   email: [
     { required: true, message: '请输入邮箱', trigger: 'blur' },
-    { type: 'email', message: '请输入正确的邮箱格式', trigger: 'blur' }
+    { type: 'email', message: '请输入正确的邮箱格式', trigger: 'blur' },
   ],
-  department: [
-    { required: true, message: '请选择部门', trigger: 'change' }
-  ],
-  role: [
-    { required: true, message: '请选择角色', trigger: 'change' }
-  ]
+  department: [{ required: true, message: '请选择部门', trigger: 'change' }],
+  role: [{ required: true, message: '请选择角色', trigger: 'change' }],
 }
 
 // 模拟数据
@@ -235,7 +217,7 @@ const mockData = [
     department: 'management',
     role: 'super_admin',
     status: 'active',
-    joinDate: '2024-01-15'
+    joinDate: '2024-01-15',
   },
   {
     id: 'E002',
@@ -244,7 +226,7 @@ const mockData = [
     department: 'finance',
     role: 'finance_manager',
     status: 'active',
-    joinDate: '2024-01-16'
+    joinDate: '2024-01-16',
   },
   {
     id: 'E003',
@@ -253,8 +235,8 @@ const mockData = [
     department: 'hr',
     role: 'hr_manager',
     status: 'inactive',
-    joinDate: '2024-01-17'
-  }
+    joinDate: '2024-01-17',
+  },
 ]
 
 // 获取部门文本
@@ -265,7 +247,7 @@ const getDepartmentText = (department) => {
     hr: '人事部',
     operations: '运营部',
     ticketing: '票务部',
-    customer_service: '客服部'
+    customer_service: '客服部',
   }
   return departmentMap[department] || '未知'
 }
@@ -279,7 +261,7 @@ const getRoleText = (role) => {
     operations_manager: '运营管理员',
     ticket_manager: '票务管理员',
     customer_service: '客服人员',
-    employee: '普通员工'
+    employee: '普通员工',
   }
   return roleMap[role] || '未知'
 }
@@ -293,7 +275,7 @@ const getRoleType = (role) => {
     operations_manager: 'primary',
     ticket_manager: 'info',
     customer_service: '',
-    employee: ''
+    employee: '',
   }
   return roleTypeMap[role] || ''
 }
@@ -309,7 +291,7 @@ const handleReset = () => {
   Object.assign(searchForm, {
     name: '',
     department: '',
-    role: ''
+    role: '',
   })
   loadData()
 }
@@ -323,7 +305,7 @@ const handleAdd = () => {
     email: '',
     department: '',
     role: '',
-    status: 'active'
+    status: 'active',
   })
   memberDialogVisible.value = true
 }
@@ -354,16 +336,12 @@ const handlePermissions = (row) => {
 const handleToggleStatus = async (row) => {
   const action = row.status === 'active' ? '禁用' : '启用'
   try {
-    await ElMessageBox.confirm(
-      `确定要${action}成员 ${row.name} 吗？`,
-      '确认操作',
-      {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }
-    )
-    
+    await ElMessageBox.confirm(`确定要${action}成员 ${row.name} 吗？`, '确认操作', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning',
+    })
+
     row.status = row.status === 'active' ? 'inactive' : 'active'
     ElMessage.success(`${action}成功`)
   } catch {
@@ -399,7 +377,7 @@ const handleCurrentChange = (page) => {
 // 加载数据
 const loadData = () => {
   loading.value = true
-  
+
   // 模拟 API 调用
   setTimeout(() => {
     tableData.value = mockData
@@ -463,11 +441,11 @@ onMounted(() => {
   .search-form {
     flex-direction: column;
   }
-  
+
   .action-buttons {
     flex-direction: column;
   }
-  
+
   .action-buttons .el-button {
     width: 100%;
   }
