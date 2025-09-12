@@ -63,11 +63,11 @@ export const useFinanceStore = defineStore("finance", () => {
         page: pagination.value.currentPage,
         pageSize: pagination.value.pageSize,
       };
-      
+
       // 如果没有指定具体的 transactionType，则查询宽泛的类型 (0 for income, 1 for expense)
       // 这对于“所有收入”或“所有支出”的视图是必要的
       if (!query.transactionType) {
-          query.transactionType = generalType;
+        query.transactionType = generalType;
       }
 
       const response = await searchFinancialRecords(query);
@@ -117,7 +117,9 @@ export const useFinanceStore = defineStore("finance", () => {
     try {
       await createFinancialRecord(payload);
       ElMessage.success("新增成功！");
-      const isIncome = incomeTypeOptions.some(opt => opt.value === payload.transactionType);
+      const isIncome = incomeTypeOptions.some(
+        (opt) => opt.value === payload.transactionType,
+      );
       if (isIncome) {
         await fetchIncomes();
       } else {
@@ -125,7 +127,9 @@ export const useFinanceStore = defineStore("finance", () => {
       }
     } catch (error) {
       ElMessage.error(error.message || "新增失败");
-      const isIncome = incomeTypeOptions.some(opt => opt.value === payload.transactionType);
+      const isIncome = incomeTypeOptions.some(
+        (opt) => opt.value === payload.transactionType,
+      );
       if (isIncome) {
         await fetchIncomes();
       } else {
@@ -139,7 +143,9 @@ export const useFinanceStore = defineStore("finance", () => {
     try {
       await updateFinancialRecord(id, payload);
       ElMessage.success("更新成功！");
-      const isIncome = incomeTypeOptions.some(opt => opt.value === payload.transactionType);
+      const isIncome = incomeTypeOptions.some(
+        (opt) => opt.value === payload.transactionType,
+      );
       if (isIncome) {
         await fetchIncomes();
       } else {
@@ -154,8 +160,10 @@ export const useFinanceStore = defineStore("finance", () => {
   const deleteRecord = async (id, source, isIncome) => {
     // 记录的 source 标识了其来源。'payroll' 和 'maintenance' 等表示它们来自其他业务模块，
     // 在财务模块中应被视为只读。只有手动创建的记录 (source 为 null 或 'manual') 才能被删除。
-    if (source && source !== 'manual') {
-      ElMessage.warning(`该记录来自 ${source} 系统，为只读数据，不能在此处删除。`);
+    if (source && source !== "manual") {
+      ElMessage.warning(
+        `该记录来自 ${source} 系统，为只读数据，不能在此处删除。`,
+      );
       return; // 阻止删除操作
     }
 
@@ -195,7 +203,10 @@ export const useFinanceStore = defineStore("finance", () => {
 
     // 1. 获取手动录入的收入
     // 仅当没有筛选或筛选类型为“其他收入”时执行
-    if (!transactionTypeFilter || transactionTypeFilter === UnifiedTransactionType.OTHER_INCOME) {
+    if (
+      !transactionTypeFilter ||
+      transactionTypeFilter === UnifiedTransactionType.OTHER_INCOME
+    ) {
       try {
         const query = {
           ...lastParams.value,
@@ -204,10 +215,15 @@ export const useFinanceStore = defineStore("finance", () => {
         };
         // 关键修复：如果用户没有筛选特定类型，我们应该获取所有广义的收入记录（类型为0），
         // 而不是仅仅查询“其他收入”。如果用户筛选了，就用筛选的类型。
-        query.transactionType = transactionTypeFilter ? transactionTypeFilter : 0;
+        query.transactionType = transactionTypeFilter
+          ? transactionTypeFilter
+          : 0;
 
         const response = await searchFinancialRecords(query);
-        const manualIncomes = response.financialRecords.map(r => ({ ...r, source: 'manual' }));
+        const manualIncomes = response.financialRecords.map((r) => ({
+          ...r,
+          source: "manual",
+        }));
         allIncomes.push(...manualIncomes);
         totalCount += response.totalCount;
       } catch (error) {
@@ -216,7 +232,10 @@ export const useFinanceStore = defineStore("finance", () => {
     }
 
     // 2. 获取门票销售作为收入
-    if (!transactionTypeFilter || transactionTypeFilter === UnifiedTransactionType.TICKET_SALES) {
+    if (
+      !transactionTypeFilter ||
+      transactionTypeFilter === UnifiedTransactionType.TICKET_SALES
+    ) {
       try {
         const ticketQuery = {
           page,
@@ -226,14 +245,14 @@ export const useFinanceStore = defineStore("finance", () => {
           status: 1, // TicketStatus.USED or similar status indicating completed sale
         };
         const response = await searchTicketSales(ticketQuery);
-        const ticketIncomes = response.tickets.map(t => ({
+        const ticketIncomes = response.tickets.map((t) => ({
           recordId: `ticket-${t.ticketId}`,
           transactionType: UnifiedTransactionType.TICKET_SALES,
           amount: t.price,
           paymentMethod: t.paymentMethod, // 假设票务记录有支付方式
-          description: `门票销售 - ${t.ticketTypeName || '标准票'}`,
+          description: `门票销售 - ${t.ticketTypeName || "标准票"}`,
           transactionDate: t.purchaseDate,
-          source: 'ticket',
+          source: "ticket",
         }));
         allIncomes.push(...ticketIncomes);
         totalCount += response.totalCount;
@@ -243,10 +262,12 @@ export const useFinanceStore = defineStore("finance", () => {
     }
 
     // 3. 合并和排序
-    list.value = allIncomes.sort((a, b) => new Date(b.transactionDate) - new Date(a.transactionDate));
+    list.value = allIncomes.sort(
+      (a, b) => new Date(b.transactionDate) - new Date(a.transactionDate),
+    );
     pagination.value.total = totalCount;
   };
-  
+
   const fetchExpenses = async (params) => {
     const lastParams = lastExpenseParams;
     const list = expenses;
@@ -266,7 +287,10 @@ export const useFinanceStore = defineStore("finance", () => {
 
     // 1. 获取手动录入的支出
     // 仅当没有筛选或筛选类型为“其他支出”时执行
-    if (!transactionTypeFilter || transactionTypeFilter === UnifiedTransactionType.OTHER_EXPENSE) {
+    if (
+      !transactionTypeFilter ||
+      transactionTypeFilter === UnifiedTransactionType.OTHER_EXPENSE
+    ) {
       try {
         const query = {
           ...lastParams.value,
@@ -275,10 +299,15 @@ export const useFinanceStore = defineStore("finance", () => {
         };
         // 关键修复：如果用户没有筛选特定类型，我们应该获取所有广义的支出记录（类型为1），
         // 而不是仅仅查询“其他支出”。如果用户筛选了，就用筛选的类型。
-        query.transactionType = transactionTypeFilter ? transactionTypeFilter : 1;
+        query.transactionType = transactionTypeFilter
+          ? transactionTypeFilter
+          : 1;
 
         const response = await searchFinancialRecords(query);
-        const manualExpenses = response.financialRecords.map(r => ({ ...r, source: 'manual' }));
+        const manualExpenses = response.financialRecords.map((r) => ({
+          ...r,
+          source: "manual",
+        }));
         allExpenses.push(...manualExpenses);
         totalCount += response.totalCount;
       } catch (error) {
@@ -287,7 +316,10 @@ export const useFinanceStore = defineStore("finance", () => {
     }
 
     // 2. 获取工资发放记录作为支出
-    if (!transactionTypeFilter || transactionTypeFilter === UnifiedTransactionType.SALARY_PAYMENT) {
+    if (
+      !transactionTypeFilter ||
+      transactionTypeFilter === UnifiedTransactionType.SALARY_PAYMENT
+    ) {
       try {
         const salaryQuery = {
           page,
@@ -297,14 +329,14 @@ export const useFinanceStore = defineStore("finance", () => {
           status: 1, // PayrollStatus.PAID
         };
         const response = await searchSalaryRecords(salaryQuery);
-        const payrollExpenses = response.salaryRecords.map(sr => ({
-            recordId: `payroll-${sr.salaryRecordId}`,
-            transactionType: UnifiedTransactionType.SALARY_PAYMENT,
-            amount: sr.salary,
-            paymentMethod: 2, // 假设为移动支付/银行转账
-            description: `工资发放 - ${new Date(sr.payDate).toLocaleDateString()}`,
-            transactionDate: sr.payDate,
-            source: 'salary',
+        const payrollExpenses = response.salaryRecords.map((sr) => ({
+          recordId: `payroll-${sr.salaryRecordId}`,
+          transactionType: UnifiedTransactionType.SALARY_PAYMENT,
+          amount: sr.salary,
+          paymentMethod: 2, // 假设为移动支付/银行转账
+          description: `工资发放 - ${new Date(sr.payDate).toLocaleDateString()}`,
+          transactionDate: sr.payDate,
+          source: "salary",
         }));
         allExpenses.push(...payrollExpenses);
         totalCount += response.totalCount;
@@ -314,7 +346,10 @@ export const useFinanceStore = defineStore("finance", () => {
     }
 
     // 3. 获取维保成本作为支出
-    if (!transactionTypeFilter || transactionTypeFilter === UnifiedTransactionType.MAINTENANCE) {
+    if (
+      !transactionTypeFilter ||
+      transactionTypeFilter === UnifiedTransactionType.MAINTENANCE
+    ) {
       try {
         const maintenanceQuery = {
           page,
@@ -323,14 +358,14 @@ export const useFinanceStore = defineStore("finance", () => {
           endDate: lastParams.value.endDate,
         };
         const response = await searchMaintenanceRecords(maintenanceQuery);
-        const maintenanceExpenses = response.maintenanceRecords.map(mr => ({
+        const maintenanceExpenses = response.maintenanceRecords.map((mr) => ({
           recordId: `maintenance-${mr.maintenanceId}`,
           transactionType: UnifiedTransactionType.MAINTENANCE,
           amount: mr.cost,
           paymentMethod: 0, // 假设为现金
           description: `维保成本 - ${mr.facilityName}: ${mr.description}`,
           transactionDate: mr.completionDate,
-          source: 'maintenance',
+          source: "maintenance",
         }));
         allExpenses.push(...maintenanceExpenses);
         totalCount += response.totalCount;
@@ -340,7 +375,10 @@ export const useFinanceStore = defineStore("finance", () => {
     }
 
     // 4. 获取退款记录作为支出
-    if (!transactionTypeFilter || transactionTypeFilter === UnifiedTransactionType.TICKET_REFUND) {
+    if (
+      !transactionTypeFilter ||
+      transactionTypeFilter === UnifiedTransactionType.TICKET_REFUND
+    ) {
       try {
         const refundQuery = {
           page,
@@ -350,14 +388,14 @@ export const useFinanceStore = defineStore("finance", () => {
           status: 3, // RefundStatus.COMPLETED
         };
         const response = await searchRefunds(refundQuery);
-        const refundExpenses = response.refunds.map(r => ({
+        const refundExpenses = response.refunds.map((r) => ({
           recordId: `refund-${r.refundId}`,
           transactionType: UnifiedTransactionType.TICKET_REFUND,
           amount: r.amount,
           paymentMethod: r.paymentMethod,
           description: `门票退款 - 票号: ${r.ticketId}`,
           transactionDate: r.refundDate,
-          source: 'refund',
+          source: "refund",
         }));
         allExpenses.push(...refundExpenses);
         totalCount += response.totalCount;
@@ -365,18 +403,28 @@ export const useFinanceStore = defineStore("finance", () => {
         ElMessage.error(error.message || `获取退款记录失败`);
       }
     }
-    
+
     // 5. 合并和排序
-    list.value = allExpenses.sort((a, b) => new Date(b.transactionDate) - new Date(a.transactionDate));
+    list.value = allExpenses.sort(
+      (a, b) => new Date(b.transactionDate) - new Date(a.transactionDate),
+    );
     pagination.value.total = totalCount;
   };
 
-  const addIncome = (payload) => addRecord({ ...payload, transactionType: payload.transactionType || UnifiedTransactionType.OTHER_INCOME });
-  const addExpense = (payload) => addRecord({ ...payload, transactionType: payload.transactionType || UnifiedTransactionType.OTHER_EXPENSE });
-  const updateIncome = (id, payload) =>
-    updateRecord(id, { ...payload });
-  const updateExpense = (id, payload) =>
-    updateRecord(id, { ...payload });
+  const addIncome = (payload) =>
+    addRecord({
+      ...payload,
+      transactionType:
+        payload.transactionType || UnifiedTransactionType.OTHER_INCOME,
+    });
+  const addExpense = (payload) =>
+    addRecord({
+      ...payload,
+      transactionType:
+        payload.transactionType || UnifiedTransactionType.OTHER_EXPENSE,
+    });
+  const updateIncome = (id, payload) => updateRecord(id, { ...payload });
+  const updateExpense = (id, payload) => updateRecord(id, { ...payload });
   const deleteIncome = (id, source) => deleteRecord(id, source, true); // 传入 isIncome = true
   const deleteExpense = (id, source) => deleteRecord(id, source, false); // 传入 isIncome = false
 

@@ -46,8 +46,14 @@ export const expenseTypeOptions = [
 ];
 
 const allTypeNames = {
-  ...incomeTypeOptions.reduce((acc, cur) => ({ ...acc, [cur.value]: cur.label }), {}),
-  ...expenseTypeOptions.reduce((acc, cur) => ({ ...acc, [cur.value]: cur.label }), {}),
+  ...incomeTypeOptions.reduce(
+    (acc, cur) => ({ ...acc, [cur.value]: cur.label }),
+    {},
+  ),
+  ...expenseTypeOptions.reduce(
+    (acc, cur) => ({ ...acc, [cur.value]: cur.label }),
+    {},
+  ),
 };
 
 /**
@@ -58,24 +64,26 @@ const allTypeNames = {
  */
 export const getSourceTypeName = (source, type) => {
   // 业务来源优先
-  if (source === 'salary') return '工资发放';
-  if (source === 'maintenance') return '设备维护';
-  if (source === 'ticket') return '门票销售';
-  if (source === 'refund') return '门票退款';
+  if (source === "salary") return "工资发放";
+  if (source === "maintenance") return "设备维护";
+  if (source === "ticket") return "门票销售";
+  if (source === "refund") return "门票退款";
   // 手动录入
-  if (source === 'manual' || !source) {
+  if (source === "manual" || !source) {
     // finance API 原始类型兼容
-    if (type === UnifiedTransactionType.OTHER_EXPENSE || type === 1) return '其他支出';
-    if (type === UnifiedTransactionType.OTHER_INCOME || type === 0) return '其他收入';
-    if (type === UnifiedTransactionType.TICKET_REFUND) return '门票退款';
-    if (type === UnifiedTransactionType.SALARY_PAYMENT) return '工资发放';
-    if (type === UnifiedTransactionType.MAINTENANCE) return '设备维护';
+    if (type === UnifiedTransactionType.OTHER_EXPENSE || type === 1)
+      return "其他支出";
+    if (type === UnifiedTransactionType.OTHER_INCOME || type === 0)
+      return "其他收入";
+    if (type === UnifiedTransactionType.TICKET_REFUND) return "门票退款";
+    if (type === UnifiedTransactionType.SALARY_PAYMENT) return "工资发放";
+    if (type === UnifiedTransactionType.MAINTENANCE) return "设备维护";
   }
   // 兜底：映射 finance API 的原始类型
-  if (type === 0) return '收入';
-  if (type === 1) return '支出';
-  if (type === 2) return '退款';
-  if (type === 3) return '转账';
+  if (type === 0) return "收入";
+  if (type === 1) return "支出";
+  if (type === 2) return "退款";
+  if (type === 3) return "转账";
   // 前端自定义类型
   return getTransactionTypeName(type);
 };
