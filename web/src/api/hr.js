@@ -10,7 +10,7 @@ import request from '@/utils/request'
  */
 export function createAttendance(data) {
   return request({
-    url: '/api/attendance',
+    url: '/api/resource/attendance',
     method: 'post',
     data,
   })
@@ -23,7 +23,7 @@ export function createAttendance(data) {
  */
 export function updateAttendance(id, data) {
   return request({
-    url: `/api/attendance/${id}`,
+    url: `/api/resource/attendance/${id}`,
     method: 'put',
     data,
   })
@@ -35,7 +35,7 @@ export function updateAttendance(id, data) {
  */
 export function deleteAttendance(id) {
   return request({
-    url: `/api/attendance/${id}`,
+    url: `/api/resource/attendance/${id}`,
     method: 'delete',
   })
 }
@@ -46,7 +46,7 @@ export function deleteAttendance(id) {
  */
 export function checkIn(data) {
   return request({
-    url: '/api/attendance/checkin',
+    url: '/api/resource/attendance/checkin',
     method: 'post',
     data,
   })
@@ -58,7 +58,7 @@ export function checkIn(data) {
  */
 export function checkOut(data) {
   return request({
-    url: '/api/attendance/checkout',
+    url: '/api/resource/attendance/checkout',
     method: 'post',
     data,
   })
@@ -70,7 +70,7 @@ export function checkOut(data) {
  */
 export function applyLeave(data) {
   return request({
-    url: '/api/attendance/leave',
+    url: '/api/resource/attendance/leave',
     method: 'post',
     data,
   })
@@ -83,7 +83,7 @@ export function applyLeave(data) {
  */
 export function updateAttendanceStatus(id, data) {
   return request({
-    url: `/api/attendance/status/${id}`,
+    url: `/api/resource/attendance/status/${id}`,
     method: 'put',
     data,
   })
@@ -91,13 +91,13 @@ export function updateAttendanceStatus(id, data) {
 
 /**
  * 统一查询接口，支持复杂查询条件
- * @param {Object} data 查询条件
+ * @param {Object} params 查询参数
  */
-export function queryAttendance(data) {
+export function queryAttendance(params) {
   return request({
-    url: '/api/attendance/query',
-    method: 'post',
-    data,
+    url: '/api/resource/attendance/search',
+    method: 'get',
+    params,
   })
 }
 
@@ -109,7 +109,7 @@ export function queryAttendance(data) {
  */
 export function createEmployee(data) {
   return request({
-    url: '/api/employees',
+    url: '/api/user/employees',
     method: 'post',
     data,
   })
@@ -121,7 +121,7 @@ export function createEmployee(data) {
  */
 export function getEmployeeById(id) {
   return request({
-    url: `/api/employees/${id}`,
+    url: `/api/user/employees/${id}`,
     method: 'get',
   })
 }
@@ -133,7 +133,7 @@ export function getEmployeeById(id) {
  */
 export function updateEmployee(id, data) {
   return request({
-    url: `/api/employees/${id}`,
+    url: `/api/user/employees/${id}`,
     method: 'put',
     data,
   })
@@ -145,7 +145,7 @@ export function updateEmployee(id, data) {
  */
 export function deleteEmployee(id) {
   return request({
-    url: `/api/employees/${id}`,
+    url: `/api/user/employees/${id}`,
     method: 'delete',
   })
 }
@@ -156,7 +156,7 @@ export function deleteEmployee(id) {
  */
 export function getEmployees(params) {
   return request({
-    url: '/api/employees',
+    url: '/api/user/employees/search',
     method: 'get',
     params,
   })
@@ -170,7 +170,7 @@ export function getEmployees(params) {
  */
 export function createEmployeeReview(data) {
   return request({
-    url: '/api/employeereviews',
+    url: '/api/resource/employee-reviews',
     method: 'post',
     data,
   })
@@ -183,7 +183,7 @@ export function createEmployeeReview(data) {
  */
 export function updateEmployeeReview(id, data) {
   return request({
-    url: `/api/employeereviews/${id}`,
+    url: `/api/resource/employee-reviews/${id}`,
     method: 'put',
     data,
   })
@@ -195,42 +195,19 @@ export function updateEmployeeReview(id, data) {
  */
 export function deleteEmployeeReview(id) {
   return request({
-    url: `/api/employeereviews/${id}`,
+    url: `/api/resource/employee-reviews/${id}`,
     method: 'delete',
   })
 }
 
 /**
- * 根据ID获取绩效记录
- * @param {string} id 绩效记录ID
- */
-export function getEmployeeReviewById(id) {
-  return request({
-    url: `/api/employeereviews/${id}`,
-    method: 'get',
-  })
-}
-
-/**
- * 统一查询端点，支持多维度查询
+ * 查询绩效记录
  * @param {Object} params 查询参数
  */
 export function getEmployeeReviews(params) {
   return request({
-    url: '/api/employeereviews',
+    url: '/api/resource/employee-reviews/search',
     method: 'get',
     params,
-  })
-}
-
-/**
- * 创建考勤扣分记录
- * @param {Object} data 考勤扣分数据
- */
-export function createAttendanceDeduction(data) {
-  return request({
-    url: '/api/employeereviews/attendance-deduction',
-    method: 'post',
-    data,
   })
 }

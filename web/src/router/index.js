@@ -70,7 +70,6 @@ const routes = [
     component: Login,
     meta: {
       title: '登录',
-
       requiresAuth: false,
     },
   },
@@ -504,6 +503,14 @@ const routes = [
         component: EmployeeList,
         meta: {
           title: '员工列表',
+        },
+      },
+      {
+        path: 'employees/create',
+        name: 'EmployeeCreate',
+        component: () => import('@/views/hr/employees/EmployeeCreate.vue'),
+        meta: {
+          title: '新增员工',
         },
       },
       {

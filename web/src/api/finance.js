@@ -132,7 +132,7 @@ export function createSalaryRecord(data) {
  */
 export function getSalaryRecord(id) {
   return request({
-    url: '/api/resource/salary-records/${id}',
+    url: `/api/resource/salary-records/${id}`,
     method: 'get',
   })
 }
@@ -144,19 +144,18 @@ export function getSalaryRecord(id) {
  */
 export function updateSalaryRecord(id, data) {
   return request({
-    url: '/api/resource/salary-records/${id}',
+    url: `/api/resource/salary-records/${id}`,
     method: 'put',
     data,
   })
 }
-
 /**
  * 删除工资单记录
  * @param {number} id - 工资单ID
  */
 export function deleteSalaryRecord(id) {
   return request({
-    url: '/api/resource/salary-records/${id}',
+    url: `/api/resource/salary-records/${id}`,
     method: 'delete',
   })
 }

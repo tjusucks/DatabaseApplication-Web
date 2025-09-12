@@ -111,7 +111,9 @@
           </el-col>
           <el-col :span="8">
             <div class="member-stat">
-              <div class="stat-value">{{ formatDate(visitorData.memberSince) }}</div>
+              <div class="stat-value">
+                {{ formatDate(visitorData.memberSince) }}
+              </div>
               <div class="stat-label">入会时间</div>
             </div>
           </el-col>

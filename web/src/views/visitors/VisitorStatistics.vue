@@ -85,7 +85,9 @@
       <el-col :span="6">
         <el-card class="metric-card">
           <div class="metric-content">
-            <div class="metric-value">{{ formatDuration(metrics.avgStayTime) }}</div>
+            <div class="metric-value">
+              {{ formatDuration(metrics.avgStayTime) }}
+            </div>
             <div class="metric-label">平均停留时间</div>
             <div class="metric-change" :class="getChangeClass(metrics.stayTimeChange)">
               <el-icon><TrendCharts /></el-icon>

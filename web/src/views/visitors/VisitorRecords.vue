@@ -102,7 +102,9 @@
       <el-col :span="6">
         <el-card class="stat-card">
           <div class="stat-content">
-            <div class="stat-value">{{ formatDuration(stats.avgDuration) }}</div>
+            <div class="stat-value">
+              {{ formatDuration(stats.avgDuration) }}
+            </div>
             <div class="stat-label">平均游玩时长</div>
           </div>
           <el-icon class="stat-icon" color="#f56c6c"><Timer /></el-icon>
