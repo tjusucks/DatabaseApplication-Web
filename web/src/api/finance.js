@@ -296,3 +296,27 @@ export function searchRefunds(query) {
     params: query,
   })
 }
+
+/**
+ * 获取票务销售统计信息
+ * @param {Object} params - 查询参数
+ */
+export function getTicketSalesStats(params) {
+  return request({
+    url: '/api/ticketing/tickets/sales/stats',
+    method: 'get',
+    params,
+  })
+}
+
+/**
+ * 获取分组的票务销售统计信息
+ * @param {Object} params - 查询参数，包括groupBy字段
+ */
+export function getTicketSalesGroupedStats(params) {
+  return request({
+    url: '/api/ticketing/tickets/sales/stats/grouped',
+    method: 'get',
+    params,
+  })
+}

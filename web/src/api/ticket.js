@@ -206,3 +206,19 @@ export function searchRefunds(params) {
 export function getRefundById(id) {
   return request.get(`/api/ticketing/refunds/${id}`)
 }
+
+/**
+ * @description 获取票务销售统计信息
+ * @param {Object} params - 查询参数
+ */
+export function getTicketSalesStats(params) {
+  return request.get('/api/ticketing/tickets/sales/stats', { params })
+}
+
+/**
+ * @description 获取分组的票务销售统计信息
+ * @param {Object} params - 查询参数，包括groupBy字段
+ */
+export function getTicketSalesGroupedStats(params) {
+  return request.get('/api/ticketing/tickets/sales/stats/grouped', { params })
+}

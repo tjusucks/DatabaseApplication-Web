@@ -10,6 +10,8 @@ import {
   searchMaintenanceRecords,
   searchTicketSales, // 导入票务销售API
   searchRefunds, // 导入退款API
+  getTicketSalesStats, // 导入票务销售统计API
+  getTicketSalesGroupedStats, // 导入分组票务销售统计API
 } from '@/api/finance'
 
 import { defineStore } from 'pinia'
@@ -489,6 +491,36 @@ export const useFinanceStore = defineStore('finance', () => {
     }
   }
 
+  /**
+   * 获取票务销售统计信息
+   * @param {Object} params - 查询参数
+   */
+  const fetchTicketSalesStats = async (params) => {
+    try {
+      const response = await getTicketSalesStats(params)
+      return response
+    } catch (error) {
+      console.error('获取票务销售统计失败:', error)
+      ElMessage.error('获取票务销售统计失败')
+      throw error
+    }
+  }
+
+  /**
+   * 获取分组的票务销售统计信息
+   * @param {Object} params - 查询参数，包括groupBy字段
+   */
+  const fetchTicketSalesGroupedStats = async (params) => {
+    try {
+      const response = await getTicketSalesGroupedStats(params)
+      return response
+    } catch (error) {
+      console.error('获取分组票务销售统计失败:', error)
+      ElMessage.error('获取分组票务销售统计失败')
+      throw error
+    }
+  }
+
   // 返回所有 state 和 actions
   return {
     incomes,
@@ -516,5 +548,7 @@ export const useFinanceStore = defineStore('finance', () => {
     fetchGroupedStats,
     fetchTrendDataByDay, // 修复：将 getDailyOverviewForTrend 重命名为 fetchTrendDataByDay
     fetchConsumptionRecords,
+    fetchTicketSalesStats,
+    fetchTicketSalesGroupedStats,
   }
 })
