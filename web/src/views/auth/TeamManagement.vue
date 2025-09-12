@@ -24,13 +24,9 @@
         </el-form-item>
         <el-form-item label="角色">
           <el-select v-model="searchForm.role" placeholder="请选择角色" clearable>
-            <el-option label="超级管理员" value="super_admin" />
-            <el-option label="财务管理员" value="finance_manager" />
-            <el-option label="人事管理员" value="hr_manager" />
-            <el-option label="运营管理员" value="operations_manager" />
-            <el-option label="票务管理员" value="ticket_manager" />
-            <el-option label="客服人员" value="customer_service" />
-            <el-option label="普通员工" value="employee" />
+            <el-option label="超级管理员" value="Admin" />
+            <el-option label="管理员" value="Manager" />
+            <el-option label="普通员工" value="Employee" />
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -138,13 +134,9 @@
         </el-form-item>
         <el-form-item label="角色" prop="role">
           <el-select v-model="memberForm.role" placeholder="请选择角色" style="width: 100%">
-            <el-option label="超级管理员" value="super_admin" />
-            <el-option label="财务管理员" value="finance_manager" />
-            <el-option label="人事管理员" value="hr_manager" />
-            <el-option label="运营管理员" value="operations_manager" />
-            <el-option label="票务管理员" value="ticket_manager" />
-            <el-option label="客服人员" value="customer_service" />
-            <el-option label="普通员工" value="employee" />
+            <el-option label="超级管理员" value="Admin" />
+            <el-option label="管理员" value="Manager" />
+            <el-option label="普通员工" value="Employee" />
           </el-select>
         </el-form-item>
         <el-form-item label="状态" prop="status">
@@ -215,7 +207,7 @@ const mockData = [
     name: '张三',
     email: 'zhangsan@example.com',
     department: 'management',
-    role: 'super_admin',
+    role: 'Admin',
     status: 'active',
     joinDate: '2024-01-15',
   },
@@ -224,7 +216,7 @@ const mockData = [
     name: '李四',
     email: 'lisi@example.com',
     department: 'finance',
-    role: 'finance_manager',
+    role: 'Manager',
     status: 'active',
     joinDate: '2024-01-16',
   },
@@ -233,7 +225,7 @@ const mockData = [
     name: '王五',
     email: 'wangwu@example.com',
     department: 'hr',
-    role: 'hr_manager',
+    role: 'Manager',
     status: 'inactive',
     joinDate: '2024-01-17',
   },
@@ -255,13 +247,9 @@ const getDepartmentText = (department) => {
 // 获取角色文本
 const getRoleText = (role) => {
   const roleMap = {
-    super_admin: '超级管理员',
-    finance_manager: '财务管理员',
-    hr_manager: '人事管理员',
-    operations_manager: '运营管理员',
-    ticket_manager: '票务管理员',
-    customer_service: '客服人员',
-    employee: '普通员工',
+    Admin: '超级管理员',
+    Manager: '管理员',
+    Employee: '普通员工',
   }
   return roleMap[role] || '未知'
 }
@@ -269,13 +257,9 @@ const getRoleText = (role) => {
 // 获取角色类型
 const getRoleType = (role) => {
   const roleTypeMap = {
-    super_admin: 'danger',
-    finance_manager: 'warning',
-    hr_manager: 'success',
-    operations_manager: 'primary',
-    ticket_manager: 'info',
-    customer_service: '',
-    employee: '',
+    Admin: 'danger',
+    Manager: 'warning',
+    Employee: '',
   }
   return roleTypeMap[role] || ''
 }

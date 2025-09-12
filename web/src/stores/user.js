@@ -334,8 +334,9 @@ export const useUserStore = defineStore('user', () => {
   // 检查是否有任意一个角色
   const hasAnyRole = (roles) => {
     if (!roles || roles.length === 0) return true
-    if (userInfo.value.role === 'super_admin') return true
-    return roles.includes(userInfo.value.role)
+    // Admin角色拥有所有权限
+    if (userInfo.value.roleName === 'Admin') return true
+    return roles.includes(userInfo.value.roleName)
   }
 
 
@@ -395,6 +396,7 @@ export const useUserStore = defineStore('user', () => {
       ElMessage.error(errorMessage)
       throw new Error(errorMessage)
     }
+  }
 
   // 登出
   const logout = async () => {
