@@ -98,7 +98,7 @@ export function getReservationById(id, params) {
 }
 export function createReservation(data) {
   // 假设后端的创建接口就是 POST /api/ticketing/reservations
-  return request.post('/ticketing/reservations', data)
+  return request.post('/api/ticketing/reservations', data)
 }
 
 /**
@@ -107,7 +107,7 @@ export function createReservation(data) {
  * @param {object} data - { paymentMethod, amount }
  */
 export function processReservationPayment(reservationId, data) {
-  return request.post(`/ticketing/reservations/${reservationId}/payment`, data)
+  return request.post(`/api/ticketing/reservations/${reservationId}/payment`, data)
 }
 // --- 促销管理 API ---
 
@@ -180,7 +180,7 @@ export function createPromotionAction(data) {
  * @param {object} data - { ticketId, reason, ... }
  */
 export function requestRefund(data) {
-  return request.post('/ticketing/refunds/request', data)
+  return request.post('/api/ticketing/refunds/request', data)
 }
 
 /**
@@ -188,7 +188,7 @@ export function requestRefund(data) {
  * @param {object} data - { refundId, isApproved, notes }
  */
 export function processRefund(data) {
-  return request.post(`/ticketing/refunds/${data.refundId}/process`, data)
+  return request.post(`/api/ticketing/refunds/${data.refundId}/process`, data)
 }
 
 /**
@@ -196,7 +196,7 @@ export function processRefund(data) {
  * @param {object} params - { keyword, status, startDate, endDate, page, size }
  */
 export function searchRefunds(params) {
-  return request.get('/ticketing/refunds/search', { params })
+  return request.get('/api/ticketing/refunds/search', { params })
 }
 
 /**
@@ -204,5 +204,5 @@ export function searchRefunds(params) {
  * @param {number} id - 退票记录ID
  */
 export function getRefundById(id) {
-  return request.get(`/ticketing/refunds/${id}`)
+  return request.get(`/api/ticketing/refunds/${id}`)
 }

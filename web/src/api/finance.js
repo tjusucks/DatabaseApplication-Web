@@ -32,7 +32,7 @@ export function createFinancialRecord(data) {
  */
 export function getFinancialRecordById(id) {
   return request({
-    url: '/api/resource/financial-records/${id}',
+    url: `/api/resource/financial-records/${id}`,
     method: 'get',
   })
 }
@@ -44,7 +44,7 @@ export function getFinancialRecordById(id) {
  */
 export function updateFinancialRecord(id, data) {
   return request({
-    url: '/api/resource/financial-records/${id}',
+    url: `/api/resource/financial-records/${id}`,
     method: 'put',
     data,
   })
@@ -56,7 +56,7 @@ export function updateFinancialRecord(id, data) {
  */
 export function deleteFinancialRecord(id) {
   return request({
-    url: '/api/resource/financial-records/${id}',
+    url: `/api/resource/financial-records/${id}`,
     method: 'delete',
   })
 }
@@ -106,7 +106,7 @@ export function getFinanceStats(params) {
  */
 export function getRecordsByType(transactionType, params) {
   return request({
-    url: '/api/resource/financial-records/by-type/${transactionType}',
+    url: `/api/resource/financial-records/by-type/${transactionType}`,
     method: 'get',
     params,
   })
@@ -240,7 +240,7 @@ export function createMaintenanceRecord(data) {
  */
 export function getMaintenanceRecord(id) {
   return request({
-    url: '/api/resource/maintenance-records/${id}',
+    url: `/api/resource/maintenance-records/${id}`,
     method: 'get',
   })
 }
@@ -252,7 +252,7 @@ export function getMaintenanceRecord(id) {
  */
 export function updateMaintenanceRecord(id, data) {
   return request({
-    url: '/api/resource/maintenance-records/${id}',
+    url: `/api/resource/maintenance-records/${id}`,
     method: 'put',
     data,
   })
@@ -264,7 +264,7 @@ export function updateMaintenanceRecord(id, data) {
  */
 export function deleteMaintenanceRecord(id) {
   return request({
-    url: '/api/resource/maintenance-records/${id}',
+    url: `/api/resource/maintenance-records/${id}`,
     method: 'delete',
   })
 }
