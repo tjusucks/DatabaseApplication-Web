@@ -3,18 +3,6 @@
     <template #header>
       <div class="header-controls">
         <el-form :inline="true" :model="searchForm" class="search-form">
-          <!-- 类型筛选功能后端不支持，暂时禁用
-          <el-form-item label="类型">
-            <el-select v-model="searchForm.type" placeholder="请选择收入类型" clearable>
-              <el-option
-                v-for="option in incomeTypeOptions"
-                :key="option.value"
-                :label="option.label"
-                :value="option.value"
-              ></el-option>
-            </el-select>
-          </el-form-item>
-          -->
           <el-form-item label="支付方式">
             <el-select v-model="searchForm.paymentMethod" placeholder="请选择支付方式" clearable>
               <el-option
@@ -47,11 +35,6 @@
 
     <el-table :data="financeStore.incomes" v-loading="loading" stripe>
       <el-table-column prop="recordId" label="ID" width="80"></el-table-column>
-      <el-table-column prop="transactionType" label="类型" width="150">
-        <template #default="{ row }">
-          {{ getTransactionTypeName(row.transactionType) }}
-        </template>
-      </el-table-column>
       <el-table-column prop="amount" label="金额 (元)" width="150" sortable>
          <template #default="{ row }">
           {{ parseFloat(row.amount).toFixed(2) }}
@@ -67,7 +50,7 @@
       <el-table-column label="操作" width="150" fixed="right">
         <template #default="{ row }">
           <el-button link type="primary" @click="openFormModal(row)">编辑</el-button>
-          <el-popconfirm title="确定删除吗？" @confirm="handleDelete(row.recordId)">
+          <el-popconfirm title="确定删除吗？" @confirm="handleDelete(row)">
             <template #reference>
               <el-button link type="danger">删除</el-button>
             </template>
@@ -91,7 +74,6 @@
     <!-- 新增/编辑弹窗 -->
     <el-dialog v-model="dialogVisible" :title="form.recordId ? '编辑收入' : '新增收入'" width="500px" @close="resetForm">
       <el-form :model="form" :rules="rules" ref="formRef" label-width="80px">
-        <!-- '类型'字段在后端模型中不存在，UI上将其合并到'描述'中 -->
         <el-form-item label="金额" prop="amount">
           <el-input-number v-model="form.amount" :precision="2" :step="10" :min="0" style="width: 100%;"></el-input-number>
         </el-form-item>
@@ -129,7 +111,6 @@ import { Plus, Search } from '@element-plus/icons-vue'
 import {
   PaymentMethodOptions,
   getPaymentMethodName,
-  getTransactionTypeName
 } from '@/utils/constants'
 
 const financeStore = useFinanceStore()
@@ -137,7 +118,7 @@ const loading = ref(false)
 
 // 将搜索表单的响应式对象与 store 中的持久化参数关联
 const searchForm = reactive({
-  // type: financeStore.lastIncomeParams.type || '', // 后端不支持，移除
+  transactionType: financeStore.lastIncomeParams.transactionType || '',
   paymentMethod: financeStore.lastIncomeParams.paymentMethod || '',
   dateRange: financeStore.lastIncomeParams.startDate && financeStore.lastIncomeParams.endDate
     ? [financeStore.lastIncomeParams.startDate, financeStore.lastIncomeParams.endDate]
@@ -152,7 +133,7 @@ const initialFormState = {
   amount: 0,
   transactionDate: '',
   description: '',
-  transactionType: 0, // 0 for Income
+  transactionType: null,
   paymentMethod: null,
 }
 
@@ -161,7 +142,7 @@ const form = reactive({ ...initialFormState })
 const rules = {
   amount: [{ required: true, message: '请输入金额', trigger: 'blur' }, { type: 'number', min: 0.01, message: '金额必须大于0' }],
   transactionDate: [{ required: true, message: '请选择日期', trigger: 'change' }],
-  // description: [{ required: true, message: '请输入描述', trigger: 'blur' }], // 描述变为非必需
+  paymentMethod: [{ required: true, message: '请选择支付方式', trigger: 'change' }],
 }
 
 // 使用计算属性直接从 store 获取分页信息，以确保双向绑定
@@ -179,6 +160,7 @@ const pageSize = computed({
 onMounted(() => {
   // 页面加载时，使用 store 中已有的参数（如果有）来获取数据
   fetchData()
+  // financeStore.getDailyOverviewForTrend({ startDate: '2023-01-01', endDate: '2023-01-31' })
 })
 
 const fetchData = async (params = {}) => {
@@ -194,6 +176,7 @@ const fetchData = async (params = {}) => {
     // 合并来自搜索表单的最新参数
     const queryParams = {
       ...params,
+      transactionType: searchForm.transactionType !== '' ? searchForm.transactionType : undefined,
       paymentMethod: searchForm.paymentMethod !== '' ? searchForm.paymentMethod : undefined,
       startDate: searchForm.dateRange && searchForm.dateRange[0] ? searchForm.dateRange[0] : undefined,
       endDate: endDate ? endDate.toISOString() : undefined
@@ -214,7 +197,7 @@ const handleSearch = () => {
 }
 
 const resetSearch = () => {
-  // searchForm.type = '' // 移除
+  searchForm.transactionType = ''
   searchForm.dateRange = []
   searchForm.paymentMethod = ''
   // 重置搜索同样需要重置分页并重新获取数据
@@ -235,11 +218,14 @@ const openFormModal = (rowData = null) => {
   resetForm()
   if (rowData) {
     // 编辑
+    if (rowData.source && rowData.source !== 'manual') {
+      ElMessage.warning(`该记录来自 ${rowData.source} 系统，为只读数据，不能在此处编辑。`);
+      return;
+    }
     Object.assign(form, rowData)
   } else {
     // 新增，设置默认值
     form.transactionDate = new Date().toISOString().split('T')[0]
-    // form.paymentMethod = PaymentMethod.Cash // 不再设置默认支付方式，让用户选择
   }
   dialogVisible.value = true
 }
@@ -250,7 +236,7 @@ const resetForm = () => {
     formRef.value.resetFields()
     // 确保关键字段在 resetFields 后也被重置
     form.recordId = null
-    form.transactionType = 0 // 确保重置后类型正确
+    form.transactionType = null
   }
 }
 
@@ -281,13 +267,13 @@ const handleSubmit = async () => {
   })
 }
 
-const handleDelete = async (id) => {
+const handleDelete = async (row) => {
   loading.value = true; // 开始操作时显示加载状态
   try {
-    await financeStore.deleteIncome(id)
+    // 传递记录的 ID 和来源，以便 store 正确处理
+    await financeStore.deleteIncome(row.recordId, row.source)
     // 无需手动调用 fetchData() 或显示成功消息，store action 已处理
   } catch (error) {
-    // store 中已有错误提示，这里不再重复
     console.error('删除失败:', error);
   } finally {
     loading.value = false; // 结束操作时隐藏加载状态
