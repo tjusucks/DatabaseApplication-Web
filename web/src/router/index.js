@@ -419,6 +419,24 @@ const routes = [
           title: '运营分析',
         },
       },
+      {
+        path: 'ridetraffic',
+        name: 'RideTrafficDashboard',
+        component: () => import('@/views/operations/ridetraffic/RideTrafficDashboard.vue'),
+        meta: {
+          title: '游乐设施流量',
+          roles: ['super_admin', 'operations_manager'],
+        },
+      },
+      {
+        path: 'ridetraffic/:id',
+        name: 'RideTrafficDetail',
+        component: () => import('@/views/operations/ridetraffic/RideTrafficDetail.vue'),
+        meta: {
+          title: '流量详情',
+          roles: ['super_admin', 'operations_manager'],
+        },
+      },
     ],
   },
   // 财务管理路由
