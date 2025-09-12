@@ -8,39 +8,85 @@
       </div>
 
       <!-- 注册表单 -->
-      <el-form ref="registerFormRef" :model="registerForm" :rules="registerRules" class="register-form"
-        label-position="top">
+      <el-form
+        ref="registerFormRef"
+        :model="registerForm"
+        :rules="registerRules"
+        class="register-form"
+        label-position="top"
+      >
         <el-form-item label="用户名" prop="username">
-          <el-input v-model="registerForm.username" placeholder="请输入用户名" size="large" prefix-icon="User" clearable />
+          <el-input
+            v-model="registerForm.username"
+            placeholder="请输入用户名"
+            size="large"
+            prefix-icon="User"
+            clearable
+          />
         </el-form-item>
 
         <el-form-item label="显示名称" prop="displayName">
-          <el-input v-model="registerForm.displayName" placeholder="请输入显示名称" size="large" prefix-icon="Avatar"
-            clearable />
+          <el-input
+            v-model="registerForm.displayName"
+            placeholder="请输入显示名称"
+            size="large"
+            prefix-icon="Avatar"
+            clearable
+          />
         </el-form-item>
 
         <el-form-item label="邮箱地址" prop="email">
-          <el-input v-model="registerForm.email" placeholder="请输入邮箱地址（可选）" size="large" prefix-icon="Message"
-            clearable />
+          <el-input
+            v-model="registerForm.email"
+            placeholder="请输入邮箱地址（可选）"
+            size="large"
+            prefix-icon="Message"
+            clearable
+          />
         </el-form-item>
 
         <el-form-item label="手机号码" prop="phoneNumber">
-          <el-input v-model="registerForm.phoneNumber" placeholder="请输入手机号码（可选）" size="large" prefix-icon="Phone"
-            clearable />
+          <el-input
+            v-model="registerForm.phoneNumber"
+            placeholder="请输入手机号码（可选）"
+            size="large"
+            prefix-icon="Phone"
+            clearable
+          />
         </el-form-item>
 
         <el-form-item label="密码" prop="password">
-          <el-input v-model="registerForm.password" type="password" placeholder="请输入密码" size="large" prefix-icon="Lock"
-            show-password clearable />
+          <el-input
+            v-model="registerForm.password"
+            type="password"
+            placeholder="请输入密码"
+            size="large"
+            prefix-icon="Lock"
+            show-password
+            clearable
+          />
         </el-form-item>
 
         <el-form-item label="确认密码" prop="confirmPassword">
-          <el-input v-model="registerForm.confirmPassword" type="password" placeholder="请再次输入密码" size="large"
-            prefix-icon="Lock" show-password clearable />
+          <el-input
+            v-model="registerForm.confirmPassword"
+            type="password"
+            placeholder="请再次输入密码"
+            size="large"
+            prefix-icon="Lock"
+            show-password
+            clearable
+          />
         </el-form-item>
 
         <el-form-item>
-          <el-button type="primary" size="large" :loading="loading" @click="handleRegister" class="register-button">
+          <el-button
+            type="primary"
+            size="large"
+            :loading="loading"
+            @click="handleRegister"
+            class="register-button"
+          >
             {{ loading ? '注册中...' : '立即注册' }}
           </el-button>
         </el-form-item>
@@ -48,9 +94,7 @@
         <el-form-item>
           <div class="register-footer">
             <el-text>已有账号？</el-text>
-            <el-link type="primary" :underline="false" @click="goToLogin">
-              立即登录
-            </el-link>
+            <el-link type="primary" :underline="false" @click="goToLogin"> 立即登录 </el-link>
           </div>
         </el-form-item>
       </el-form>
@@ -79,31 +123,25 @@ const registerForm = reactive({
   email: '',
   phoneNumber: '',
   password: '',
-  confirmPassword: ''
+  confirmPassword: '',
 })
-
-
 
 // 表单验证规则
 const registerRules = {
   username: [
     { required: true, message: '请输入用户名', trigger: 'blur' },
     { min: 2, max: 50, message: '用户名长度在 2 到 50 个字符', trigger: 'blur' },
-    { pattern: /^[a-zA-Z0-9_]+$/, message: '用户名只能包含字母、数字和下划线', trigger: 'blur' }
+    { pattern: /^[a-zA-Z0-9_]+$/, message: '用户名只能包含字母、数字和下划线', trigger: 'blur' },
   ],
   displayName: [
     { required: true, message: '请输入显示名称', trigger: 'blur' },
-    { min: 1, max: 100, message: '显示名称长度在 1 到 100 个字符', trigger: 'blur' }
+    { min: 1, max: 100, message: '显示名称长度在 1 到 100 个字符', trigger: 'blur' },
   ],
-  email: [
-    { type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur' }
-  ],
-  phoneNumber: [
-    { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号码', trigger: 'blur' }
-  ],
+  email: [{ type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur' }],
+  phoneNumber: [{ pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号码', trigger: 'blur' }],
   password: [
     { required: true, message: '请输入密码', trigger: 'blur' },
-    { min: 6, max: 100, message: '密码长度在 6 到 100 个字符', trigger: 'blur' }
+    { min: 6, max: 100, message: '密码长度在 6 到 100 个字符', trigger: 'blur' },
   ],
   confirmPassword: [
     { required: true, message: '请确认密码', trigger: 'blur' },
@@ -115,12 +153,10 @@ const registerRules = {
           callback()
         }
       },
-      trigger: 'blur'
-    }
-  ]
+      trigger: 'blur',
+    },
+  ],
 }
-
-
 
 // 处理注册
 const handleRegister = async () => {
@@ -207,8 +243,6 @@ onMounted(() => {
   text-align: center;
   margin-top: 16px;
 }
-
-
 
 @media (max-width: 768px) {
   .register-container {

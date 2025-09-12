@@ -9,36 +9,61 @@
       </div>
 
       <!-- 登录表单 -->
-      <el-form ref="loginFormRef" :model="loginForm" :rules="loginRules" class="login-form" @keyup.enter="handleLogin">
+      <el-form
+        ref="loginFormRef"
+        :model="loginForm"
+        :rules="loginRules"
+        class="login-form"
+        @keyup.enter="handleLogin"
+      >
         <el-form-item prop="username">
-          <el-input v-model="loginForm.username" placeholder="请输入用户名" size="large" prefix-icon="User" clearable />
+          <el-input
+            v-model="loginForm.username"
+            placeholder="请输入用户名"
+            size="large"
+            prefix-icon="User"
+            clearable
+          />
         </el-form-item>
 
         <el-form-item prop="password">
-          <el-input v-model="loginForm.password" type="password" placeholder="请输入密码" size="large" prefix-icon="Lock"
-            show-password clearable />
+          <el-input
+            v-model="loginForm.password"
+            type="password"
+            placeholder="请输入密码"
+            size="large"
+            prefix-icon="Lock"
+            show-password
+            clearable
+          />
         </el-form-item>
 
         <el-form-item>
           <div class="login-options">
             <el-checkbox v-model="loginForm.remember">记住密码</el-checkbox>
-            <el-link type="primary" :underline="false" @click="goToResetPassword">忘记密码？</el-link>
+            <el-link type="primary" :underline="false" @click="goToResetPassword"
+              >忘记密码？</el-link
+            >
           </div>
         </el-form-item>
 
         <el-form-item>
-          <el-button type="primary" size="large" :loading="loading" @click="handleLogin" class="login-btn">
+          <el-button
+            type="primary"
+            size="large"
+            :loading="loading"
+            @click="handleLogin"
+            class="login-btn"
+          >
             {{ loading ? '登录中...' : '登录' }}
           </el-button>
         </el-form-item>
       </el-form>
 
-
       <!-- 注册链接 -->
       <div class="register-link">
         <el-divider>还没有账号？</el-divider>
         <el-button type="text" @click="goToRegister">立即注册</el-button>
-
       </div>
     </div>
 
@@ -238,8 +263,6 @@ onMounted(() => {
 }
 
 @keyframes float {
-
-
   0%,
   100% {
     transform: translateY(0px) rotate(0deg);
@@ -260,7 +283,5 @@ onMounted(() => {
   .title {
     font-size: 20px;
   }
-
-
 }
 </style>

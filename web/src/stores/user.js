@@ -308,9 +308,8 @@ import {
   login as loginApi,
   logout as logoutApi,
   register as registerApi,
-  getUserInfo
+  getUserInfo,
 } from '@/api/auth'
-
 
 export const useUserStore = defineStore('user', () => {
   // 状态
@@ -330,14 +329,13 @@ export const useUserStore = defineStore('user', () => {
     return userInfo.value.roleName === role
   }
 
-
   // 检查是否有任意一个角色
   const hasAnyRole = (roles) => {
     if (!roles || roles.length === 0) return true
-    if (userInfo.value.role === 'super_admin') return true
-    return roles.includes(userInfo.value.role)
+    // Admin角色拥有所有权限
+    if (userInfo.value.roleName === 'Admin') return true
+    return roles.includes(userInfo.value.roleName)
   }
-
 
   // 登录
 
@@ -345,11 +343,10 @@ export const useUserStore = defineStore('user', () => {
     // --- 真实 API 调用 (等待后端完成后取消注释) ---
 
     try {
-
       const response = await loginApi({
         username: loginForm.username,
         password: loginForm.password,
-        rememberMe: loginForm.remember
+        rememberMe: loginForm.remember,
       })
 
       // 保存到状态和本地存储
@@ -361,7 +358,6 @@ export const useUserStore = defineStore('user', () => {
 
       ElMessage.success(response.message || '登录成功')
       return response
-
     } catch (error) {
       const errorMessage = error.response?.data?.message || error.message || '登录失败'
       ElMessage.error(errorMessage)
@@ -378,7 +374,7 @@ export const useUserStore = defineStore('user', () => {
         confirmPassword: registerForm.confirmPassword,
         displayName: registerForm.displayName,
         email: registerForm.email || null,
-        phoneNumber: registerForm.phoneNumber || null
+        phoneNumber: registerForm.phoneNumber || null,
       })
 
       // 保存到状态和本地存储
@@ -395,6 +391,7 @@ export const useUserStore = defineStore('user', () => {
       ElMessage.error(errorMessage)
       throw new Error(errorMessage)
     }
+  }
 
   // 登出
   const logout = async () => {
@@ -437,8 +434,6 @@ export const useUserStore = defineStore('user', () => {
       throw error
     }
   }
-
-
 
   // 更新用户信息
   const updateUserInfo = (newUserInfo) => {

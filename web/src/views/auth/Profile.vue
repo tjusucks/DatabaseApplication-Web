@@ -115,14 +115,12 @@ const formattedBirthDate = computed(() => {
 // 格式化性别
 const formattedGender = computed(() => {
   const genderMap = {
-    'Male': '男',
-    'Female': '女',
-    'Other': '其他'
+    Male: '男',
+    Female: '女',
+    Other: '其他',
   }
   return genderMap[userInfo.value.gender] || ''
 })
-
-
 </script>
 
 <style scoped>

@@ -17,7 +17,7 @@ const loading = ref(true)
 onMounted(async () => {
   // 等待下一个tick确保DOM渲染完成
   await nextTick()
-  
+
   // 短暂延迟以确保内容完全加载
   setTimeout(() => {
     loading.value = false
