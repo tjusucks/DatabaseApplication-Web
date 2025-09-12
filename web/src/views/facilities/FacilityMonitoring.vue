@@ -236,9 +236,11 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted, nextTick } from 'vue'
-import * as echarts from 'echarts'
 import { useRoute } from 'vue-router'
 import { searchRides, getRideStats } from '@/api/facilities'
+
+// 动态导入echarts以避免初始加载问题
+let echarts = null
 
 const route = useRoute()
 
@@ -316,7 +318,17 @@ const logs = ref([
 let monitoringInterval = null
 let logInterval = null
 
-const initCharts = () => {
+const initCharts = async () => {
+  // 动态导入echarts
+  if (!echarts) {
+    try {
+      echarts = await import('echarts')
+    } catch (error) {
+      console.error('Failed to load echarts:', error)
+      return
+    }
+  }
+
   // 温度图表
   temperatureChartInstance = echarts.init(temperatureChart.value)
 
@@ -626,8 +638,8 @@ const addRandomLog = () => {
   })
 }
 
-onMounted(() => {
-  initCharts()
+onMounted(async () => {
+  await initCharts()
   fetchMonitoringData()
 
   // 启动定时刷新

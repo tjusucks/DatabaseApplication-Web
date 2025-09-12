@@ -211,19 +211,19 @@ const viewRecordDetail = (record) => {
 const openAddDialog = () => {
   isEditing.value = false
   form.value = {
-    rideId: null,
-    teamId: null,
+    rideId: '',
+    teamId: '',
     managerId: null,
-    maintenanceType: null,
-    startTime: '',
+    maintenanceType: '',
+    startTime: new Date(),
     endTime: null,
     cost: 0,
-    partsReplaced: null,
-    maintenanceDetails: null,
+    partsReplaced: '',
+    maintenanceDetails: '',
     isCompleted: false,
     isAccepted: null,
     acceptanceDate: null,
-    acceptanceComments: null,
+    acceptanceComments: '',
   }
   isDialogVisible.value = true
 }
@@ -240,11 +240,26 @@ const saveRecord = async () => {
   try {
     await formRef.value.validate()
 
+    // 准备提交数据，确保数据类型正确
+    const submitData = {
+      ...form.value,
+      rideId: parseInt(form.value.rideId),
+      teamId: parseInt(form.value.teamId),
+      managerId: form.value.managerId ? parseInt(form.value.managerId) : null,
+      maintenanceType: parseInt(form.value.maintenanceType),
+      startTime: form.value.startTime instanceof Date ? form.value.startTime.toISOString() : form.value.startTime,
+      endTime: form.value.endTime ? (form.value.endTime instanceof Date ? form.value.endTime.toISOString() : form.value.endTime) : null,
+      cost: parseFloat(form.value.cost),
+      acceptanceDate: form.value.acceptanceDate ? (form.value.acceptanceDate instanceof Date ? form.value.acceptanceDate.toISOString() : form.value.acceptanceDate) : null,
+    }
+
     if (isEditing.value) {
-      await updateMaintenanceRecord(form.value.maintenanceId, form.value)
+      await updateMaintenanceRecord(form.value.maintenanceId, submitData)
       ElMessage.success('更新维护记录成功')
     } else {
-      await createMaintenanceRecord(form.value)
+      // 创建时不需要maintenanceId
+      const { maintenanceId, ...createData } = submitData
+      await createMaintenanceRecord(createData)
       ElMessage.success('新增维护记录成功')
     }
 

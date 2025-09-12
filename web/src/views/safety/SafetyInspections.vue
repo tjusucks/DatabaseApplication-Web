@@ -289,7 +289,10 @@ const saveInspection = async () => {
 
     const submitData = {
       ...form,
-      checkDate: form.checkDate ? form.checkDate.toISOString() : '',
+      rideId: parseInt(form.rideId),
+      teamId: parseInt(form.teamId),
+      checkType: parseInt(form.checkType),
+      checkDate: form.checkDate ? form.checkDate.toISOString() : new Date().toISOString(),
       issuesFound: form.issuesFound || null,
       recommendations: form.recommendations || null,
     }
@@ -299,7 +302,7 @@ const saveInspection = async () => {
       ElMessage.success('检查记录更新成功')
     } else {
       // 创建时不需要inspectionId
-      const { inspectionId, ...createData } = submitData
+      const { inspectionId, rideName, teamName, ...createData } = submitData
       await createInspectionRecord(createData)
       ElMessage.success('检查记录创建成功')
     }
@@ -337,13 +340,13 @@ const cancelDialog = () => {
 const resetForm = () => {
   Object.assign(form, {
     inspectionId: null,
-    rideId: null,
-    teamId: null,
-    checkDate: null,
-    checkType: null,
+    rideId: '',
+    teamId: '',
+    checkDate: new Date(),
+    checkType: '',
     isPassed: true,
-    issuesFound: null,
-    recommendations: null,
+    issuesFound: '',
+    recommendations: '',
   })
   if (formRef.value) {
     formRef.value.clearValidate()

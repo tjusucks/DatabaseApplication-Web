@@ -29,25 +29,36 @@
               <img src="@/images/facilities/ticket-icon.png" alt="票" class="small-icon" />
             </div>
           </div>
-          <el-input
-            v-model="searchQuery.keyword"
-            placeholder="搜索设施"
-            clearable
-            @input="fetchFacilities"
-            class="search-input"
-          />
+          <div class="search-controls">
+            <el-input
+              v-model="searchQuery.keyword"
+              placeholder="搜索设施"
+              clearable
+              @input="fetchFacilities"
+              class="search-input"
+            />
+            <el-button @click="resetSearch" class="reset-btn">重置</el-button>
+          </div>
         </div>
       </template>
 
       <el-table :data="facilities" :loading="loading" @row-click="viewFacilityDetail">
-        <el-table-column prop="id" label="设施ID" width="100" />
-        <el-table-column prop="name" label="设施名称" />
-        <el-table-column prop="status" label="状态" />
-        <el-table-column label="操作">
+        <el-table-column prop="rideId" label="设施ID" width="100" />
+        <el-table-column prop="rideName" label="设施名称" />
+        <el-table-column prop="rideStatus" label="状态">
+          <template #default="{ row }">
+            <el-tag :type="getStatusType(row.rideStatus)">
+              {{ getStatusText(row.rideStatus) }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="location" label="位置" />
+        <el-table-column prop="capacity" label="容量" width="80" />
+        <el-table-column label="操作" width="200">
           <template #default="{ row }">
             <el-button size="small" @click.stop="viewFacilityDetail(row)">查看详情</el-button>
             <el-button size="small" type="primary" @click.stop="editFacility(row)">更改</el-button>
-            <el-button size="small" type="danger" @click.stop="deleteFacility(row.id)"
+            <el-button size="small" type="danger" @click.stop="deleteFacility(row.rideId)"
               >删除</el-button
             >
           </template>
@@ -74,61 +85,206 @@
         </div>
       </div>
 
-      <el-dialog title="新增设施" v-model="isAddDialogVisible">
-        <el-form :model="newFacility" ref="addFacilityForm">
+      <el-dialog title="新增设施" v-model="isAddDialogVisible" width="600px">
+        <el-form :model="newFacility" ref="addFacilityFormRef" label-width="120px">
           <el-form-item
             label="设施名称"
-            prop="name"
+            prop="rideName"
             :rules="[{ required: true, message: '请输入设施名称', trigger: 'blur' }]"
           >
-            <el-input v-model="newFacility.name" />
+            <el-input v-model="newFacility.rideName" placeholder="请输入设施名称" />
           </el-form-item>
-          <el-form-item
-            label="状态"
-            prop="status"
-            :rules="[{ required: true, message: '请选择状态', trigger: 'change' }]"
-          >
-            <el-select v-model="newFacility.status" placeholder="请选择状态">
-              <el-option label="启用" value="enabled" />
-              <el-option label="禁用" value="disabled" />
-            </el-select>
-          </el-form-item>
+
           <el-form-item
             label="位置"
             prop="location"
-            :rules="[{ required: true, message: '请输入位置', trigger: 'blur' }]"
+            :rules="[{ required: true, message: '请输入设施位置', trigger: 'blur' }]"
           >
-            <el-input v-model="newFacility.location" />
+            <el-input v-model="newFacility.location" placeholder="请输入设施位置" />
           </el-form-item>
+
+          <el-form-item
+            label="设施状态"
+            prop="rideStatus"
+            :rules="[{ required: true, message: '请选择设施状态', trigger: 'change' }]"
+          >
+            <el-select v-model="newFacility.rideStatus" placeholder="请选择设施状态">
+              <el-option label="运营中" :value="0" />
+              <el-option label="维护中" :value="1" />
+              <el-option label="已关闭" :value="2" />
+              <el-option label="测试中" :value="3" />
+            </el-select>
+          </el-form-item>
+
           <el-form-item
             label="容量"
             prop="capacity"
             :rules="[{ required: true, message: '请输入容量', trigger: 'blur' }]"
           >
-            <el-input-number v-model="newFacility.capacity" />
+            <el-input-number v-model="newFacility.capacity" :min="1" :max="1000" placeholder="请输入容量" />
           </el-form-item>
+
           <el-form-item
-            label="运行时长 (分钟)"
+            label="运行时长(秒)"
             prop="duration"
             :rules="[{ required: true, message: '请输入运行时长', trigger: 'blur' }]"
           >
-            <el-input-number v-model="newFacility.duration" />
+            <el-input-number v-model="newFacility.duration" :min="1" :max="3600" placeholder="请输入运行时长" />
           </el-form-item>
-          <el-form-item label="描述" prop="description">
-            <el-input type="textarea" v-model="newFacility.description" />
+
+          <el-form-item
+            label="最低身高限制(cm)"
+            prop="heightLimitMin"
+            :rules="[{ required: true, message: '请输入最低身高限制', trigger: 'blur' }]"
+          >
+            <el-input-number v-model="newFacility.heightLimitMin" :min="50" :max="300" placeholder="请输入最低身高限制" />
           </el-form-item>
-          <el-form-item label="开放日期" prop="openDate">
-            <el-date-picker v-model="newFacility.openDate" type="date" />
+
+          <el-form-item
+            label="最高身高限制(cm)"
+            prop="heightLimitMax"
+            :rules="[{ required: true, message: '请输入最高身高限制', trigger: 'blur' }]"
+          >
+            <el-input-number v-model="newFacility.heightLimitMax" :min="50" :max="300" placeholder="请输入最高身高限制" />
           </el-form-item>
-          <el-form-item label="负责人" prop="managerId">
-            <el-input v-model="newFacility.managerId" />
+
+          <el-form-item label="开放日期">
+            <el-date-picker
+              v-model="newFacility.openDate"
+              type="date"
+              placeholder="选择开放日期"
+              format="YYYY-MM-DD"
+              value-format="YYYY-MM-DD"
+            />
+          </el-form-item>
+
+          <el-form-item label="管理员ID">
+            <el-input-number v-model="newFacility.managerId" :min="1" placeholder="请输入管理员ID" />
+          </el-form-item>
+
+          <el-form-item label="设施描述">
+            <el-input
+              v-model="newFacility.description"
+              type="textarea"
+              :rows="3"
+              placeholder="请输入设施描述"
+            />
           </el-form-item>
         </el-form>
 
         <template #footer>
           <div class="dialog-footer">
             <el-button @click="isAddDialogVisible = false">取 消</el-button>
-            <el-button type="primary" @click="addFacility">确 定</el-button>
+            <el-button type="primary" @click="addFacility" :loading="addLoading">确 定</el-button>
+          </div>
+        </template>
+      </el-dialog>
+
+      <!-- 设施详情弹窗 -->
+      <el-dialog title="设施详情" v-model="isDetailDialogVisible" width="600px">
+        <div class="facility-detail" v-if="selectedFacility">
+          <el-descriptions :column="2" border>
+            <el-descriptions-item label="设施ID">{{ selectedFacility.rideId }}</el-descriptions-item>
+            <el-descriptions-item label="设施名称">{{ selectedFacility.rideName }}</el-descriptions-item>
+            <el-descriptions-item label="位置">{{ selectedFacility.location }}</el-descriptions-item>
+            <el-descriptions-item label="状态">
+              <el-tag :type="getStatusType(selectedFacility.rideStatus)">
+                {{ getStatusText(selectedFacility.rideStatus) }}
+              </el-tag>
+            </el-descriptions-item>
+            <el-descriptions-item label="容量">{{ selectedFacility.capacity }} 人</el-descriptions-item>
+            <el-descriptions-item label="运行时长">{{ selectedFacility.duration }} 秒</el-descriptions-item>
+            <el-descriptions-item label="最低身高限制">{{ selectedFacility.heightLimitMin }} cm</el-descriptions-item>
+            <el-descriptions-item label="最高身高限制">{{ selectedFacility.heightLimitMax }} cm</el-descriptions-item>
+            <el-descriptions-item label="开放日期" span="2">
+              {{ selectedFacility.openDate ? new Date(selectedFacility.openDate).toLocaleDateString() : '未设置' }}
+            </el-descriptions-item>
+            <el-descriptions-item label="管理员" span="2">
+              {{ selectedFacility.managerName || '未分配' }}
+            </el-descriptions-item>
+            <el-descriptions-item label="设施描述" span="2">
+              {{ selectedFacility.description || '暂无描述' }}
+            </el-descriptions-item>
+            <el-descriptions-item label="创建时间" span="2">
+              {{ new Date(selectedFacility.createdAt).toLocaleString() }}
+            </el-descriptions-item>
+            <el-descriptions-item label="更新时间" span="2">
+              {{ new Date(selectedFacility.updatedAt).toLocaleString() }}
+            </el-descriptions-item>
+          </el-descriptions>
+        </div>
+        <template #footer>
+          <div class="dialog-footer">
+            <el-button @click="isDetailDialogVisible = false">关 闭</el-button>
+            <el-button type="primary" @click="editFromDetail">编 辑</el-button>
+          </div>
+        </template>
+      </el-dialog>
+
+      <!-- 设施编辑弹窗 -->
+      <el-dialog title="编辑设施" v-model="isEditDialogVisible" width="600px">
+        <el-form :model="editFacilityForm" ref="editFacilityFormRef" label-width="120px">
+          <el-form-item label="设施名称" prop="rideName" :rules="[{ required: true, message: '请输入设施名称', trigger: 'blur' }]">
+            <el-input v-model="editFacilityForm.rideName" placeholder="请输入设施名称" />
+          </el-form-item>
+
+          <el-form-item label="位置" prop="location" :rules="[{ required: true, message: '请输入设施位置', trigger: 'blur' }]">
+            <el-input v-model="editFacilityForm.location" placeholder="请输入设施位置" />
+          </el-form-item>
+
+          <el-form-item label="设施状态" prop="rideStatus" :rules="[{ required: true, message: '请选择设施状态', trigger: 'change' }]">
+            <el-select v-model="editFacilityForm.rideStatus" placeholder="请选择设施状态">
+              <el-option label="运营中" :value="0" />
+              <el-option label="维护中" :value="1" />
+              <el-option label="已关闭" :value="2" />
+              <el-option label="测试中" :value="3" />
+            </el-select>
+          </el-form-item>
+
+          <el-form-item label="容量" prop="capacity" :rules="[{ required: true, message: '请输入容量', trigger: 'blur' }]">
+            <el-input-number v-model="editFacilityForm.capacity" :min="1" :max="1000" placeholder="请输入容量" />
+          </el-form-item>
+
+          <el-form-item label="运行时长(秒)" prop="duration" :rules="[{ required: true, message: '请输入运行时长', trigger: 'blur' }]">
+            <el-input-number v-model="editFacilityForm.duration" :min="1" :max="3600" placeholder="请输入运行时长" />
+          </el-form-item>
+
+          <el-form-item label="最低身高限制(cm)" prop="heightLimitMin" :rules="[{ required: true, message: '请输入最低身高限制', trigger: 'blur' }]">
+            <el-input-number v-model="editFacilityForm.heightLimitMin" :min="50" :max="300" placeholder="请输入最低身高限制" />
+          </el-form-item>
+
+          <el-form-item label="最高身高限制(cm)" prop="heightLimitMax" :rules="[{ required: true, message: '请输入最高身高限制', trigger: 'blur' }]">
+            <el-input-number v-model="editFacilityForm.heightLimitMax" :min="50" :max="300" placeholder="请输入最高身高限制" />
+          </el-form-item>
+
+          <el-form-item label="开放日期">
+            <el-date-picker
+              v-model="editFacilityForm.openDate"
+              type="date"
+              placeholder="选择开放日期"
+              format="YYYY-MM-DD"
+              value-format="YYYY-MM-DD"
+            />
+          </el-form-item>
+
+          <el-form-item label="管理员ID">
+            <el-input-number v-model="editFacilityForm.managerId" :min="1" placeholder="请输入管理员ID" />
+          </el-form-item>
+
+          <el-form-item label="设施描述">
+            <el-input
+              v-model="editFacilityForm.description"
+              type="textarea"
+              :rows="3"
+              placeholder="请输入设施描述"
+            />
+          </el-form-item>
+        </el-form>
+
+        <template #footer>
+          <div class="dialog-footer">
+            <el-button @click="isEditDialogVisible = false">取 消</el-button>
+            <el-button type="primary" @click="saveEditFacility" :loading="editLoading">保 存</el-button>
           </div>
         </template>
       </el-dialog>
@@ -230,16 +386,38 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { searchRides, deleteRide, createRide, getRideStats } from '@/api/facilities'
+import { searchRides, deleteRide, createRide, getRideStats, updateRide } from '@/api/facilities'
+import { ElMessage, ElMessageBox } from 'element-plus'
 
 const facilities = ref([])
 const loading = ref(false)
 const pagination = ref({ page: 1, pageSize: 10, total: 0 })
 const isAddDialogVisible = ref(false)
+const isDetailDialogVisible = ref(false)
+const isEditDialogVisible = ref(false)
+const selectedFacility = ref(null)
+const editLoading = ref(false)
+const editFacilityFormRef = ref(null)
+const addFacilityFormRef = ref(null)
+const addLoading = ref(false)
 const newFacility = ref({
   rideName: '',
   location: '',
-  rideStatus: 1,
+  rideStatus: 0, // 默认为运营中
+  capacity: 10,
+  duration: 30,
+  heightLimitMin: 120,
+  heightLimitMax: 200,
+  description: '',
+  openDate: null,
+  managerId: null,
+})
+
+const editFacilityForm = ref({
+  rideId: null,
+  rideName: '',
+  location: '',
+  rideStatus: 0, // 默认为运营中
   capacity: 10,
   duration: 30,
   heightLimitMin: 120,
@@ -291,29 +469,93 @@ const fetchStats = async () => {
 }
 
 const viewFacilityDetail = (facility) => {
-  console.log('查看设施详情:', facility)
+  selectedFacility.value = facility
+  isDetailDialogVisible.value = true
 }
 
 const editFacility = (facility) => {
-  console.log('编辑设施:', facility)
-  // 打开编辑弹窗或跳转到编辑页面
+  // 复制设施数据到编辑表单
+  editFacilityForm.value = {
+    rideId: facility.rideId,
+    rideName: facility.rideName,
+    location: facility.location,
+    rideStatus: facility.rideStatus,
+    capacity: facility.capacity,
+    duration: facility.duration,
+    heightLimitMin: facility.heightLimitMin,
+    heightLimitMax: facility.heightLimitMax,
+    description: facility.description,
+    openDate: facility.openDate ? facility.openDate.split('T')[0] : null,
+    managerId: facility.managerId,
+  }
+  isEditDialogVisible.value = true
+}
+
+const editFromDetail = () => {
+  if (selectedFacility.value) {
+    editFacility(selectedFacility.value)
+    isDetailDialogVisible.value = false
+  }
+}
+
+const saveEditFacility = async () => {
+  if (!editFacilityFormRef.value) return
+
+  try {
+    await editFacilityFormRef.value.validate()
+    editLoading.value = true
+
+    const updateData = {
+      rideId: editFacilityForm.value.rideId,
+      rideName: editFacilityForm.value.rideName,
+      location: editFacilityForm.value.location,
+      rideStatus: editFacilityForm.value.rideStatus,
+      capacity: editFacilityForm.value.capacity,
+      duration: editFacilityForm.value.duration,
+      heightLimitMin: editFacilityForm.value.heightLimitMin,
+      heightLimitMax: editFacilityForm.value.heightLimitMax,
+      description: editFacilityForm.value.description,
+      openDate: editFacilityForm.value.openDate,
+      managerId: editFacilityForm.value.managerId,
+    }
+
+    await updateRide(editFacilityForm.value.rideId, updateData)
+    ElMessage.success('设施信息更新成功')
+    isEditDialogVisible.value = false
+    fetchFacilities() // 重新加载设施列表
+  } catch (error) {
+    ElMessage.error('更新设施信息失败: ' + (error.message || '未知错误'))
+    console.error('更新设施失败:', error)
+  } finally {
+    editLoading.value = false
+  }
 }
 
 const deleteFacility = async (id) => {
   try {
+    await ElMessageBox.confirm('确定要删除这个设施吗？删除后无法恢复！', '确认删除', {
+      type: 'warning',
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+    })
+
     await deleteRide(id)
+    ElMessage.success('设施删除成功')
     fetchFacilities() // 重新加载设施列表
   } catch (error) {
-    console.error('删除设施失败:', error)
+    if (error !== 'cancel') {
+      ElMessage.error('删除设施失败: ' + (error.message || '未知错误'))
+      console.error('删除设施失败:', error)
+    }
   }
 }
 
 const openAddFacilityDialog = () => {
-  console.log('打开新增设施弹窗') // 添加调试信息
+  // 重置表单数据
   newFacility.value = {
     rideName: '',
     location: '',
-    rideStatus: 1,
+    rideStatus: 0, // 默认为运营中
     capacity: 10,
     duration: 30,
     heightLimitMin: 120,
@@ -322,17 +564,47 @@ const openAddFacilityDialog = () => {
     openDate: null,
     managerId: null,
   }
+
+  // 清除表单验证状态
+  if (addFacilityFormRef.value) {
+    addFacilityFormRef.value.clearValidate()
+  }
+
   isAddDialogVisible.value = true
 }
 
 const addFacility = async () => {
+  if (!addFacilityFormRef.value) return
+
   try {
-    console.log('新增设施数据:', newFacility.value) // 添加调试信息
-    await createRide(newFacility.value)
+    // 表单验证
+    await addFacilityFormRef.value.validate()
+    addLoading.value = true
+
+    // 准备提交数据，确保数据类型正确
+    const submitData = {
+      rideName: newFacility.value.rideName,
+      location: newFacility.value.location,
+      description: newFacility.value.description || null,
+      rideStatus: parseInt(newFacility.value.rideStatus),
+      capacity: parseInt(newFacility.value.capacity),
+      duration: parseInt(newFacility.value.duration),
+      heightLimitMin: parseInt(newFacility.value.heightLimitMin),
+      heightLimitMax: parseInt(newFacility.value.heightLimitMax),
+      openDate: newFacility.value.openDate || null,
+      managerId: newFacility.value.managerId ? parseInt(newFacility.value.managerId) : null,
+    }
+
+    console.log('新增设施数据:', submitData) // 添加调试信息
+    await createRide(submitData)
+    ElMessage.success('设施创建成功')
     isAddDialogVisible.value = false
     fetchFacilities() // 重新加载设施列表
   } catch (error) {
+    ElMessage.error('新增设施失败: ' + (error.message || '未知错误'))
     console.error('新增设施失败:', error)
+  } finally {
+    addLoading.value = false
   }
 }
 
@@ -346,6 +618,26 @@ const resetSearch = () => {
     maxCapacity: null,
   }
   fetchFacilities()
+}
+
+const getStatusType = (status) => {
+  const statusMap = {
+    0: 'success',  // Operating - 运营中
+    1: 'warning',  // Maintenance - 维护中
+    2: 'info',     // Closed - 已关闭
+    3: 'danger'    // Testing - 测试中
+  }
+  return statusMap[status] || 'info'
+}
+
+const getStatusText = (status) => {
+  const statusMap = {
+    0: '运营中',   // Operating
+    1: '维护中',   // Maintenance
+    2: '已关闭',   // Closed
+    3: '测试中'    // Testing
+  }
+  return statusMap[status] || '未知'
 }
 
 onMounted(() => {
@@ -500,8 +792,20 @@ onMounted(() => {
   }
 }
 
+.search-controls {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
 .search-input {
   width: 300px;
+}
+
+.reset-btn {
+  background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+  border: none;
+  color: white;
 }
 
 /* 操作区域样式 */
