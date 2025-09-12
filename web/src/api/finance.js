@@ -1,4 +1,4 @@
-import request from "@/utils/request";
+import request from '@/utils/request'
 
 // ----------------- 财务记录 (Financial Records) -----------------
 
@@ -8,10 +8,10 @@ import request from "@/utils/request";
  */
 export function searchFinancialRecords(params) {
   return request({
-    url: "/resource/financial-records/search",
-    method: "get",
+    url: '/resource/financial-records/search',
+    method: 'get',
     params,
-  });
+  })
 }
 
 /**
@@ -20,10 +20,10 @@ export function searchFinancialRecords(params) {
  */
 export function createFinancialRecord(data) {
   return request({
-    url: "/resource/financial-records",
-    method: "post",
+    url: '/resource/financial-records',
+    method: 'post',
     data,
-  });
+  })
 }
 
 /**
@@ -33,8 +33,8 @@ export function createFinancialRecord(data) {
 export function getFinancialRecordById(id) {
   return request({
     url: `/resource/financial-records/${id}`,
-    method: "get",
-  });
+    method: 'get',
+  })
 }
 
 /**
@@ -45,9 +45,9 @@ export function getFinancialRecordById(id) {
 export function updateFinancialRecord(id, data) {
   return request({
     url: `/resource/financial-records/${id}`,
-    method: "put",
+    method: 'put',
     data,
-  });
+  })
 }
 
 /**
@@ -57,8 +57,8 @@ export function updateFinancialRecord(id, data) {
 export function deleteFinancialRecord(id) {
   return request({
     url: `/resource/financial-records/${id}`,
-    method: "delete",
-  });
+    method: 'delete',
+  })
 }
 
 // ----------------- 财务报表 (Financial Reports) -----------------
@@ -69,10 +69,10 @@ export function deleteFinancialRecord(id) {
  */
 export function getFinanceOverview(params) {
   return request({
-    url: "/resource/financial-records/overview",
-    method: "get",
+    url: '/resource/financial-records/overview',
+    method: 'get',
     params,
-  });
+  })
 }
 
 /**
@@ -81,10 +81,10 @@ export function getFinanceOverview(params) {
  */
 export function getFinanceGroupedStats(params) {
   return request({
-    url: "/resource/financial-records/stats/grouped",
-    method: "get",
+    url: '/resource/financial-records/stats/grouped',
+    method: 'get',
     params,
-  });
+  })
 }
 
 /**
@@ -93,10 +93,10 @@ export function getFinanceGroupedStats(params) {
  */
 export function getFinanceStats(params) {
   return request({
-    url: "/resource/financial-records/stats",
-    method: "get",
+    url: '/resource/financial-records/stats',
+    method: 'get',
     params,
-  });
+  })
 }
 
 /**
@@ -107,9 +107,9 @@ export function getFinanceStats(params) {
 export function getRecordsByType(transactionType, params) {
   return request({
     url: `/resource/financial-records/by-type/${transactionType}`,
-    method: "get",
+    method: 'get',
     params,
-  });
+  })
 }
 
 // ----------------- 薪资管理 (Payroll) -----------------
@@ -120,10 +120,10 @@ export function getRecordsByType(transactionType, params) {
  */
 export function createSalaryRecord(data) {
   return request({
-    url: "/resource/salary-records",
-    method: "post",
+    url: '/resource/salary-records',
+    method: 'post',
     data,
-  });
+  })
 }
 
 /**
@@ -133,8 +133,8 @@ export function createSalaryRecord(data) {
 export function getSalaryRecord(id) {
   return request({
     url: `/resource/salary-records/${id}`,
-    method: "get",
-  });
+    method: 'get',
+  })
 }
 
 /**
@@ -145,9 +145,9 @@ export function getSalaryRecord(id) {
 export function updateSalaryRecord(id, data) {
   return request({
     url: `/resource/salary-records/${id}`,
-    method: "put",
+    method: 'put',
     data,
-  });
+  })
 }
 
 /**
@@ -157,8 +157,8 @@ export function updateSalaryRecord(id, data) {
 export function deleteSalaryRecord(id) {
   return request({
     url: `/resource/salary-records/${id}`,
-    method: "delete",
-  });
+    method: 'delete',
+  })
 }
 
 /**
@@ -167,10 +167,10 @@ export function deleteSalaryRecord(id) {
  */
 export function searchSalaryRecords(query) {
   return request({
-    url: "/resource/salary-records/search",
-    method: "get",
+    url: '/resource/salary-records/search',
+    method: 'get',
     params: query,
-  });
+  })
 }
 
 /**
@@ -179,10 +179,10 @@ export function searchSalaryRecords(query) {
  */
 export function getSalaryStats(query) {
   return request({
-    url: "/resource/salary-records/stats",
-    method: "post",
+    url: '/resource/salary-records/stats',
+    method: 'post',
     data: query,
-  });
+  })
 }
 
 /**
@@ -191,10 +191,10 @@ export function getSalaryStats(query) {
  */
 export function generatePayrolls(data) {
   return request({
-    url: "/resource/salary-records/generate-payrolls",
-    method: "post",
+    url: '/resource/salary-records/generate-payrolls',
+    method: 'post',
     data,
-  });
+  })
 }
 
 /**
@@ -203,10 +203,10 @@ export function generatePayrolls(data) {
  */
 export function processPayroll(data) {
   return request({
-    url: "/resource/salary-records/process-payroll",
-    method: "post",
+    url: '/resource/salary-records/process-payroll',
+    method: 'post',
     data,
-  });
+  })
 }
 
 // ----------------- 维保记录 (Maintenance) -----------------
@@ -217,10 +217,10 @@ export function processPayroll(data) {
  */
 export function searchMaintenanceRecords(query) {
   return request({
-    url: "/resource/maintenance-records/search",
-    method: "get",
+    url: '/resource/maintenance-records/search',
+    method: 'get',
     params: query,
-  });
+  })
 }
 
 /**
@@ -229,10 +229,10 @@ export function searchMaintenanceRecords(query) {
  */
 export function createMaintenanceRecord(data) {
   return request({
-    url: "/resource/maintenance-records",
-    method: "post",
+    url: '/resource/maintenance-records',
+    method: 'post',
     data,
-  });
+  })
 }
 
 /**
@@ -242,8 +242,8 @@ export function createMaintenanceRecord(data) {
 export function getMaintenanceRecord(id) {
   return request({
     url: `/resource/maintenance-records/${id}`,
-    method: "get",
-  });
+    method: 'get',
+  })
 }
 
 /**
@@ -254,9 +254,9 @@ export function getMaintenanceRecord(id) {
 export function updateMaintenanceRecord(id, data) {
   return request({
     url: `/resource/maintenance-records/${id}`,
-    method: "put",
+    method: 'put',
     data,
-  });
+  })
 }
 
 /**
@@ -266,8 +266,8 @@ export function updateMaintenanceRecord(id, data) {
 export function deleteMaintenanceRecord(id) {
   return request({
     url: `/resource/maintenance-records/${id}`,
-    method: "delete",
-  });
+    method: 'delete',
+  })
 }
 
 // ----------------- 票务销售 (Ticket Sales) -----------------
@@ -278,10 +278,10 @@ export function deleteMaintenanceRecord(id) {
  */
 export function searchTicketSales(query) {
   return request({
-    url: "/resource/tickets/search", // 假设这是票务搜索的端点
-    method: "get",
+    url: '/resource/tickets/search', // 假设这是票务搜索的端点
+    method: 'get',
     params: query,
-  });
+  })
 }
 
 // ----------------- 退款处理 (Refunds) -----------------
@@ -292,8 +292,8 @@ export function searchTicketSales(query) {
  */
 export function searchRefunds(query) {
   return request({
-    url: "/resource/refunds/search", // 假设这是退款搜索的端点
-    method: "get",
+    url: '/resource/refunds/search', // 假设这是退款搜索的端点
+    method: 'get',
     params: query,
-  });
+  })
 }

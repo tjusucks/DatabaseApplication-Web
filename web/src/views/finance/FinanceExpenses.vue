@@ -21,7 +21,7 @@
               start-placeholder="开始日期"
               end-placeholder="结束日期"
               clearable
-              style="width: 240px;"
+              style="width: 240px"
             />
           </el-form-item>
           <el-form-item>
@@ -76,13 +76,29 @@
     ></el-pagination>
 
     <!-- 新增/编辑弹窗 -->
-    <el-dialog v-model="dialogVisible" :title="form.recordId ? '编辑支出' : '新增支出'" width="500px" @close="resetForm">
+    <el-dialog
+      v-model="dialogVisible"
+      :title="form.recordId ? '编辑支出' : '新增支出'"
+      width="500px"
+      @close="resetForm"
+    >
       <el-form :model="form" :rules="rules" ref="formRef" label-width="80px">
         <el-form-item label="金额" prop="amount">
-          <el-input-number v-model="form.amount" :precision="2" :step="10" :min="0" style="width: 100%;"></el-input-number>
+          <el-input-number
+            v-model="form.amount"
+            :precision="2"
+            :step="10"
+            :min="0"
+            style="width: 100%"
+          ></el-input-number>
         </el-form-item>
         <el-form-item label="支付方式" prop="paymentMethod">
-          <el-select v-model="form.paymentMethod" placeholder="请选择支付方式" style="width: 100%;" clearable>
+          <el-select
+            v-model="form.paymentMethod"
+            placeholder="请选择支付方式"
+            style="width: 100%"
+            clearable
+          >
             <el-option
               v-for="option in PaymentMethodOptions"
               :key="option.value"
@@ -92,10 +108,20 @@
           </el-select>
         </el-form-item>
         <el-form-item label="日期" prop="transactionDate">
-          <el-date-picker v-model="form.transactionDate" type="date" placeholder="选择日期" value-format="YYYY-MM-DD" style="width: 100%;"></el-date-picker>
+          <el-date-picker
+            v-model="form.transactionDate"
+            type="date"
+            placeholder="选择日期"
+            value-format="YYYY-MM-DD"
+            style="width: 100%"
+          ></el-date-picker>
         </el-form-item>
         <el-form-item label="描述" prop="description">
-          <el-input v-model="form.description" type="textarea" placeholder="请输入描述 (例如：采购办公用品)"></el-input>
+          <el-input
+            v-model="form.description"
+            type="textarea"
+            placeholder="请输入描述 (例如：采购办公用品)"
+          ></el-input>
         </el-form-item>
         <!--
         <el-form-item label="负责员工ID" prop="responsibleEmployeeId">
@@ -135,9 +161,10 @@ const formRef = ref(null)
 const searchForm = reactive({
   transactionType: financeStore.lastExpenseParams.transactionType || '',
   paymentMethod: financeStore.lastExpenseParams.paymentMethod || '',
-  dateRange: financeStore.lastExpenseParams.startDate && financeStore.lastExpenseParams.endDate
-    ? [financeStore.lastExpenseParams.startDate, financeStore.lastExpenseParams.endDate]
-    : []
+  dateRange:
+    financeStore.lastExpenseParams.startDate && financeStore.lastExpenseParams.endDate
+      ? [financeStore.lastExpenseParams.startDate, financeStore.lastExpenseParams.endDate]
+      : [],
 })
 
 const initialFormState = {
@@ -148,13 +175,16 @@ const initialFormState = {
   transactionType: null,
   paymentMethod: null,
   responsibleEmployeeId: null,
-  approvedById: null
+  approvedById: null,
 }
 
 const form = reactive({ ...initialFormState })
 
 const rules = {
-  amount: [{ required: true, message: '请输入金额', trigger: 'blur' }, { type: 'number', min: 0.01, message: '金额必须大于0' }],
+  amount: [
+    { required: true, message: '请输入金额', trigger: 'blur' },
+    { type: 'number', min: 0.01, message: '金额必须大于0' },
+  ],
   transactionDate: [{ required: true, message: '请选择日期', trigger: 'change' }],
   paymentMethod: [{ required: true, message: '请选择支付方式', trigger: 'change' }],
 }
@@ -162,18 +192,23 @@ const rules = {
 // 使用计算属性直接从 store 获取分页信息
 const currentPage = computed({
   get: () => financeStore.pagination.currentPage,
-  set: (val) => { financeStore.pagination.currentPage = val }
+  set: (val) => {
+    financeStore.pagination.currentPage = val
+  },
 })
 
 const pageSize = computed({
   get: () => financeStore.pagination.pageSize,
-  set: (val) => { financeStore.pagination.pageSize = val }
+  set: (val) => {
+    financeStore.pagination.pageSize = val
+  },
 })
 
 const fetchData = async (params = {}) => {
   loading.value = true
   try {
-    let endDate = searchForm.dateRange && searchForm.dateRange[1] ? searchForm.dateRange[1] : undefined
+    let endDate =
+      searchForm.dateRange && searchForm.dateRange[1] ? searchForm.dateRange[1] : undefined
     if (endDate) {
       // 将结束日期设置为当天的 23:59:59，以确保包含当天所有数据
       endDate = new Date(endDate)
@@ -184,8 +219,9 @@ const fetchData = async (params = {}) => {
       ...params,
       transactionType: searchForm.transactionType !== '' ? searchForm.transactionType : undefined,
       paymentMethod: searchForm.paymentMethod !== '' ? searchForm.paymentMethod : undefined,
-      startDate: searchForm.dateRange && searchForm.dateRange[0] ? searchForm.dateRange[0] : undefined,
-      endDate: endDate ? endDate.toISOString() : undefined
+      startDate:
+        searchForm.dateRange && searchForm.dateRange[0] ? searchForm.dateRange[0] : undefined,
+      endDate: endDate ? endDate.toISOString() : undefined,
     }
     await financeStore.fetchExpenses(queryParams)
   } catch (error) {
@@ -220,14 +256,14 @@ const openFormModal = (expense = null) => {
   if (expense) {
     // 对于非 'manual' 来源的记录，禁用编辑
     if (expense.source && expense.source !== 'manual') {
-      ElMessage.warning(`该记录来自 ${expense.source} 系统，为只读数据，不能在此处编辑。`);
-      return;
+      ElMessage.warning(`该记录来自 ${expense.source} 系统，为只读数据，不能在此处编辑。`)
+      return
     }
     Object.assign(form, expense)
   } else {
     // 新增时设置默认日期和类型
     form.transactionDate = new Date().toISOString().split('T')[0]
-    form.transactionType = UnifiedTransactionType.OTHER_EXPENSE; // 默认类型为其他支出
+    form.transactionType = UnifiedTransactionType.OTHER_EXPENSE // 默认类型为其他支出
   }
   dialogVisible.value = true
 }

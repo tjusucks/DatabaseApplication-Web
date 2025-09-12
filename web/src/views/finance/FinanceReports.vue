@@ -11,7 +11,7 @@
               start-placeholder="开始日期"
               end-placeholder="结束日期"
               clearable
-              style="width: 240px;"
+              style="width: 240px"
               :shortcuts="dateShortcuts"
             />
           </el-form-item>
@@ -27,44 +27,55 @@
     <el-row :gutter="20" class="overview-cards" v-loading="overviewLoading">
       <el-col :span="6">
         <el-card shadow="hover">
-          <el-statistic title="总收入 (元)" :value="overviewData.totalIncome || 0" :precision="2"></el-statistic>
+          <el-statistic
+            title="总收入 (元)"
+            :value="overviewData.totalIncome || 0"
+            :precision="2"
+          ></el-statistic>
         </el-card>
       </el-col>
       <el-col :span="6">
         <el-card shadow="hover">
-          <el-statistic title="总支出 (元)" :value="overviewData.totalExpense || 0" :precision="2"></el-statistic>
+          <el-statistic
+            title="总支出 (元)"
+            :value="overviewData.totalExpense || 0"
+            :precision="2"
+          ></el-statistic>
         </el-card>
       </el-col>
       <el-col :span="6">
         <el-card shadow="hover">
-          <el-statistic title="净利润 (元)" :value="overviewData.netProfit || 0" :precision="2"></el-statistic>
+          <el-statistic
+            title="净利润 (元)"
+            :value="overviewData.netProfit || 0"
+            :precision="2"
+          ></el-statistic>
         </el-card>
       </el-col>
       <el-col :span="6">
         <el-card shadow="hover">
           <el-statistic title="利润率 (%)" :value="overviewData.profitMargin || 0" :precision="2">
-             <template #suffix>%</template>
+            <template #suffix>%</template>
           </el-statistic>
         </el-card>
       </el-col>
     </el-row>
 
     <!-- 图表 -->
-    <el-row :gutter="20" style="margin-top: 20px;">
+    <el-row :gutter="20" style="margin-top: 20px">
       <el-col :span="16">
         <el-card shadow="never">
           <template #header>收支趋势</template>
-          <div ref="trendChart" style="height: 400px;" v-loading="trendLoading"></div>
+          <div ref="trendChart" style="height: 400px" v-loading="trendLoading"></div>
         </el-card>
       </el-col>
       <el-col :span="8">
         <el-card shadow="never">
           <template #header>收支构成</template>
-          <div ref="compositionChart" style="height: 400px;" v-loading="overviewLoading"></div>
+          <div ref="compositionChart" style="height: 400px" v-loading="overviewLoading"></div>
         </el-card>
       </el-col>
     </el-row>
-
   </FinancePageTemplate>
 </template>
 
@@ -78,7 +89,7 @@ import * as echarts from 'echarts'
 const financeStore = useFinanceStore()
 
 const filterForm = reactive({
-  dateRange: []
+  dateRange: [],
 })
 
 const overviewLoading = ref(false)
@@ -92,9 +103,33 @@ let trendChartInstance = null
 let compositionChartInstance = null
 
 const dateShortcuts = [
-  { text: '最近一周', value: () => { const end = new Date(); const start = new Date(); start.setTime(start.getTime() - 3600 * 1000 * 24 * 7); return [start, end] } },
-  { text: '最近一个月', value: () => { const end = new Date(); const start = new Date(); start.setMonth(start.getMonth() - 1); return [start, end] } },
-  { text: '最近三个月', value: () => { const end = new Date(); const start = new Date(); start.setMonth(start.getMonth() - 3); return [start, end] } }
+  {
+    text: '最近一周',
+    value: () => {
+      const end = new Date()
+      const start = new Date()
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+      return [start, end]
+    },
+  },
+  {
+    text: '最近一个月',
+    value: () => {
+      const end = new Date()
+      const start = new Date()
+      start.setMonth(start.getMonth() - 1)
+      return [start, end]
+    },
+  },
+  {
+    text: '最近三个月',
+    value: () => {
+      const end = new Date()
+      const start = new Date()
+      start.setMonth(start.getMonth() - 3)
+      return [start, end]
+    },
+  },
 ]
 
 // 辅助函数：将 Date 对象格式化为 'YYYY-MM-DD' 字符串，忽略时区
@@ -116,7 +151,7 @@ const getQueryParams = () => {
   }
   return {
     startDate: formatDateToYYYYMMDD(startDate),
-    endDate: formatDateToYYYYMMDD(endDate)
+    endDate: formatDateToYYYYMMDD(endDate),
   }
 }
 
@@ -175,25 +210,27 @@ const initCharts = () => {
   }
 }
 
-
 const updateTrendChart = (data = []) => {
   if (!trendChartInstance) return
 
   if (!data || data.length === 0) {
-    trendChartInstance.setOption({
-      title: { text: '暂无数据', left: 'center', top: 'center', textStyle: { color: '#909399' } },
-      xAxis: { show: false },
-      yAxis: { show: false },
-      series: [],
-      tooltip: { show: false },
-      legend: { show: false }
-    }, true) // `true` 清除旧的配置
+    trendChartInstance.setOption(
+      {
+        title: { text: '暂无数据', left: 'center', top: 'center', textStyle: { color: '#909399' } },
+        xAxis: { show: false },
+        yAxis: { show: false },
+        series: [],
+        tooltip: { show: false },
+        legend: { show: false },
+      },
+      true,
+    ) // `true` 清除旧的配置
     return
   }
 
-  const dates = data.map(item => item.date)
-  const incomes = data.map(item => item.totalIncome)
-  const expenses = data.map(item => item.totalExpense)
+  const dates = data.map((item) => item.date)
+  const incomes = data.map((item) => item.totalIncome)
+  const expenses = data.map((item) => item.totalExpense)
 
   const option = {
     title: { show: false }, // 确保清除“暂无数据”的标题
@@ -204,8 +241,8 @@ const updateTrendChart = (data = []) => {
     yAxis: { type: 'value', axisLabel: { formatter: '{value} 元' } },
     series: [
       { name: '收入', type: 'line', smooth: true, data: incomes, itemStyle: { color: '#67C23A' } },
-      { name: '支出', type: 'line', smooth: true, data: expenses, itemStyle: { color: '#F56C6C' } }
-    ]
+      { name: '支出', type: 'line', smooth: true, data: expenses, itemStyle: { color: '#F56C6C' } },
+    ],
   }
   trendChartInstance.setOption(option, true) // `true` 清除旧的配置
 }
@@ -217,12 +254,15 @@ const updateCompositionChart = () => {
   const totalExpense = overviewData.value.totalExpense || 0
 
   if (totalIncome === 0 && totalExpense === 0) {
-    compositionChartInstance.setOption({
-      title: { text: '暂无数据', left: 'center', top: 'center', textStyle: { color: '#909399' } },
-      series: [],
-      tooltip: { show: false },
-      legend: { show: false }
-    }, true) // `true` 清除旧的配置
+    compositionChartInstance.setOption(
+      {
+        title: { text: '暂无数据', left: 'center', top: 'center', textStyle: { color: '#909399' } },
+        series: [],
+        tooltip: { show: false },
+        legend: { show: false },
+      },
+      true,
+    ) // `true` 清除旧的配置
     return
   }
 
@@ -241,10 +281,10 @@ const updateCompositionChart = () => {
         labelLine: { show: false },
         data: [
           { value: totalIncome, name: '总收入', itemStyle: { color: '#67C23A' } },
-          { value: totalExpense, name: '总支出', itemStyle: { color: '#F56C6C' } }
-        ]
-      }
-    ]
+          { value: totalExpense, name: '总支出', itemStyle: { color: '#F56C6C' } },
+        ],
+      },
+    ],
   }
   compositionChartInstance.setOption(option, true) // `true` 清除旧的配置
 }
@@ -283,7 +323,6 @@ onBeforeUnmount(() => {
   trendChartInstance?.dispose()
   compositionChartInstance?.dispose()
 })
-
 </script>
 
 <style scoped>

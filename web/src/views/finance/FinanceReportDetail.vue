@@ -48,8 +48,8 @@ const pageDescription = computed(() => {
 onMounted(async () => {
   try {
     // 直接调用 store 中的新方法
-    const result = financeStore.fetchDetailsByType(type.value, startDate.value, endDate.value);
-    items.value = result;
+    const result = financeStore.fetchDetailsByType(type.value, startDate.value, endDate.value)
+    items.value = result
   } catch (error) {
     console.error('获取报表详情失败:', error)
     items.value = []

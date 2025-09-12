@@ -1,5 +1,9 @@
 <template>
-  <FinancePageTemplate title="消费记录" description="查看所有游客和内部消费的详细记录" icon="Tickets">
+  <FinancePageTemplate
+    title="消费记录"
+    description="查看所有游客和内部消费的详细记录"
+    icon="Tickets"
+  >
     <template #header>
       <el-form :inline="true" :model="searchForm" class="search-form">
         <el-form-item label="日期范围">
@@ -47,7 +51,7 @@ import { useFinanceStore } from '@/stores/finance'
 const financeStore = useFinanceStore()
 const loading = ref(false)
 const searchForm = reactive({
-  dateRange: []
+  dateRange: [],
 })
 
 onMounted(() => {
