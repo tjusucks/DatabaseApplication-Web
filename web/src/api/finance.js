@@ -216,7 +216,7 @@ export function processPayroll(data) {
  */
 export function searchMaintenanceRecords(query) {
   return request({
-    url: '/api/resource/maintenance-records/search',
+    url: '/api/resource/maintenance/search',
     method: 'get',
     params: query,
   })
@@ -228,7 +228,7 @@ export function searchMaintenanceRecords(query) {
  */
 export function createMaintenanceRecord(data) {
   return request({
-    url: '/api/resource/maintenance-records',
+    url: '/api/resource/maintenance',
     method: 'post',
     data,
   })
@@ -240,7 +240,7 @@ export function createMaintenanceRecord(data) {
  */
 export function getMaintenanceRecord(id) {
   return request({
-    url: `/api/resource/maintenance-records/${id}`,
+    url: `/api/resource/maintenance/${id}`,
     method: 'get',
   })
 }
@@ -252,7 +252,7 @@ export function getMaintenanceRecord(id) {
  */
 export function updateMaintenanceRecord(id, data) {
   return request({
-    url: `/api/resource/maintenance-records/${id}`,
+    url: `/api/resource/maintenance/${id}`,
     method: 'put',
     data,
   })
@@ -264,7 +264,7 @@ export function updateMaintenanceRecord(id, data) {
  */
 export function deleteMaintenanceRecord(id) {
   return request({
-    url: `/api/resource/maintenance-records/${id}`,
+    url: `/api/resource/maintenance/${id}`,
     method: 'delete',
   })
 }
@@ -277,7 +277,7 @@ export function deleteMaintenanceRecord(id) {
  */
 export function searchTicketSales(query) {
   return request({
-    url: '/api/resource/tickets/search', // 假设这是票务搜索的端点
+    url: '/api/ticketing/tickets/sales/search', // 假设这是票务搜索的端点
     method: 'get',
     params: query,
   })
@@ -291,7 +291,7 @@ export function searchTicketSales(query) {
  */
 export function searchRefunds(query) {
   return request({
-    url: '/api/resource/refunds/search', // 假设这是退款搜索的端点
+    url: '/api/ticketing/refunds/search', // 假设这是退款搜索的端点
     method: 'get',
     params: query,
   })

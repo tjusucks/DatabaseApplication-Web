@@ -225,20 +225,21 @@ export const useFinanceStore = defineStore('finance', () => {
           pageSize,
           startDate: lastParams.value.startDate,
           endDate: lastParams.value.endDate,
-          status: 1, // TicketStatus.USED or similar status indicating completed sale
+          // Note: Removed 'status' parameter as it's not in the API specification
         }
         const response = await searchTicketSales(ticketQuery)
-        const ticketIncomes = response.tickets.map((t) => ({
+        const ticketSales = response?.ticketSales || []
+        const ticketIncomes = ticketSales.map((t) => ({
           recordId: `ticket-${t.ticketId}`,
           transactionType: UnifiedTransactionType.TICKET_SALES,
           amount: t.price,
           paymentMethod: t.paymentMethod, // 假设票务记录有支付方式
-          description: `门票销售 - ${t.ticketTypeName || '标准票'}`,
-          transactionDate: t.purchaseDate,
+          description: `门票销售 - ${t.ticketTypeName || t.ticketType || '标准票'}`,
+          transactionDate: t.purchaseDate || t.saleDate,
           source: 'ticket',
         }))
         allIncomes.push(...ticketIncomes)
-        totalCount += response.totalCount
+        totalCount += response?.totalCount || 0
       } catch (error) {
         ElMessage.error(error.message || `获取门票销售记录失败`)
       }
