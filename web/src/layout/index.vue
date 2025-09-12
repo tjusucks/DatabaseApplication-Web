@@ -19,9 +19,13 @@
 
       <!-- 页面内容 -->
       <div class="content-container">
-        <router-view v-slot="{ Component }">
-          <transition name="fade-transform" mode="out-in">
-            <component :is="Component" />
+        <router-view v-slot="{ Component, route }">
+          <transition name="fade-transform" mode="out-in" appear>
+            <keep-alive :max="10">
+              <ErrorBoundary>
+                <component :is="Component" :key="route.fullPath" v-if="Component" />
+              </ErrorBoundary>
+            </keep-alive>
           </transition>
         </router-view>
       </div>
@@ -42,6 +46,7 @@ import { useAppStore } from '@/stores/app'
 import Sidebar from './components/Sidebar.vue'
 import Navbar from './components/Navbar.vue'
 import Breadcrumb from './components/Breadcrumb.vue'
+import ErrorBoundary from '@/components/ErrorBoundary.vue'
 
 const appStore = useAppStore()
 
@@ -111,20 +116,46 @@ onMounted(() => {
   align-items: center;
 }
 
-/* Page transition animations */
-.fade-transform-enter-active,
+/* Page transition animations - 优化闪烁问题 */
+.fade-transform-enter-active {
+  transition: all 0.25s ease-out;
+}
+
 .fade-transform-leave-active {
-  transition: all 0.3s;
+  transition: all 0.2s ease-in;
 }
 
 .fade-transform-enter-from {
   opacity: 0;
-  transform: translateX(30px);
+  transform: translateY(10px);
 }
 
 .fade-transform-leave-to {
   opacity: 0;
-  transform: translateX(-30px);
+  transform: translateY(-10px);
+}
+
+/* 防止内容闪烁 */
+.content-container {
+  position: relative;
+  min-height: calc(100vh - 140px);
+}
+
+.fade-transform-enter-active .el-card,
+.fade-transform-enter-active .el-table {
+  transition-delay: 0.1s;
+}
+
+/* 预加载状态样式 */
+.content-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #f0f2f5;
+  z-index: -1;
 }
 
 /* Responsive design */

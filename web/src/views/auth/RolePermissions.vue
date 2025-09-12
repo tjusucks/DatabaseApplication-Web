@@ -105,17 +105,13 @@ import { ref, reactive, onMounted, nextTick } from 'vue'
 import { ElMessage } from 'element-plus'
 
 // 选中的角色
-const selectedRole = ref('super_admin')
+const selectedRole = ref('Admin')
 
 // 角色列表
 const roles = ref([
-  { key: 'super_admin', name: '超级管理员', userCount: 1 },
-  { key: 'finance_manager', name: '财务管理员', userCount: 2 },
-  { key: 'hr_manager', name: '人事管理员', userCount: 3 },
-  { key: 'operations_manager', name: '运营管理员', userCount: 4 },
-  { key: 'ticket_manager', name: '票务管理员', userCount: 5 },
-  { key: 'customer_service', name: '客服人员', userCount: 8 },
-  { key: 'employee', name: '普通员工', userCount: 20 },
+  { key: 'Admin', name: '超级管理员', userCount: 1 },
+  { key: 'Manager', name: '管理员', userCount: 15 },
+  { key: 'Employee', name: '普通员工', userCount: 28 },
 ])
 
 // 权限树
@@ -204,7 +200,7 @@ const currentPermissions = ref([])
 
 // 角色权限映射
 const rolePermissions = {
-  super_admin: [
+  Admin: [
     'dashboard',
     'visitors',
     'visitors.list',
@@ -235,33 +231,34 @@ const rolePermissions = {
     'auth.teams',
     'auth.roles',
   ],
-  finance_manager: [
+  Manager: [
     'dashboard',
-    'finance',
-    'finance.income',
-    'finance.expenses',
-    'finance.reports',
-    'finance.salary',
-  ],
-  hr_manager: ['dashboard', 'hr', 'hr.employees', 'hr.attendance', 'hr.performance', 'hr.payroll'],
-  operations_manager: [
-    'dashboard',
-    'facilities',
-    'facilities.list',
-    'facilities.monitoring',
-    'facilities.maintenance',
     'visitors',
     'visitors.list',
-  ],
-  ticket_manager: [
-    'dashboard',
+    'visitors.create',
+    'visitors.edit',
+    'visitors.blacklist',
     'tickets',
     'tickets.types',
     'tickets.pricing',
     'tickets.sales',
     'tickets.statistics',
+    'finance',
+    'finance.income',
+    'finance.expenses',
+    'finance.reports',
+    'finance.salary',
+    'hr',
+    'hr.employees',
+    'hr.attendance',
+    'hr.performance',
+    'hr.payroll',
+    'facilities',
+    'facilities.list',
+    'facilities.monitoring',
+    'facilities.maintenance',
   ],
-  customer_service: [
+  Employee: [
     'dashboard',
     'visitors',
     'visitors.list',
@@ -269,7 +266,6 @@ const rolePermissions = {
     'visitors.edit',
     'visitors.blacklist',
   ],
-  employee: ['dashboard'],
 }
 
 // 添加角色对话框

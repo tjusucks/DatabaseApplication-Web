@@ -41,7 +41,9 @@
         <el-form-item>
           <div class="login-options">
             <el-checkbox v-model="loginForm.remember">记住密码</el-checkbox>
-            <el-link type="primary" :underline="false">忘记密码？</el-link>
+            <el-link type="primary" :underline="false" @click="goToResetPassword"
+              >忘记密码？</el-link
+            >
           </div>
         </el-form-item>
 
@@ -58,17 +60,10 @@
         </el-form-item>
       </el-form>
 
-      <!-- 快速登录提示 -->
-      <div class="quick-login">
-        <el-divider>快速登录</el-divider>
-        <div class="demo-accounts">
-          <el-tag @click="quickLogin('admin')" class="demo-tag" type="danger">
-            管理员: admin / 123456
-          </el-tag>
-          <el-tag @click="quickLogin('employee')" class="demo-tag" type="info">
-            员工: employee / 123456
-          </el-tag>
-        </div>
+      <!-- 注册链接 -->
+      <div class="register-link">
+        <el-divider>还没有账号？</el-divider>
+        <el-button type="text" @click="goToRegister">立即注册</el-button>
       </div>
     </div>
 
@@ -136,15 +131,14 @@ const handleLogin = async () => {
   }
 }
 
-// 快速登录
-const quickLogin = (type) => {
-  if (type === 'admin') {
-    loginForm.username = 'admin'
-    loginForm.password = '123456'
-  } else if (type === 'employee') {
-    loginForm.username = 'employee'
-    loginForm.password = '123456'
-  }
+// 跳转到注册页面
+const goToRegister = () => {
+  router.push('/register')
+}
+
+// 跳转到重置密码页面
+const goToResetPassword = () => {
+  router.push('/reset-password')
 }
 
 // 组件挂载时的初始化
@@ -221,25 +215,9 @@ onMounted(() => {
   font-weight: 500;
 }
 
-.quick-login {
+.register-link {
   margin-top: 20px;
-}
-
-.demo-accounts {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-top: 10px;
-}
-
-.demo-tag {
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-.demo-tag:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
 }
 
 /* 背景装饰 */
@@ -289,6 +267,7 @@ onMounted(() => {
   100% {
     transform: translateY(0px) rotate(0deg);
   }
+
   50% {
     transform: translateY(-20px) rotate(180deg);
   }
@@ -303,10 +282,6 @@ onMounted(() => {
 
   .title {
     font-size: 20px;
-  }
-
-  .demo-accounts {
-    align-items: center;
   }
 }
 </style>

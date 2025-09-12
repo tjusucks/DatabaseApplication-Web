@@ -57,7 +57,9 @@
       <el-col :span="6">
         <el-card class="stat-card">
           <div class="stat-content">
-            <div class="stat-value">{{ formatDuration(realtimeStats.avgStayTime) }}</div>
+            <div class="stat-value">
+              {{ formatDuration(realtimeStats.avgStayTime) }}
+            </div>
             <div class="stat-label">平均停留时间</div>
             <div class="stat-trend">
               <el-icon><Timer /></el-icon>
@@ -127,7 +129,9 @@
               class="activity-item"
               :class="activity.type"
             >
-              <div class="activity-time">{{ formatTime(activity.timestamp) }}</div>
+              <div class="activity-time">
+                {{ formatTime(activity.timestamp) }}
+              </div>
               <div class="activity-content">
                 <el-icon>
                   <LocationInformation v-if="activity.type === 'entry'" />

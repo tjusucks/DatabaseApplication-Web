@@ -1,13 +1,14 @@
 import axios from 'axios'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/stores/user'
 import { useAppStore } from '@/stores/app'
 import router from '@/router'
 
 // 创建 axios 实例
 const service = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL: import.meta.env.VITE_API_BASE_URL || '/api',
   timeout: 15000,
+  withCredentials: true, // 支持Cookie认证
   headers: {
     'Content-Type': 'application/json',
   },
@@ -16,16 +17,10 @@ const service = axios.create({
 // 请求拦截器
 service.interceptors.request.use(
   (config) => {
-    const userStore = useUserStore()
     const appStore = useAppStore()
 
     // 显示全局加载状态
     appStore.setGlobalLoading(true)
-
-    // 添加认证 token
-    if (userStore.token) {
-      config.headers.Authorization = `Bearer ${userStore.token}`
-    }
 
     // 添加请求时间戳，防止缓存
     if (config.method === 'get') {
@@ -74,12 +69,7 @@ service.interceptors.response.use(
     return response.data
   },
 
-  /**
-   * 失败回调 (onRejected)
-   * HTTP 状态码超出 2xx 范围时，会触发此函数。
-   */
-  (error) => {
-    // 1. 获取 store 实例
+  async (error) => {
     const appStore = useAppStore()
     const userStore = useUserStore()
 
@@ -195,4 +185,37 @@ export const request = {
   },
 }
 
-export default service
+// 创建兼容的默认导出
+// 支持两种调用方式：
+// 1. request({ url: '/path', method: 'get', params: {} }) - 兼容现有API文件
+// 2. request.get('/path', params) - 新的方法调用方式
+const compatibleRequest = function (config) {
+  // 处理传统的 { url, method, data, params } 格式
+  const { url, method = 'get', data, params, ...restConfig } = config
+
+  // 如果URL已经以/api开头，去掉这个前缀，因为service已经有baseURL: '/api'
+  const cleanUrl = url.startsWith('/api') ? url.substring(4) : url
+
+  // 根据method调用对应的service方法
+  switch (method.toLowerCase()) {
+    case 'get':
+      return service.get(cleanUrl, { params, ...restConfig })
+    case 'post':
+      return service.post(cleanUrl, data, restConfig)
+    case 'put':
+      return service.put(cleanUrl, data, restConfig)
+    case 'delete':
+      return service.delete(cleanUrl, restConfig)
+    case 'patch':
+      return service.patch(cleanUrl, data, restConfig)
+    default:
+      // 对于默认情况，也需要处理URL
+      const cleanConfig = { ...config, url: cleanUrl }
+      return service(cleanConfig)
+  }
+}
+
+// 将request对象的方法添加到compatibleRequest函数上
+Object.assign(compatibleRequest, request)
+
+export default compatibleRequest
