@@ -168,7 +168,7 @@
 import { ref, reactive, onMounted, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Search, Refresh, Plus } from '@element-plus/icons-vue'
-import { searchSalaryRecords, getSalaryRecordById, createSalaryRecord } from '@/api/finance'
+import { searchSalaryRecords, getSalaryRecord } from '@/api/finance'
 import { getEmployees } from '@/api/hr'
 import { useRouter } from 'vue-router'
 
@@ -249,6 +249,10 @@ const loadData = async () => {
     if (response && response.salaryRecords) {
       payrollData.value = response.salaryRecords
       pagination.total = response.totalCount || 0
+    } else if (response && response.data && response.data.salaryRecords) {
+      // 兼容另一种可能的响应格式
+      payrollData.value = response.data.salaryRecords
+      pagination.total = response.data.totalCount || 0
     } else {
       payrollData.value = []
       pagination.total = 0
@@ -289,8 +293,12 @@ const handleCurrentChange = (val) => {
 // 查看详情
 const handleView = async (row) => {
   try {
-    const response = await getSalaryRecordById(row.salaryRecordId)
-    currentPayroll.value = response
+    const response = await getSalaryRecord(row.salaryRecordId)
+    if (response && response.data) {
+      currentPayroll.value = response.data
+    } else {
+      currentPayroll.value = response
+    }
     detailDialogVisible.value = true
   } catch (error) {
     ElMessage.error('获取工资单详情失败: ' + error.message)
@@ -315,8 +323,8 @@ const searchEmployees = async (keyword) => {
     // 根据API实际返回的数据结构调整代码
     const employees = Array.isArray(response) ? response : response?.data || []
     employeeOptions.value = employees.map((item) => ({
-      employeeId: item.employeeId,
-      name: item.user?.displayName || item.user?.username || '未知',
+      employeeId: item.employeeId || item.id,
+      name: item.user?.displayName || item.user?.username || item.name || '未知',
     }))
   } catch (error) {
     console.error('搜索员工失败:', error)

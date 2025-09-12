@@ -132,9 +132,8 @@ export function createSalaryRecord(data) {
  */
 export function getSalaryRecord(id) {
   return request({
-    url: '/api/resource/salary-records/batch',
-    method: 'post',
-    data,
+    url: `/api/resource/salary-records/${id}`,
+    method: 'get',
   })
 }
 
@@ -145,19 +144,155 @@ export function getSalaryRecord(id) {
  */
 export function updateSalaryRecord(id, data) {
   return request({
-    url: `/api/resource/salary-records/${salaryRecordId}`,
+    url: `/api/resource/salary-records/${id}`,
     method: 'put',
     data,
   })
 }
-
 /**
  * 删除工资单记录
  * @param {number} id - 工资单ID
  */
 export function deleteSalaryRecord(id) {
   return request({
-    url: `/api/resource/salary-records/${salaryRecordId}`,
+    url: `/api/resource/salary-records/${id}`,
     method: 'delete',
+  })
+}
+
+/**
+ * 搜索工资单记录
+ * @param {Object} query - 查询条件
+ */
+export function searchSalaryRecords(query) {
+  return request({
+    url: '/api/resource/salary-records/search',
+    method: 'get',
+    params: query,
+  })
+}
+
+/**
+ * 获取工资单统计信息
+ * @param {Object} query - 查询条件
+ */
+export function getSalaryStats(query) {
+  return request({
+    url: '/api/resource/salary-records/stats',
+    method: 'post',
+    data: query,
+  })
+}
+
+/**
+ * 生成工资单
+ * @param {Object} data - 生成选项
+ */
+export function generatePayrolls(data) {
+  return request({
+    url: '/api/resource/salary-records/generate-payrolls',
+    method: 'post',
+    data,
+  })
+}
+
+/**
+ * 处理工资单支付
+ * @param {Object} data - 支付信息
+ */
+export function processPayroll(data) {
+  return request({
+    url: '/api/resource/salary-records/process-payroll',
+    method: 'post',
+    data,
+  })
+}
+
+// ----------------- 维保记录 (Maintenance) -----------------
+
+/**
+ * 搜索维保记录
+ * @param {Object} query - 查询条件
+ */
+export function searchMaintenanceRecords(query) {
+  return request({
+    url: '/api/resource/maintenance-records/search',
+    method: 'get',
+    params: query,
+  })
+}
+
+/**
+ * 创建维保记录
+ * @param {Object} data - 维保记录数据
+ */
+export function createMaintenanceRecord(data) {
+  return request({
+    url: '/api/resource/maintenance-records',
+    method: 'post',
+    data,
+  })
+}
+
+/**
+ * 获取单个维保记录
+ * @param {number} id - 记录ID
+ */
+export function getMaintenanceRecord(id) {
+  return request({
+    url: '/api/resource/maintenance-records/${id}',
+    method: 'get',
+  })
+}
+
+/**
+ * 更新维保记录
+ * @param {number} id - 记录ID
+ * @param {Object} data - 更新的数据
+ */
+export function updateMaintenanceRecord(id, data) {
+  return request({
+    url: '/api/resource/maintenance-records/${id}',
+    method: 'put',
+    data,
+  })
+}
+
+/**
+ * 删除维保记录
+ * @param {number} id - 记录ID
+ */
+export function deleteMaintenanceRecord(id) {
+  return request({
+    url: '/api/resource/maintenance-records/${id}',
+    method: 'delete',
+  })
+}
+
+// ----------------- 票务销售 (Ticket Sales) -----------------
+
+/**
+ * 搜索门票销售记录 (作为收入)
+ * @param {Object} query - 查询条件
+ */
+export function searchTicketSales(query) {
+  return request({
+    url: '/api/resource/tickets/search', // 假设这是票务搜索的端点
+    method: 'get',
+    params: query,
+  })
+}
+
+// ----------------- 退款处理 (Refunds) -----------------
+
+/**
+ * 搜索退款记录 (作为支出)
+ * @param {Object} query - 查询条件
+ */
+export function searchRefunds(query) {
+  return request({
+    url: '/api/resource/refunds/search', // 假设这是退款搜索的端点
+    method: 'get',
+    params: query,
   })
 }

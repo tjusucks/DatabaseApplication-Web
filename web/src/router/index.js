@@ -488,6 +488,14 @@ const routes = [
         },
       },
       {
+        path: 'employees/create',
+        name: 'EmployeeCreate',
+        component: () => import('@/views/hr/employees/EmployeeCreate.vue'),
+        meta: {
+          title: '新增员工',
+        },
+      },
+      {
         path: 'employees/:id',
         name: 'EmployeeDetail',
         component: EmployeeDetail,

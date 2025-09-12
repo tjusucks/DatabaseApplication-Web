@@ -189,7 +189,7 @@ export const request = {
 // 支持两种调用方式：
 // 1. request({ url: '/path', method: 'get', params: {} }) - 兼容现有API文件
 // 2. request.get('/path', params) - 新的方法调用方式
-const compatibleRequest = function(config) {
+const compatibleRequest = function (config) {
   // 处理传统的 { url, method, data, params } 格式
   const { url, method = 'get', data, params, ...restConfig } = config
 
