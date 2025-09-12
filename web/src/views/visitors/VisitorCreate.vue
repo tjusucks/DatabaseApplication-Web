@@ -184,35 +184,18 @@ const validateMemberContact = () => {
 const formRules = {
   username: [
     { required: true, message: '用户名不能为空', trigger: 'blur' },
-    {
-      min: 3,
-      max: 50,
-      message: '用户名长度在 3 到 50 个字符',
-      trigger: 'blur',
-    },
+    { min: 3, max: 50, message: '用户名长度在 3 到 50 个字符', trigger: 'blur' },
   ],
   displayName: [
     { required: true, message: '请输入姓名', trigger: 'blur' },
     { min: 2, max: 50, message: '姓名长度在 2 到 50 个字符', trigger: 'blur' },
   ],
   email: [{ type: 'email', message: '请输入正确的邮箱格式', trigger: 'blur' }],
-  phoneNumber: [
-    {
-      pattern: /^1[3-9]\d{9}$/,
-      message: '请输入正确的手机号码',
-      trigger: 'blur',
-    },
-  ],
+  phoneNumber: [{ pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号码', trigger: 'blur' }],
   gender: [{ required: true, message: '请选择性别', trigger: 'change' }],
   height: [
     { required: true, message: '请输入身高', trigger: 'blur' },
-    {
-      type: 'number',
-      min: 50,
-      max: 250,
-      message: '身高应在 50-250cm 之间',
-      trigger: 'blur',
-    },
+    { type: 'number', min: 50, max: 250, message: '身高应在 50-250cm 之间', trigger: 'blur' },
   ],
   visitorType: [
     { required: true, message: '请选择游客类型', trigger: 'change' },

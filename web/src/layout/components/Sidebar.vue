@@ -22,6 +22,7 @@
           v-if="!item.children || item.children.length === 0"
           :index="item.path"
           @click="handleMenuClick(item)"
+          @mouseenter="handleMenuHover(item)"
         >
           <el-icon>
             <component :is="item.icon" />
@@ -44,6 +45,7 @@
               v-if="!child.children || child.children.length === 0"
               :index="child.path"
               @click="handleMenuClick(child)"
+              @mouseenter="handleMenuHover(child)"
             >
               <el-icon>
                 <component :is="child.icon || 'Document'" />
@@ -85,6 +87,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useAppStore } from '@/stores/app'
 import { useUserStore } from '@/stores/user'
 import { getMenuList } from '@/utils/menu'
+import { routePreloader } from '@/utils/routePreloader'
 
 const route = useRoute()
 const router = useRouter()
@@ -104,6 +107,32 @@ const handleMenuClick = (menuItem) => {
   if (menuItem.path && menuItem.path !== route.path) {
     router.push(menuItem.path)
   }
+}
+
+// 处理菜单悬停 - 预加载路由
+const handleMenuHover = (menuItem) => {
+  if (menuItem.path) {
+    // 从路径提取路由名称
+    const routeName = getRouteNameFromPath(menuItem.path)
+    if (routeName) {
+      routePreloader.preloadRoute(routeName)
+    }
+  }
+}
+
+// 从路径提取路由名称的辅助函数
+const getRouteNameFromPath = (path) => {
+  const pathToNameMap = {
+    '/visitors/list': 'VisitorList',
+    '/visitors/records': 'VisitorRecords',
+    '/tickets/types': 'TicketTypes',
+    '/tickets/pricing': 'TicketPricing',
+    '/tickets/sales': 'TicketSales',
+    '/tickets/statistics': 'TicketStatistics',
+    '/dashboard': 'Dashboard',
+    // 可以根据需要添加更多映射
+  }
+  return pathToNameMap[path]
 }
 </script>
 
@@ -157,16 +186,44 @@ const handleMenuClick = (menuItem) => {
   line-height: 48px;
 }
 
+/* 选中状态样式优化 */
 :deep(.el-menu-item.is-active) {
-  background-color: #409eff !important;
+  background-color: rgba(64, 158, 255, 0.15) !important;
+  border-right: 3px solid #409eff;
+  color: #409eff !important;
+  position: relative;
 }
 
+:deep(.el-menu-item.is-active::before) {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background-color: #409eff;
+}
+
+/* 悬停状态样式优化 */
 :deep(.el-menu-item:hover) {
-  background-color: #263445 !important;
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  color: #fff !important;
 }
 
 :deep(.el-sub-menu__title:hover) {
-  background-color: #263445 !important;
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  color: #fff !important;
+}
+
+/* 子菜单选中状态 */
+:deep(.el-sub-menu .el-menu-item.is-active) {
+  background-color: rgba(64, 158, 255, 0.2) !important;
+  border-right: none;
+  padding-left: 50px !important;
+}
+
+:deep(.el-sub-menu .el-menu-item.is-active::before) {
+  display: none;
 }
 
 /* Mobile responsive design */

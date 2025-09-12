@@ -207,22 +207,10 @@ const formRules = {
   ],
   height: [
     { required: true, message: '请输入身高', trigger: 'blur' },
-    {
-      type: 'number',
-      min: 50,
-      max: 300,
-      message: '身高必须在 50-300 厘米之间',
-      trigger: 'blur',
-    },
+    { type: 'number', min: 50, max: 300, message: '身高必须在 50-300 厘米之间', trigger: 'blur' },
   ],
   email: [{ type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur' }],
-  phoneNumber: [
-    {
-      pattern: /^1[3-9]\d{9}$/,
-      message: '请输入正确的手机号码',
-      trigger: 'blur',
-    },
-  ],
+  phoneNumber: [{ pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号码', trigger: 'blur' }],
 }
 
 // 获取游客详情

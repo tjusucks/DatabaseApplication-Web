@@ -306,12 +306,7 @@ const pointsRules = {
   ],
   reason: [
     { required: true, message: '请输入操作原因', trigger: 'blur' },
-    {
-      min: 2,
-      max: 200,
-      message: '原因长度在 2 到 200 个字符',
-      trigger: 'blur',
-    },
+    { min: 2, max: 200, message: '原因长度在 2 到 200 个字符', trigger: 'blur' },
   ],
 }
 

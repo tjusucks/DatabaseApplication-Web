@@ -156,7 +156,7 @@ const statsData = ref([
 const quickActions = computed(() => {
   const actions = []
 
-  if (userStore.hasAnyRole(['super_admin', 'ticket_manager'])) {
+  if (userStore.hasAnyRole(['Admin', 'Manager'])) {
     actions.push({
       name: '门票销售',
       type: 'primary',
@@ -165,7 +165,7 @@ const quickActions = computed(() => {
     })
   }
 
-  if (userStore.hasAnyRole(['super_admin', 'customer_service'])) {
+  if (userStore.hasAnyRole(['Admin', 'Employee'])) {
     actions.push({
       name: '游客管理',
       type: 'success',
@@ -174,7 +174,7 @@ const quickActions = computed(() => {
     })
   }
 
-  if (userStore.hasAnyRole(['super_admin', 'operations_manager'])) {
+  if (userStore.hasAnyRole(['Admin', 'Manager'])) {
     actions.push({
       name: '设施监控',
       type: 'warning',
@@ -183,7 +183,7 @@ const quickActions = computed(() => {
     })
   }
 
-  if (userStore.hasAnyRole(['super_admin', 'finance_manager'])) {
+  if (userStore.hasAnyRole(['Admin', 'Manager'])) {
     actions.push({
       name: '财务报表',
       type: 'info',

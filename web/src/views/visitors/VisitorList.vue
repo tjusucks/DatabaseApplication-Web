@@ -116,9 +116,7 @@
         <el-table-column label="联系方式" width="200">
           <template #default="{ row }">
             <div v-if="row.user?.email || row.user?.phoneNumber">
-              <div v-if="row.user?.email" class="contact-item">
-                {{ row.user.email }}
-              </div>
+              <div v-if="row.user?.email" class="contact-item">{{ row.user.email }}</div>
               <div v-if="row.user?.phoneNumber" class="contact-item">
                 {{ row.user.phoneNumber }}
               </div>
