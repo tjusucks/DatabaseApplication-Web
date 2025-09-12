@@ -21,7 +21,7 @@
               start-placeholder="开始日期"
               end-placeholder="结束日期"
               clearable
-              style="width: 240px;"
+              style="width: 240px"
             />
           </el-form-item>
           <el-form-item>
@@ -36,7 +36,7 @@
     <el-table :data="financeStore.incomes" v-loading="loading" stripe>
       <el-table-column prop="recordId" label="ID" width="80"></el-table-column>
       <el-table-column prop="amount" label="金额 (元)" width="150" sortable>
-         <template #default="{ row }">
+        <template #default="{ row }">
           {{ parseFloat(row.amount).toFixed(2) }}
         </template>
       </el-table-column>
@@ -72,13 +72,29 @@
     ></el-pagination>
 
     <!-- 新增/编辑弹窗 -->
-    <el-dialog v-model="dialogVisible" :title="form.recordId ? '编辑收入' : '新增收入'" width="500px" @close="resetForm">
+    <el-dialog
+      v-model="dialogVisible"
+      :title="form.recordId ? '编辑收入' : '新增收入'"
+      width="500px"
+      @close="resetForm"
+    >
       <el-form :model="form" :rules="rules" ref="formRef" label-width="80px">
         <el-form-item label="金额" prop="amount">
-          <el-input-number v-model="form.amount" :precision="2" :step="10" :min="0" style="width: 100%;"></el-input-number>
+          <el-input-number
+            v-model="form.amount"
+            :precision="2"
+            :step="10"
+            :min="0"
+            style="width: 100%"
+          ></el-input-number>
         </el-form-item>
         <el-form-item label="支付方式" prop="paymentMethod">
-          <el-select v-model="form.paymentMethod" placeholder="请选择支付方式" style="width: 100%;" clearable>
+          <el-select
+            v-model="form.paymentMethod"
+            placeholder="请选择支付方式"
+            style="width: 100%"
+            clearable
+          >
             <el-option
               v-for="option in PaymentMethodOptions"
               :key="option.value"
@@ -88,10 +104,20 @@
           </el-select>
         </el-form-item>
         <el-form-item label="日期" prop="transactionDate">
-          <el-date-picker v-model="form.transactionDate" type="date" placeholder="选择日期" value-format="YYYY-MM-DD" style="width: 100%;"></el-date-picker>
+          <el-date-picker
+            v-model="form.transactionDate"
+            type="date"
+            placeholder="选择日期"
+            value-format="YYYY-MM-DD"
+            style="width: 100%"
+          ></el-date-picker>
         </el-form-item>
         <el-form-item label="描述" prop="description">
-          <el-input v-model="form.description" type="textarea" placeholder="请输入描述 (可选)"></el-input>
+          <el-input
+            v-model="form.description"
+            type="textarea"
+            placeholder="请输入描述 (可选)"
+          ></el-input>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -108,10 +134,7 @@ import FinancePageTemplate from '@/views/finance/components/FinancePageTemplate.
 import { useFinanceStore } from '@/stores/finance'
 import { ElMessage } from 'element-plus'
 import { Plus, Search } from '@element-plus/icons-vue'
-import {
-  PaymentMethodOptions,
-  getPaymentMethodName,
-} from '@/utils/constants'
+import { PaymentMethodOptions, getPaymentMethodName } from '@/utils/constants'
 
 const financeStore = useFinanceStore()
 const loading = ref(false)
@@ -120,9 +143,10 @@ const loading = ref(false)
 const searchForm = reactive({
   transactionType: financeStore.lastIncomeParams.transactionType || '',
   paymentMethod: financeStore.lastIncomeParams.paymentMethod || '',
-  dateRange: financeStore.lastIncomeParams.startDate && financeStore.lastIncomeParams.endDate
-    ? [financeStore.lastIncomeParams.startDate, financeStore.lastIncomeParams.endDate]
-    : []
+  dateRange:
+    financeStore.lastIncomeParams.startDate && financeStore.lastIncomeParams.endDate
+      ? [financeStore.lastIncomeParams.startDate, financeStore.lastIncomeParams.endDate]
+      : [],
 })
 
 const dialogVisible = ref(false)
@@ -140,7 +164,10 @@ const initialFormState = {
 const form = reactive({ ...initialFormState })
 
 const rules = {
-  amount: [{ required: true, message: '请输入金额', trigger: 'blur' }, { type: 'number', min: 0.01, message: '金额必须大于0' }],
+  amount: [
+    { required: true, message: '请输入金额', trigger: 'blur' },
+    { type: 'number', min: 0.01, message: '金额必须大于0' },
+  ],
   transactionDate: [{ required: true, message: '请选择日期', trigger: 'change' }],
   paymentMethod: [{ required: true, message: '请选择支付方式', trigger: 'change' }],
 }
@@ -148,14 +175,17 @@ const rules = {
 // 使用计算属性直接从 store 获取分页信息，以确保双向绑定
 const currentPage = computed({
   get: () => financeStore.pagination.currentPage,
-  set: (val) => { financeStore.pagination.currentPage = val }
+  set: (val) => {
+    financeStore.pagination.currentPage = val
+  },
 })
 
 const pageSize = computed({
   get: () => financeStore.pagination.pageSize,
-  set: (val) => { financeStore.pagination.pageSize = val }
+  set: (val) => {
+    financeStore.pagination.pageSize = val
+  },
 })
-
 
 onMounted(() => {
   // 页面加载时，使用 store 中已有的参数（如果有）来获取数据
@@ -166,7 +196,8 @@ onMounted(() => {
 const fetchData = async (params = {}) => {
   loading.value = true
   try {
-    let endDate = searchForm.dateRange && searchForm.dateRange[1] ? searchForm.dateRange[1] : undefined
+    let endDate =
+      searchForm.dateRange && searchForm.dateRange[1] ? searchForm.dateRange[1] : undefined
     if (endDate) {
       // 将结束日期设置为当天的 23:59:59，以确保包含当天所有数据
       endDate = new Date(endDate)
@@ -178,8 +209,9 @@ const fetchData = async (params = {}) => {
       ...params,
       transactionType: searchForm.transactionType !== '' ? searchForm.transactionType : undefined,
       paymentMethod: searchForm.paymentMethod !== '' ? searchForm.paymentMethod : undefined,
-      startDate: searchForm.dateRange && searchForm.dateRange[0] ? searchForm.dateRange[0] : undefined,
-      endDate: endDate ? endDate.toISOString() : undefined
+      startDate:
+        searchForm.dateRange && searchForm.dateRange[0] ? searchForm.dateRange[0] : undefined,
+      endDate: endDate ? endDate.toISOString() : undefined,
     }
     await financeStore.fetchIncomes(queryParams)
   } catch (error) {
@@ -219,8 +251,8 @@ const openFormModal = (rowData = null) => {
   if (rowData) {
     // 编辑
     if (rowData.source && rowData.source !== 'manual') {
-      ElMessage.warning(`该记录来自 ${rowData.source} 系统，为只读数据，不能在此处编辑。`);
-      return;
+      ElMessage.warning(`该记录来自 ${rowData.source} 系统，为只读数据，不能在此处编辑。`)
+      return
     }
     Object.assign(form, rowData)
   } else {
@@ -244,9 +276,9 @@ const handleSubmit = async () => {
   if (!formRef.value) return
   await formRef.value.validate(async (valid) => {
     if (valid) {
-      loading.value = true; // 开始操作时显示加载状态
+      loading.value = true // 开始操作时显示加载状态
       try {
-        const payload = { ...form };
+        const payload = { ...form }
 
         if (form.recordId) {
           // 编辑
@@ -259,24 +291,24 @@ const handleSubmit = async () => {
         // 无需手动调用 fetchData()，因为 store action 内部会刷新
       } catch (error) {
         // store 中已有错误提示，这里不再重复
-        console.error('操作失败:', error);
+        console.error('操作失败:', error)
       } finally {
-        loading.value = false; // 结束操作时隐藏加载状态
+        loading.value = false // 结束操作时隐藏加载状态
       }
     }
   })
 }
 
 const handleDelete = async (row) => {
-  loading.value = true; // 开始操作时显示加载状态
+  loading.value = true // 开始操作时显示加载状态
   try {
     // 传递记录的 ID 和来源，以便 store 正确处理
     await financeStore.deleteIncome(row.recordId, row.source)
     // 无需手动调用 fetchData() 或显示成功消息，store action 已处理
   } catch (error) {
-    console.error('删除失败:', error);
+    console.error('删除失败:', error)
   } finally {
-    loading.value = false; // 结束操作时隐藏加载状态
+    loading.value = false // 结束操作时隐藏加载状态
   }
 }
 </script>

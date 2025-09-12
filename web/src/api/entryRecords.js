@@ -1,4 +1,4 @@
-import request from "@/utils/request";
+import request from '@/utils/request'
 
 // 入园记录管理 API - 基于后端 /api/user/entries 路径
 
@@ -8,10 +8,10 @@ import request from "@/utils/request";
  */
 export function createEntryRecord(data) {
   return request({
-    url: "/api/user/entries",
-    method: "post",
+    url: '/api/user/entries',
+    method: 'post',
     data,
-  });
+  })
 }
 
 /**
@@ -20,10 +20,10 @@ export function createEntryRecord(data) {
  */
 export function getAllEntryRecords(params) {
   return request({
-    url: "/api/user/entries",
-    method: "get",
+    url: '/api/user/entries',
+    method: 'get',
     params,
-  });
+  })
 }
 
 /**
@@ -33,8 +33,8 @@ export function getAllEntryRecords(params) {
 export function getEntryRecordById(id) {
   return request({
     url: `/api/user/entries/${id}`,
-    method: "get",
-  });
+    method: 'get',
+  })
 }
 
 /**
@@ -45,9 +45,9 @@ export function getEntryRecordById(id) {
 export function updateEntryRecord(id, data) {
   return request({
     url: `/api/user/entries/${id}`,
-    method: "put",
+    method: 'put',
     data,
-  });
+  })
 }
 
 /**
@@ -57,8 +57,8 @@ export function updateEntryRecord(id, data) {
 export function deleteEntryRecord(id) {
   return request({
     url: `/api/user/entries/${id}`,
-    method: "delete",
-  });
+    method: 'delete',
+  })
 }
 
 /**
@@ -67,10 +67,10 @@ export function deleteEntryRecord(id) {
  */
 export function searchEntryRecords(params) {
   return request({
-    url: "/api/user/entries/search",
-    method: "get",
+    url: '/api/user/entries/search',
+    method: 'get',
     params,
-  });
+  })
 }
 
 /**
@@ -79,10 +79,10 @@ export function searchEntryRecords(params) {
  */
 export function getEntryRecordStats(params) {
   return request({
-    url: "/api/user/entries/stats",
-    method: "get",
+    url: '/api/user/entries/stats',
+    method: 'get',
     params,
-  });
+  })
 }
 
 /**
@@ -91,10 +91,10 @@ export function getEntryRecordStats(params) {
  */
 export function getGroupedEntryRecordStats(params) {
   return request({
-    url: "/api/user/entries/stats/grouped",
-    method: "get",
+    url: '/api/user/entries/stats/grouped',
+    method: 'get',
     params,
-  });
+  })
 }
 
 // 便捷函数 - 基于搜索API实现
@@ -107,7 +107,7 @@ export function registerEntry(data) {
   return createEntryRecord({
     ...data,
     entryTime: new Date().toISOString(),
-  });
+  })
 }
 
 /**
@@ -118,7 +118,7 @@ export function registerExit(data) {
   return updateEntryRecord(data.entryRecordId, {
     exitTime: new Date().toISOString(),
     exitGate: data.exitGate,
-  });
+  })
 }
 
 /**
@@ -126,7 +126,7 @@ export function registerExit(data) {
  * @param {string|number} visitorId 游客ID
  */
 export function getEntryRecordsByVisitor(visitorId) {
-  return searchEntryRecords({ visitorId });
+  return searchEntryRecords({ visitorId })
 }
 
 /**
@@ -136,7 +136,7 @@ export function getCurrentVisitors() {
   return searchEntryRecords({
     isCurrentlyInPark: true,
     includeVisitorInfo: true,
-  });
+  })
 }
 
 /**
@@ -144,8 +144,8 @@ export function getCurrentVisitors() {
  */
 export function getCurrentVisitorCount() {
   return getEntryRecordStats({
-    statType: "currentCount",
-  });
+    statType: 'currentCount',
+  })
 }
 
 /**
@@ -156,7 +156,7 @@ export function getEntryRecordsByDateRange(params) {
   return searchEntryRecords({
     startDate: params.startDate,
     endDate: params.endDate,
-  });
+  })
 }
 
 /**
@@ -165,9 +165,9 @@ export function getEntryRecordsByDateRange(params) {
  */
 export function getDailyStatistics(params) {
   return getGroupedEntryRecordStats({
-    groupBy: "date",
+    groupBy: 'date',
     ...params,
-  });
+  })
 }
 
 /**
@@ -175,7 +175,7 @@ export function getDailyStatistics(params) {
  * @param {string} gate 入园门
  */
 export function getEntryRecordsByGate(gate) {
-  return searchEntryRecords({ entryGate: gate });
+  return searchEntryRecords({ entryGate: gate })
 }
 
 /**
@@ -187,5 +187,5 @@ export function getActiveEntryRecord(visitorId) {
     visitorId,
     isCurrentlyInPark: true,
     limit: 1,
-  });
+  })
 }
