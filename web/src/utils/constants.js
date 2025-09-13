@@ -87,6 +87,20 @@ export const getSourceTypeName = (source, type) => {
 
 export const getTransactionTypeName = (type) => {
   if (type === null || type === undefined) return '---'
+
+  // 处理字符串类型（后端返回的枚举字符串）
+  if (typeof type === 'string') {
+    const stringToNameMap = {
+      'Income': '收入',
+      'Expense': '支出',
+      'Refund': '退款',
+      'Transfer': '转账'
+    }
+    if (stringToNameMap[type]) {
+      return stringToNameMap[type]
+    }
+  }
+
   // 优先从 allTypeNames 中查找，如果找不到，再尝试从旧的 TransactionTypeNames 查找
   return allTypeNames[type] || TransactionTypeNames[type] || '未知类型'
 }

@@ -23,12 +23,37 @@
     </template>
 
     <el-table :data="financeStore.consumptionRecords" v-loading="loading" stripe>
-      <el-table-column prop="id" label="记录ID" width="80"></el-table-column>
-      <el-table-column prop="consumerName" label="消费者" width="150"></el-table-column>
-      <el-table-column prop="type" label="消费类型" width="120"></el-table-column>
-      <el-table-column prop="itemName" label="项目名称"></el-table-column>
-      <el-table-column prop="amount" label="金额 (元)" width="120"></el-table-column>
-      <el-table-column prop="transactionDate" label="交易日期" width="180"></el-table-column>
+      <el-table-column prop="recordId" label="记录ID" width="80"></el-table-column>
+      <el-table-column prop="responsibleEmployeeName" label="消费者" width="150">
+        <template #default="{ row }">
+          {{ row.responsibleEmployeeName || '未指定' }}
+        </template>
+      </el-table-column>
+      <el-table-column prop="transactionType" label="消费类型" width="120">
+        <template #default="{ row }">
+          {{ getTransactionTypeName(row.transactionType) }}
+        </template>
+      </el-table-column>
+      <el-table-column prop="paymentMethod" label="支付方式" width="120">
+        <template #default="{ row }">
+          {{ getPaymentMethodName(row.paymentMethod) }}
+        </template>
+      </el-table-column>
+      <el-table-column prop="description" label="项目名称">
+        <template #default="{ row }">
+          {{ row.description || '无描述' }}
+        </template>
+      </el-table-column>
+      <el-table-column prop="amount" label="金额 (元)" width="120">
+        <template #default="{ row }">
+          {{ parseFloat(row.amount).toFixed(2) }}
+        </template>
+      </el-table-column>
+      <el-table-column prop="transactionDate" label="交易日期" width="180">
+        <template #default="{ row }">
+          {{ formatDate(row.transactionDate) }}
+        </template>
+      </el-table-column>
     </el-table>
 
     <el-pagination
@@ -47,6 +72,7 @@
 import { ref, onMounted, reactive } from 'vue'
 import FinancePageTemplate from '@/views/finance/components/FinancePageTemplate.vue'
 import { useFinanceStore } from '@/stores/finance'
+import { getTransactionTypeName, getPaymentMethodName } from '@/utils/constants'
 
 const financeStore = useFinanceStore()
 const loading = ref(false)
@@ -69,7 +95,7 @@ const fetchData = async () => {
 }
 
 const handleSearch = () => {
-  financeStore.pagination.currentPage = 1
+  financeStore.consumptionPagination.currentPage = 1
   fetchData()
 }
 
@@ -81,6 +107,12 @@ const resetSearch = () => {
 const handlePageChange = (page) => {
   financeStore.consumptionPagination.currentPage = page
   fetchData()
+}
+
+// 格式化日期
+const formatDate = (dateString) => {
+  if (!dateString) return '-'
+  return new Date(dateString).toLocaleString('zh-CN')
 }
 </script>
 
