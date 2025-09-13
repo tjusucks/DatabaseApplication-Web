@@ -101,12 +101,15 @@
         </el-form-item>
 
         <!-- 检查团队 -->
-        <el-form-item label="检查团队ID" prop="teamId">
-          <el-input v-model="form.teamId" placeholder="请输入检查团队ID" />
-        </el-form-item>
-
-        <el-form-item label="检查团队名称">
-          <el-input v-model="form.teamName" placeholder="请输入检查团队名称（可选）" />
+        <el-form-item label="检查团队" prop="teamId">
+          <el-select v-model="form.teamId" placeholder="请选择检查团队" style="width: 100%">
+            <el-option
+              v-for="team in availableTeams"
+              :key="team.teamId"
+              :label="`${team.teamName} (${getTeamTypeText(team.teamType)})`"
+              :value="team.teamId"
+            />
+          </el-select>
         </el-form-item>
 
         <!-- 检查日期 -->
@@ -184,6 +187,17 @@ const isDialogVisible = ref(false)
 const isEditing = ref(false)
 const formRef = ref(null)
 
+// 可用的团队列表（与维护记录页面保持一致）
+const availableTeams = ref([
+  { teamId: 1, teamName: '维护团队A', teamType: 1 }, // Mechanic
+  { teamId: 2, teamName: '维护团队B', teamType: 1 }, // Mechanic
+  { teamId: 3, teamName: '高级维护团队', teamType: 1 }, // Mechanic
+  { teamId: 4, teamName: '安全检查团队A', teamType: 0 }, // Inspector
+  { teamId: 5, teamName: '安全检查团队B', teamType: 0 }, // Inspector
+  { teamId: 6, teamName: '综合运维团队', teamType: 2 }, // Mixed
+  { teamId: 7, teamName: '应急响应团队', teamType: 2 } // Mixed
+])
+
 // 搜索参数
 const searchParams = reactive({
   keyword: '',
@@ -220,7 +234,7 @@ const form = reactive({
 // 表单验证规则
 const formRules = {
   rideId: [{ required: true, message: '请输入游乐设施ID', trigger: 'blur' }],
-  teamId: [{ required: true, message: '请输入检查团队ID', trigger: 'blur' }],
+  teamId: [{ required: true, message: '请选择检查团队', trigger: 'change' }],
   checkDate: [{ required: true, message: '请选择检查日期', trigger: 'change' }],
   checkType: [{ required: true, message: '请选择检查类型', trigger: 'change' }],
   isPassed: [{ required: true, message: '请选择检查结果', trigger: 'change' }],
@@ -340,13 +354,15 @@ const cancelDialog = () => {
 const resetForm = () => {
   Object.assign(form, {
     inspectionId: null,
-    rideId: '',
-    teamId: '',
+    rideId: null,
+    rideName: null,
+    teamId: null, // 改为null，配合下拉选择
+    teamName: null,
     checkDate: new Date(),
-    checkType: '',
+    checkType: null,
     isPassed: true,
-    issuesFound: '',
-    recommendations: '',
+    issuesFound: null,
+    recommendations: null,
   })
   if (formRef.value) {
     formRef.value.clearValidate()
@@ -366,6 +382,16 @@ const getCheckTypeName = (checkType) => {
     4: '年度检查',
   }
   return types[checkType] || '未知类型'
+}
+
+// 获取团队类型文本
+const getTeamTypeText = (teamType) => {
+  const typeMap = {
+    0: '检查团队',
+    1: '维护团队',
+    2: '综合团队'
+  }
+  return typeMap[teamType] || '未知类型'
 }
 
 // 生命周期

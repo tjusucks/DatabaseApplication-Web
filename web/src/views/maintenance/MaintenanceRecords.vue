@@ -60,8 +60,15 @@
         <el-form-item label="设施ID" prop="rideId">
           <el-input-number v-model="form.rideId" :min="1" placeholder="请输入设施ID" />
         </el-form-item>
-        <el-form-item label="维护团队ID" prop="teamId">
-          <el-input-number v-model="form.teamId" :min="1" placeholder="请输入团队ID" />
+        <el-form-item label="维护团队" prop="teamId">
+          <el-select v-model="form.teamId" placeholder="请选择维护团队" style="width: 100%">
+            <el-option
+              v-for="team in availableTeams"
+              :key="team.teamId"
+              :label="`${team.teamName} (${getTeamTypeText(team.teamType)})`"
+              :value="team.teamId"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item label="管理员ID" prop="managerId">
           <el-input-number v-model="form.managerId" :min="1" placeholder="请输入管理员ID（可选）" />
@@ -161,6 +168,17 @@ const isDialogVisible = ref(false)
 const isEditing = ref(false)
 const formRef = ref()
 
+// 可用的团队列表（基于种子数据）
+const availableTeams = ref([
+  { teamId: 1, teamName: '维护团队A', teamType: 1 }, // Mechanic
+  { teamId: 2, teamName: '维护团队B', teamType: 1 }, // Mechanic
+  { teamId: 3, teamName: '高级维护团队', teamType: 1 }, // Mechanic
+  { teamId: 4, teamName: '安全检查团队A', teamType: 0 }, // Inspector
+  { teamId: 5, teamName: '安全检查团队B', teamType: 0 }, // Inspector
+  { teamId: 6, teamName: '综合运维团队', teamType: 2 }, // Mixed
+  { teamId: 7, teamName: '应急响应团队', teamType: 2 } // Mixed
+])
+
 const form = ref({
   rideId: null,
   teamId: null,
@@ -179,7 +197,7 @@ const form = ref({
 
 const rules = {
   rideId: [{ required: true, message: '请输入设施ID', trigger: 'blur' }],
-  teamId: [{ required: true, message: '请输入团队ID', trigger: 'blur' }],
+  teamId: [{ required: true, message: '请选择维护团队', trigger: 'change' }],
   maintenanceType: [{ required: true, message: '请选择维护类型', trigger: 'change' }],
   startTime: [{ required: true, message: '请选择开始时间', trigger: 'change' }],
   cost: [{ required: true, message: '请输入费用', trigger: 'blur' }],
@@ -293,6 +311,16 @@ const deleteRecord = async (id) => {
 const formatDateTime = (dateTime) => {
   if (!dateTime) return '-'
   return new Date(dateTime).toLocaleString('zh-CN')
+}
+
+// 获取团队类型文本
+const getTeamTypeText = (teamType) => {
+  const typeMap = {
+    0: '检查团队',
+    1: '维护团队',
+    2: '综合团队'
+  }
+  return typeMap[teamType] || '未知类型'
 }
 
 onMounted(() => {
