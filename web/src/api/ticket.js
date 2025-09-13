@@ -80,6 +80,18 @@ export function getSalesStatistics(params) {
   })
 }
 
+/**
+ * @description 搜索门票销售记录
+ * @param {object} params - 搜索参数，包括 visitorId, ticketId 等
+ */
+export function searchTicketSales(params) {
+  return request({
+    url: '/api/ticketing/tickets/sales/search',
+    method: 'get',
+    params,
+  })
+}
+
 // --- 预订管理 API ---
 
 export function getReservations(params) {
@@ -205,6 +217,46 @@ export function searchRefunds(params) {
  */
 export function getRefundById(id) {
   return request.get(`/api/ticketing/refunds/${id}`)
+}
+
+// =========================================================================
+// 检票入园 API
+// =========================================================================
+
+/**
+ * @description 获取票据信息（通过搜索API）
+ * @param {number} ticketId - 票据ID
+ */
+export function getTicketInfo(ticketId) {
+  // 使用现有的搜索API来获取票据信息
+  return request.get('/api/ticketing/tickets/sales/search', {
+    params: { ticketId: ticketId, pageSize: 1 }
+  }).then(response => {
+    if (response.ticketSales && response.ticketSales.length > 0) {
+      return response.ticketSales[0]
+    } else {
+      throw new Error('票据不存在')
+    }
+  })
+}
+
+/**
+ * @description 处理检票入园/出园（模拟实现）
+ * @param {object} data - { ticketId, entryType }
+ */
+export function processTicketEntry(data) {
+  // 由于后端没有检票API，这里返回一个模拟的成功响应
+  // 实际应用中需要后端提供相应的API
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve({
+        success: true,
+        message: `${data.entryType === 'entry' ? '入园' : '出园'}成功`,
+        ticketId: data.ticketId,
+        entryTime: new Date().toISOString()
+      })
+    }, 500) // 模拟网络延迟
+  })
 }
 
 /**

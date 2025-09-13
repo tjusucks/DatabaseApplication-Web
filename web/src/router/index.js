@@ -23,6 +23,7 @@ const MemberManagement = () => import('@/views/visitors/MemberManagement.vue')
 const TicketTypes = () => import('@/views/tickets/TicketTypes.vue')
 const TicketPricing = () => import('@/views/tickets/TicketPricing.vue')
 const TicketSales = () => import('@/views/tickets/TicketSales.vue')
+const TicketEntry = () => import('@/views/tickets/TicketEntry.vue')
 const TicketStatistics = () => import('@/views/tickets/TicketStatistics.vue')
 const ReservationList = () => import('@/views/reservations/ReservationList.vue')
 const ReservationDetail = () => import('@/views/reservations/ReservationDetail.vue')
@@ -226,6 +227,14 @@ const routes = [
         component: TicketSales,
         meta: {
           title: '门票销售',
+        },
+      },
+      {
+        path: 'entry',
+        name: 'TicketEntry',
+        component: TicketEntry,
+        meta: {
+          title: '入园检票',
         },
       },
       {

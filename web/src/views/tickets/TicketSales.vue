@@ -22,6 +22,17 @@
         <el-form-item label="购买数量" prop="quantity">
           <el-input-number v-model="saleForm.quantity" :min="1" :max="100" />
         </el-form-item>
+        <el-form-item label="预约游玩日期" prop="visitDate">
+          <el-date-picker
+            v-model="saleForm.visitDate"
+            type="date"
+            placeholder="选择游玩日期"
+            style="width: 100%"
+            :disabled-date="disabledDate"
+            format="YYYY-MM-DD"
+            value-format="YYYY-MM-DD"
+          />
+        </el-form-item>
         <el-form-item label="游客手机号" prop="visitorPhone">
           <el-input v-model="saleForm.visitorPhone" placeholder="关联或创建游客档案 (选填)" />
         </el-form-item>
@@ -48,18 +59,16 @@ import { storeToRefs } from 'pinia'
 import PageTemplate from '@/components/PageTemplate.vue'
 import { ElMessage } from 'element-plus'
 
-// [最终修正] 同时导入 useTicketStore 和 useReservationStore
+// 导入 stores
 import { useTicketStore, useReservationStore } from '@/stores/tickets.js'
 
-// 1. 初始化两个需要的 store
+// 1. 初始化 stores
 const ticketStore = useTicketStore()
 const reservationStore = useReservationStore()
 
 // 2. 从各自的 store 中解构所需的状态和方法
 // 从 ticketStore 获取票种信息
-const { ticketTypes } = storeToRefs(ticketStore)
-// 从 reservationStore 获取销售方法
-const { createSale } = reservationStore // <-- 直接解构 action 是可以的，因为 Pinia 的 setup store 写法已经处理了 this 绑定
+const { ticketTypes, loadingTicketTypes } = storeToRefs(ticketStore)
 
 // 3. 本地状态
 const isSubmitting = ref(false)
@@ -67,12 +76,14 @@ const saleFormRef = ref(null)
 const saleForm = reactive({
   ticketTypeId: null,
   quantity: 1,
+  visitDate: new Date().toISOString().split('T')[0], // 默认今天，格式：YYYY-MM-DD
   visitorPhone: '',
 })
 
 const rules = reactive({
   ticketTypeId: [{ required: true, message: '请选择门票类型', trigger: 'change' }],
   quantity: [{ required: true, message: '请输入购买数量', trigger: 'change' }],
+  visitDate: [{ required: true, message: '请选择游玩日期', trigger: 'change' }],
 })
 
 const totalPrice = computed(() => {
@@ -89,6 +100,11 @@ const resetForm = () => {
   }
 }
 
+// 禁用过去的日期
+const disabledDate = (time) => {
+  return time.getTime() < Date.now() - 24 * 60 * 60 * 1000
+}
+
 const handleSubmit = async () => {
   if (!saleFormRef.value) return
   await saleFormRef.value.validate(async (valid) => {
@@ -96,8 +112,8 @@ const handleSubmit = async () => {
       isSubmitting.value = true
       const saleData = { ...saleForm, totalPrice: totalPrice.value }
 
-      // 调用从 reservationStore 中获取的 createSale 方法
-      const success = await createSale(saleData)
+      // 调用 reservationStore 的 createSale 方法
+      const success = await reservationStore.createSale(saleData)
 
       if (success) {
         resetForm()

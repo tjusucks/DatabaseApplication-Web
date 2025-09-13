@@ -356,13 +356,20 @@ const loadMembers = async () => {
 
     // 添加搜索条件
     if (searchForm.visitorId) {
-      params.visitorId = searchForm.visitorId
+      params.userId = searchForm.visitorId  // 使用userId参数，因为visitorId等于userId
     }
     if (searchForm.visitorName) {
-      params.displayName = searchForm.visitorName
+      params.keyword = searchForm.visitorName  // 使用keyword参数进行模糊搜索
     }
     if (searchForm.memberLevel) {
       params.memberLevel = searchForm.memberLevel
+    }
+    // 添加积分范围搜索
+    if (searchForm.minPoints !== null && searchForm.minPoints >= 0) {
+      params.pointsMin = searchForm.minPoints
+    }
+    if (searchForm.maxPoints !== null && searchForm.maxPoints >= 0) {
+      params.pointsMax = searchForm.maxPoints
     }
 
     const response = await searchVisitors(params)

@@ -1,13 +1,17 @@
 <template>
-  <div v-if="hasError" class="error-boundary">
-    <el-result icon="error" title="页面加载失败" sub-title="抱歉，页面组件加载时出现了错误">
-      <template #extra>
-        <el-button type="primary" @click="retry">重新加载</el-button>
-        <el-button @click="goHome">返回首页</el-button>
-      </template>
-    </el-result>
+  <div class="error-boundary-wrapper">
+    <div v-if="hasError" class="error-boundary">
+      <el-result icon="error" title="页面加载失败" sub-title="抱歉，页面组件加载时出现了错误">
+        <template #extra>
+          <el-button type="primary" @click="retry">重新加载</el-button>
+          <el-button @click="goHome">返回首页</el-button>
+        </template>
+      </el-result>
+    </div>
+    <div v-else class="content-wrapper">
+      <slot />
+    </div>
   </div>
-  <slot v-else />
 </template>
 
 <script setup>
@@ -40,8 +44,18 @@ const goHome = () => {
 </script>
 
 <style scoped>
+.error-boundary-wrapper {
+  width: 100%;
+  height: 100%;
+}
+
 .error-boundary {
   padding: 50px;
   text-align: center;
+}
+
+.content-wrapper {
+  width: 100%;
+  height: 100%;
 }
 </style>
