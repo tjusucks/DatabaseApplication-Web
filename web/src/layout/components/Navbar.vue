@@ -22,27 +22,6 @@
         </el-button>
       </el-tooltip>
 
-      <!-- 主题切换 -->
-      <el-tooltip content="切换主题" placement="bottom">
-        <el-button type="text" @click="toggleTheme" class="action-btn">
-          <el-icon size="18">
-            <Sunny v-if="appStore.theme === 'light'" />
-            <Moon v-else />
-          </el-icon>
-        </el-button>
-      </el-tooltip>
-
-      <!-- 消息通知 -->
-      <el-tooltip content="消息通知" placement="bottom">
-        <el-badge :value="notificationCount" :hidden="notificationCount === 0">
-          <el-button type="text" @click="showNotifications" class="action-btn">
-            <el-icon size="18">
-              <Bell />
-            </el-icon>
-          </el-button>
-        </el-badge>
-      </el-tooltip>
-
       <!-- 用户信息下拉菜单 -->
       <el-dropdown @command="handleUserCommand" class="user-dropdown">
         <div class="user-info">
@@ -85,7 +64,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+
 import { useRouter } from 'vue-router'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import { useAppStore } from '@/stores/app'
@@ -95,17 +74,9 @@ const router = useRouter()
 const appStore = useAppStore()
 const userStore = useUserStore()
 
-// 通知数量（模拟数据）
-const notificationCount = ref(3)
-
 // 切换侧边栏
 const toggleSidebar = () => {
   appStore.toggleSidebar()
-}
-
-// 切换主题
-const toggleTheme = () => {
-  appStore.toggleTheme()
 }
 
 // 切换全屏
@@ -117,11 +88,6 @@ const toggleFullscreen = () => {
       document.exitFullscreen()
     }
   }
-}
-
-// 显示通知
-const showNotifications = () => {
-  ElMessage.info('通知功能开发中...')
 }
 
 // 处理用户下拉菜单命令

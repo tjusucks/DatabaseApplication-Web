@@ -56,7 +56,7 @@ const ConsumptionRecords = () => import('@/views/finance/ConsumptionRecords.vue'
 // 人力资源模块
 const EmployeeList = () => import('@/views/hr/employees/EmployeeList.vue')
 const EmployeeDetail = () => import('@/views/hr/employees/EmployeeDetail.vue')
-const PayrollGenerate = () => import('@/views/hr/payroll/PayrollGenerate.vue')
+
 const PayrollRecords = () => import('@/views/hr/payroll/PayrollRecords.vue')
 const AttendanceRecords = () => import('@/views/hr/attendance/AttendanceRecords.vue')
 const AttendanceStatistics = () => import('@/views/hr/attendance/AttendanceStatistics.vue')
@@ -522,13 +522,14 @@ const routes = [
         },
       },
       {
-        path: 'payroll/generate',
-        name: 'PayrollGenerate',
-        component: PayrollGenerate,
+        path: 'employees/edit/:id',
+        name: 'EmployeeEdit',
+        component: () => import('@/views/hr/employees/EmployeeEdit.vue'),
         meta: {
-          title: '工资单生成',
+          title: '编辑员工',
         },
       },
+
       {
         path: 'payroll/records',
         name: 'PayrollRecords',

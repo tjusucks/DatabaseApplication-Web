@@ -2,20 +2,21 @@
   <div class="sidebar">
     <!-- Logo 区域 -->
     <div class="logo-container">
-      <img src="@/assets/logo.svg" alt="Logo" class="logo" />
-      <h2 v-if="!appStore.sidebarCollapsed" class="title">主题公园管理</h2>
+      <img src="@/assets/amusement.svg" alt="Logo" class="logo" />
+      <h2 v-if="!appStore.sidebarCollapsed" class="title">游乐园管理系统</h2>
     </div>
 
     <!-- 菜单区域 -->
-    <el-menu
-      :default-active="activeMenu"
-      :collapse="appStore.sidebarCollapsed"
-      :unique-opened="true"
-      background-color="#304156"
-      text-color="#bfcbd9"
-      active-text-color="#409EFF"
-      router
-    >
+    <div class="menu-wrapper">
+      <el-menu
+        :default-active="activeMenu"
+        :collapse="appStore.sidebarCollapsed"
+        :unique-opened="true"
+        background-color="#304156"
+        text-color="#bfcbd9"
+        active-text-color="#409EFF"
+        router
+      >
       <template v-for="item in menuList" :key="item.path">
         <!-- 单级菜单 -->
         <el-menu-item
@@ -77,7 +78,8 @@
           </template>
         </el-sub-menu>
       </template>
-    </el-menu>
+      </el-menu>
+    </div>
   </div>
 </template>
 
@@ -166,8 +168,30 @@ const getRouteNameFromPath = (path) => {
   white-space: nowrap;
 }
 
-.el-menu {
+.menu-wrapper {
   flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.menu-wrapper::-webkit-scrollbar {
+  width: 6px;
+}
+
+.menu-wrapper::-webkit-scrollbar-track {
+  background: #2b3a4b;
+}
+
+.menu-wrapper::-webkit-scrollbar-thumb {
+  background: #4a5568;
+  border-radius: 3px;
+}
+
+.menu-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #5a6578;
+}
+
+.el-menu {
   border: none;
 }
 
