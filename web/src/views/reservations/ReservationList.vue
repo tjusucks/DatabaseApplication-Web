@@ -9,12 +9,30 @@
       </el-form-item>
     </el-form>
     <el-table :data="reservations.list" stripe border v-loading="loading">
-      <el-table-column prop="reservationId" label="预订号" />
-      <el-table-column prop="visitor.user.displayName" label="游客姓名" />
-      <el-table-column prop="visitor.user.phoneNumber" label="手机号" />
-      <el-table-column prop="reservationTime" label="预订时间" />
-      <el-table-column prop="totalAmount" label="总金额" />
-      <el-table-column label="操作" fixed="right" align="center">
+      <el-table-column prop="reservationId" label="预订号" width="100" />
+      <el-table-column prop="visitor.user.displayName" label="游客姓名" width="120" />
+      <el-table-column prop="visitor.user.phoneNumber" label="手机号" width="130" />
+      <el-table-column prop="visitDate" label="预约游玩时间" width="130" align="center">
+        <template #default="{ row }">
+          <el-tag type="success">{{ formatDate(row.visitDate) }}</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column prop="reservationTime" label="购票时间" width="160" align="center">
+        <template #default="{ row }">
+          {{ formatDateTime(row.reservationTime) }}
+        </template>
+      </el-table-column>
+      <el-table-column prop="totalAmount" label="总金额" width="100" align="right">
+        <template #default="{ row }">
+          <span class="price">¥{{ row.totalAmount.toFixed(2) }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="status" label="状态" width="100" align="center">
+        <template #default="{ row }">
+          <el-tag :type="getStatusType(row.status)">{{ getStatusText(row.status) }}</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" fixed="right" align="center" width="120">
         <template #default="{ row }">
           <el-button
             size="small"
@@ -60,15 +78,67 @@ const handleSearch = () => {
   queryParams.page = 1
   loadData()
 }
+
 const viewDetails = (id) => router.push(`/reservations/${id}`)
+
 const loadData = async () => {
   loading.value = true
   await fetchReservations(queryParams)
   loading.value = false
 }
 
+// 格式化日期（只显示日期）
+const formatDate = (dateString) => {
+  if (!dateString) return '-'
+  return new Date(dateString).toLocaleDateString('zh-CN')
+}
+
+// 格式化日期时间（显示完整的日期和时间）
+const formatDateTime = (dateString) => {
+  if (!dateString) return '-'
+  return new Date(dateString).toLocaleString('zh-CN')
+}
+
+// 获取状态类型
+const getStatusType = (status) => {
+  const statusMap = {
+    'Pending': 'warning',
+    'Confirmed': 'success',
+    'Cancelled': 'danger',
+    'Completed': 'info'
+  }
+  return statusMap[status] || 'info'
+}
+
+// 获取状态文本
+const getStatusText = (status) => {
+  const statusMap = {
+    'Pending': '待确认',
+    'Confirmed': '已确认',
+    'Cancelled': '已取消',
+    'Completed': '已完成'
+  }
+  return statusMap[status] || status
+}
+
 onMounted(loadData)
 </script>
+
+<style scoped>
+.search-bar {
+  margin-bottom: 20px;
+}
+
+.price {
+  color: #f56c6c;
+  font-weight: bold;
+}
+
+.pagination-container {
+  margin-top: 20px;
+  text-align: right;
+}
+</style>
 
 <style scoped>
 .search-bar {

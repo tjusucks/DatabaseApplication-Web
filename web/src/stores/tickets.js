@@ -196,8 +196,8 @@ export const useReservationStore = defineStore('reservation', {
           // 1. VisitorId: 使用查找到或创建的游客ID
           visitorId: visitorId,
 
-          // 2. VisitDate: 游玩日期，通常是今天
-          visitDate: new Date().toISOString(), // 发送 ISO 8601 格式的字符串
+          // 2. VisitDate: 游玩日期，使用用户选择的日期
+          visitDate: saleData.visitDate ? new Date(saleData.visitDate).toISOString() : new Date().toISOString(),
 
           // 3. Items: 购买的票种和数量列表
           items: [

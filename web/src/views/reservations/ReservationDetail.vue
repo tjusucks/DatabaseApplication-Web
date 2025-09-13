@@ -8,19 +8,32 @@
         <el-descriptions-item label="预订号">{{
           currentReservation.reservationId
         }}</el-descriptions-item>
-        <el-descriptions-item label="状态">{{ currentReservation.status }}</el-descriptions-item>
-        <el-descriptions-item label="预订时间">{{
-          currentReservation.reservationTime
-        }}</el-descriptions-item>
+        <el-descriptions-item label="状态">
+          <el-tag :type="getStatusType(currentReservation.status)">
+            {{ getStatusText(currentReservation.status) }}
+          </el-tag>
+        </el-descriptions-item>
+        <el-descriptions-item label="总金额">
+          <el-tag type="danger">¥ {{ currentReservation.totalAmount?.toFixed(2) }}</el-tag>
+        </el-descriptions-item>
         <el-descriptions-item label="游客姓名">{{
           currentReservation.visitor?.user?.displayName
         }}</el-descriptions-item>
         <el-descriptions-item label="手机号">{{
           currentReservation.visitor?.user?.phoneNumber
         }}</el-descriptions-item>
-        <el-descriptions-item label="总金额">
-          <el-tag type="danger">¥ {{ currentReservation.totalAmount }}</el-tag>
+        <el-descriptions-item label="游客邮箱">{{
+          currentReservation.visitor?.user?.email || '-'
+        }}</el-descriptions-item>
+        <el-descriptions-item label="预约游玩时间">
+          <el-tag type="success">{{ formatDate(currentReservation.visitDate) }}</el-tag>
         </el-descriptions-item>
+        <el-descriptions-item label="购票时间">{{
+          formatDateTime(currentReservation.reservationTime)
+        }}</el-descriptions-item>
+        <el-descriptions-item label="支付方式">{{
+          currentReservation.paymentMethod || '-'
+        }}</el-descriptions-item>
       </el-descriptions>
       <el-skeleton v-else :rows="5" animated />
     </el-card>
@@ -40,6 +53,40 @@ const reservationId = ref(route.params.id)
 const { currentReservation } = storeToRefs(reservationStore)
 const { fetchReservationById } = reservationStore
 const loading = ref(false)
+
+// 格式化日期（只显示日期）
+const formatDate = (dateString) => {
+  if (!dateString) return '-'
+  return new Date(dateString).toLocaleDateString('zh-CN')
+}
+
+// 格式化日期时间（显示完整的日期和时间）
+const formatDateTime = (dateString) => {
+  if (!dateString) return '-'
+  return new Date(dateString).toLocaleString('zh-CN')
+}
+
+// 获取状态类型
+const getStatusType = (status) => {
+  const statusMap = {
+    'Pending': 'warning',
+    'Confirmed': 'success',
+    'Cancelled': 'danger',
+    'Completed': 'info'
+  }
+  return statusMap[status] || 'info'
+}
+
+// 获取状态文本
+const getStatusText = (status) => {
+  const statusMap = {
+    'Pending': '待确认',
+    'Confirmed': '已确认',
+    'Cancelled': '已取消',
+    'Completed': '已完成'
+  }
+  return statusMap[status] || status
+}
 
 onMounted(async () => {
   loading.value = true
