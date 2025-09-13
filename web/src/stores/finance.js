@@ -17,7 +17,11 @@ import {
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
-import { UnifiedTransactionType, incomeTypeOptions } from '@/utils/constants'
+import {
+  UnifiedTransactionType,
+  TransactionType,
+  mapToBackendTransactionType
+} from '@/utils/constants'
 
 export const useFinanceStore = defineStore('finance', () => {
   // 统一的状态管理
@@ -118,7 +122,9 @@ export const useFinanceStore = defineStore('finance', () => {
     try {
       await createFinancialRecord(payload)
       ElMessage.success('新增成功！')
-      const isIncome = incomeTypeOptions.some((opt) => opt.value === payload.transactionType)
+      // 使用基础TransactionType枚举值判断是否为收入
+      // TransactionType.Income = 0
+      const isIncome = payload.transactionType === TransactionType.Income
       if (isIncome) {
         await fetchIncomes()
       } else {
@@ -126,7 +132,8 @@ export const useFinanceStore = defineStore('finance', () => {
       }
     } catch (error) {
       ElMessage.error(error.message || '新增失败')
-      const isIncome = incomeTypeOptions.some((opt) => opt.value === payload.transactionType)
+      // 使用基础TransactionType枚举值判断是否为收入
+      const isIncome = payload.transactionType === TransactionType.Income
       if (isIncome) {
         await fetchIncomes()
       } else {
@@ -140,7 +147,9 @@ export const useFinanceStore = defineStore('finance', () => {
     try {
       await updateFinancialRecord(id, payload)
       ElMessage.success('更新成功！')
-      const isIncome = incomeTypeOptions.some((opt) => opt.value === payload.transactionType)
+      // 使用基础TransactionType枚举值判断是否为收入
+      // TransactionType.Income = 0
+      const isIncome = payload.transactionType === TransactionType.Income
       if (isIncome) {
         await fetchIncomes()
       } else {
@@ -383,18 +392,52 @@ export const useFinanceStore = defineStore('finance', () => {
     pagination.value.total = totalCount
   }
 
-  const addIncome = (payload) =>
-    addRecord({
+  const addIncome = (payload) => {
+    // 将前端的扩展交易类型映射为后端基础类型
+    const backendTransactionType = mapToBackendTransactionType(
+      payload.transactionType || UnifiedTransactionType.OTHER_INCOME
+    )
+
+    return addRecord({
       ...payload,
-      transactionType: payload.transactionType || UnifiedTransactionType.OTHER_INCOME,
+      transactionType: backendTransactionType, // 使用映射后的基础类型（0-3）
     })
-  const addExpense = (payload) =>
-    addRecord({
+  }
+
+  const addExpense = (payload) => {
+    // 将前端的扩展交易类型映射为后端基础类型
+    const backendTransactionType = mapToBackendTransactionType(
+      payload.transactionType || UnifiedTransactionType.OTHER_EXPENSE
+    )
+
+    return addRecord({
       ...payload,
-      transactionType: payload.transactionType || UnifiedTransactionType.OTHER_EXPENSE,
+      transactionType: backendTransactionType, // 使用映射后的基础类型（0-3）
     })
-  const updateIncome = (id, payload) => updateRecord(id, { ...payload })
-  const updateExpense = (id, payload) => updateRecord(id, { ...payload })
+  }
+  const updateIncome = (id, payload) => {
+    // 将前端的扩展交易类型映射为后端基础类型
+    const backendTransactionType = payload.transactionType
+      ? mapToBackendTransactionType(payload.transactionType)
+      : undefined
+
+    return updateRecord(id, {
+      ...payload,
+      ...(backendTransactionType !== undefined && { transactionType: backendTransactionType })
+    })
+  }
+
+  const updateExpense = (id, payload) => {
+    // 将前端的扩展交易类型映射为后端基础类型
+    const backendTransactionType = payload.transactionType
+      ? mapToBackendTransactionType(payload.transactionType)
+      : undefined
+
+    return updateRecord(id, {
+      ...payload,
+      ...(backendTransactionType !== undefined && { transactionType: backendTransactionType })
+    })
+  }
   const deleteIncome = (id, source) => deleteRecord(id, source, true) // 传入 isIncome = true
   const deleteExpense = (id, source) => deleteRecord(id, source, false) // 传入 isIncome = false
 
