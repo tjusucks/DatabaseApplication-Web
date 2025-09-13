@@ -16,7 +16,11 @@
             />
           </el-form-item>
           <el-form-item label="分组方式">
-            <el-select v-model="filterForm.groupBy" placeholder="请选择分组方式" style="width: 120px">
+            <el-select
+              v-model="filterForm.groupBy"
+              placeholder="请选择分组方式"
+              style="width: 120px"
+            >
               <el-option
                 v-for="option in groupByOptions"
                 :key="option.value"
@@ -64,7 +68,11 @@
       </el-col>
       <el-col :span="6">
         <el-card shadow="hover">
-          <el-statistic title="利润率 (%)" :value="parseFloat(overviewData.profitMargin || overviewData.margin || 0).toFixed(2)" :precision="2">
+          <el-statistic
+            title="利润率 (%)"
+            :value="parseFloat(overviewData.profitMargin || overviewData.margin || 0).toFixed(2)"
+            :precision="2"
+          >
             <template #suffix>%</template>
           </el-statistic>
         </el-card>
@@ -72,12 +80,21 @@
     </el-row>
 
     <!-- 票务销售统计 -->
-    <el-row :gutter="20" class="ticket-stats-cards" style="margin-top: 20px" v-loading="ticketStatsLoading">
+    <el-row
+      :gutter="20"
+      class="ticket-stats-cards"
+      style="margin-top: 20px"
+      v-loading="ticketStatsLoading"
+    >
       <el-col :span="6">
         <el-card shadow="hover">
           <el-statistic
             title="门票销售总额 (元)"
-            :value="parseFloat(ticketStatsData.totalSalesAmount || ticketStatsData.totalAmount || 0).toFixed(2)"
+            :value="
+              parseFloat(
+                ticketStatsData.totalSalesAmount || ticketStatsData.totalAmount || 0,
+              ).toFixed(2)
+            "
             :precision="2"
           ></el-statistic>
         </el-card>
@@ -94,7 +111,11 @@
         <el-card shadow="hover">
           <el-statistic
             title="平均票价 (元)"
-            :value="parseFloat(ticketStatsData.averageTicketPrice || ticketStatsData.averagePrice || 0).toFixed(2)"
+            :value="
+              parseFloat(
+                ticketStatsData.averageTicketPrice || ticketStatsData.averagePrice || 0,
+              ).toFixed(2)
+            "
             :precision="2"
           ></el-statistic>
         </el-card>
@@ -103,7 +124,9 @@
         <el-card shadow="hover">
           <el-statistic
             title="热门票种"
-            :value="ticketStatsData.mostPopularTicketType || ticketStatsData.popularTicketType || '无数据'"
+            :value="
+              ticketStatsData.mostPopularTicketType || ticketStatsData.popularTicketType || '无数据'
+            "
           ></el-statistic>
         </el-card>
       </el-col>
@@ -124,7 +147,7 @@
         </el-card>
       </el-col>
     </el-row>
-    
+
     <!-- 票务销售趋势图 -->
     <el-row :gutter="20" style="margin-top: 20px">
       <el-col :span="24">
@@ -134,7 +157,7 @@
         </el-card>
       </el-col>
     </el-row>
-    
+
     <!-- 分组统计数据 -->
     <el-row :gutter="20" style="margin-top: 20px">
       <el-col :span="24">
@@ -157,12 +180,13 @@
               </template>
             </el-table-column>
             <el-table-column label="平均值" min-width="120">
-              <template #default="scope">
-                ¥{{ calculateAverage(scope.row) }}
-              </template>
+              <template #default="scope"> ¥{{ calculateAverage(scope.row) }} </template>
             </el-table-column>
           </el-table>
-          <div v-if="groupedStatsData.length === 0" style="text-align: center; padding: 20px; color: #909399;">
+          <div
+            v-if="groupedStatsData.length === 0"
+            style="text-align: center; padding: 20px; color: #909399"
+          >
             暂无数据
           </div>
         </el-card>
@@ -182,13 +206,13 @@ const financeStore = useFinanceStore()
 
 const filterForm = reactive({
   dateRange: [],
-  groupBy: 'Date' // Default grouping by date
+  groupBy: 'Date', // Default grouping by date
 })
 
 const groupByOptions = [
   { label: '日期', value: 'Date' },
   { label: '交易类型', value: 'TransactionType' },
-  { label: '支付方式', value: 'PaymentMethod' }
+  { label: '支付方式', value: 'PaymentMethod' },
 ]
 
 // Group by options explanation:
@@ -276,11 +300,11 @@ const handleFilter = async () => {
   try {
     // fetchOverviewData 和 fetchTrendData 内部会分别设置自己的 loading 为 false
     await Promise.all([
-      fetchOverviewData(), 
-      fetchTrendData(), 
-      fetchTicketStatsData(), 
+      fetchOverviewData(),
+      fetchTrendData(),
+      fetchTicketStatsData(),
       fetchTicketTrendData(),
-      fetchGroupedStatsData()
+      fetchGroupedStatsData(),
     ])
   } catch (error) {
     // 如果任何一个请求失败，确保 loading 状态被重置
@@ -355,7 +379,7 @@ const fetchGroupedStatsData = async () => {
   try {
     const params = {
       ...getQueryParams(),
-      groupBy: filterForm.groupBy
+      groupBy: filterForm.groupBy,
     }
     const data = await financeStore.fetchGroupedStats(params)
     // Handle different response structures
@@ -384,7 +408,7 @@ const fetchTicketTrendData = async () => {
     // For now, let's use the grouped stats with date grouping
     const data = await financeStore.fetchTicketSalesGroupedStats({
       ...params,
-      groupBy: 'Date'
+      groupBy: 'Date',
     })
     // Handle different response structures
     let groupsData = []
@@ -437,7 +461,9 @@ const updateTrendChart = (data = []) => {
   // Handle different data structures
   const dates = data.map((item) => item.date || item.key || item.name || '')
   const incomes = data.map((item) => parseFloat(item.totalIncome || item.income || item.value || 0))
-  const expenses = data.map((item) => parseFloat(item.totalExpense || item.expense || item.cost || 0))
+  const expenses = data.map((item) =>
+    parseFloat(item.totalExpense || item.expense || item.cost || 0),
+  )
 
   const option = {
     title: { show: false }, // 确保清除“暂无数据”的标题
@@ -516,8 +542,12 @@ const updateTicketTrendChart = (data = []) => {
 
   // Handle different data structures
   const dates = data.map((item) => item.key || item.date || item.name || '')
-  const salesAmounts = data.map((item) => parseFloat(item.value || item.totalAmount || item.amount || 0))
-  const salesCounts = data.map((item) => parseInt(item.count || item.quantity || item.totalCount || 0))
+  const salesAmounts = data.map((item) =>
+    parseFloat(item.value || item.totalAmount || item.amount || 0),
+  )
+  const salesCounts = data.map((item) =>
+    parseInt(item.count || item.quantity || item.totalCount || 0),
+  )
 
   const option = {
     title: { show: false }, // 确保清除"暂无数据"的标题
@@ -527,23 +557,23 @@ const updateTicketTrendChart = (data = []) => {
     xAxis: { type: 'category', boundaryGap: false, data: dates },
     yAxis: [
       { type: 'value', axisLabel: { formatter: '{value} 元' } },
-      { type: 'value', axisLabel: { formatter: '{value} 张' } }
+      { type: 'value', axisLabel: { formatter: '{value} 张' } },
     ],
     series: [
-      { 
-        name: '销售额', 
-        type: 'line', 
-        smooth: true, 
-        data: salesAmounts, 
+      {
+        name: '销售额',
+        type: 'line',
+        smooth: true,
+        data: salesAmounts,
         itemStyle: { color: '#409EFF' },
-        yAxisIndex: 0
+        yAxisIndex: 0,
       },
-      { 
-        name: '销售数量', 
-        type: 'bar', 
-        data: salesCounts, 
+      {
+        name: '销售数量',
+        type: 'bar',
+        data: salesCounts,
         itemStyle: { color: '#67C23A' },
-        yAxisIndex: 1
+        yAxisIndex: 1,
       },
     ],
   }

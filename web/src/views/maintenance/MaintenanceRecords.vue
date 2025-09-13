@@ -176,7 +176,7 @@ const availableTeams = ref([
   { teamId: 4, teamName: '安全检查团队A', teamType: 0 }, // Inspector
   { teamId: 5, teamName: '安全检查团队B', teamType: 0 }, // Inspector
   { teamId: 6, teamName: '综合运维团队', teamType: 2 }, // Mixed
-  { teamId: 7, teamName: '应急响应团队', teamType: 2 } // Mixed
+  { teamId: 7, teamName: '应急响应团队', teamType: 2 }, // Mixed
 ])
 
 const form = ref({
@@ -265,10 +265,21 @@ const saveRecord = async () => {
       teamId: parseInt(form.value.teamId),
       managerId: form.value.managerId ? parseInt(form.value.managerId) : null,
       maintenanceType: parseInt(form.value.maintenanceType),
-      startTime: form.value.startTime instanceof Date ? form.value.startTime.toISOString() : form.value.startTime,
-      endTime: form.value.endTime ? (form.value.endTime instanceof Date ? form.value.endTime.toISOString() : form.value.endTime) : null,
+      startTime:
+        form.value.startTime instanceof Date
+          ? form.value.startTime.toISOString()
+          : form.value.startTime,
+      endTime: form.value.endTime
+        ? form.value.endTime instanceof Date
+          ? form.value.endTime.toISOString()
+          : form.value.endTime
+        : null,
       cost: parseFloat(form.value.cost),
-      acceptanceDate: form.value.acceptanceDate ? (form.value.acceptanceDate instanceof Date ? form.value.acceptanceDate.toISOString() : form.value.acceptanceDate) : null,
+      acceptanceDate: form.value.acceptanceDate
+        ? form.value.acceptanceDate instanceof Date
+          ? form.value.acceptanceDate.toISOString()
+          : form.value.acceptanceDate
+        : null,
     }
 
     if (isEditing.value) {
@@ -318,7 +329,7 @@ const getTeamTypeText = (teamType) => {
   const typeMap = {
     0: '检查团队',
     1: '维护团队',
-    2: '综合团队'
+    2: '综合团队',
   }
   return typeMap[teamType] || '未知类型'
 }
