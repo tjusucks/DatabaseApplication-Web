@@ -20,7 +20,7 @@ import { ElMessage } from 'element-plus'
 import {
   UnifiedTransactionType,
   TransactionType,
-  mapToBackendTransactionType
+  mapToBackendTransactionType,
 } from '@/utils/constants'
 
 export const useFinanceStore = defineStore('finance', () => {
@@ -395,7 +395,7 @@ export const useFinanceStore = defineStore('finance', () => {
   const addIncome = (payload) => {
     // 将前端的扩展交易类型映射为后端基础类型
     const backendTransactionType = mapToBackendTransactionType(
-      payload.transactionType || UnifiedTransactionType.OTHER_INCOME
+      payload.transactionType || UnifiedTransactionType.OTHER_INCOME,
     )
 
     return addRecord({
@@ -407,7 +407,7 @@ export const useFinanceStore = defineStore('finance', () => {
   const addExpense = (payload) => {
     // 将前端的扩展交易类型映射为后端基础类型
     const backendTransactionType = mapToBackendTransactionType(
-      payload.transactionType || UnifiedTransactionType.OTHER_EXPENSE
+      payload.transactionType || UnifiedTransactionType.OTHER_EXPENSE,
     )
 
     return addRecord({
@@ -423,7 +423,7 @@ export const useFinanceStore = defineStore('finance', () => {
 
     return updateRecord(id, {
       ...payload,
-      ...(backendTransactionType !== undefined && { transactionType: backendTransactionType })
+      ...(backendTransactionType !== undefined && { transactionType: backendTransactionType }),
     })
   }
 
@@ -435,7 +435,7 @@ export const useFinanceStore = defineStore('finance', () => {
 
     return updateRecord(id, {
       ...payload,
-      ...(backendTransactionType !== undefined && { transactionType: backendTransactionType })
+      ...(backendTransactionType !== undefined && { transactionType: backendTransactionType }),
     })
   }
   const deleteIncome = (id, source) => deleteRecord(id, source, true) // 传入 isIncome = true

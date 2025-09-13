@@ -12,17 +12,12 @@
           <div class="card-header">
             <span>设施信息</span>
             <div class="header-controls">
-              <el-button 
-                type="primary" 
-                @click="updateRideData" 
-                :loading="updating"
-                size="small"
-              >
+              <el-button type="primary" @click="updateRideData" :loading="updating" size="small">
                 <el-icon><Refresh /></el-icon>
                 更新实时数据
               </el-button>
-              <el-button 
-                :type="isAutoRefresh ? 'success' : 'info'" 
+              <el-button
+                :type="isAutoRefresh ? 'success' : 'info'"
                 @click="toggleAutoRefresh"
                 size="small"
               >
@@ -31,11 +26,11 @@
                 </el-icon>
                 {{ isAutoRefresh ? '停止自动刷新' : '开始自动刷新' }}
               </el-button>
-              <el-select 
-                v-model="refreshIntervalTime" 
-                @change="changeRefreshInterval" 
-                size="small" 
-                style="width: 120px;"
+              <el-select
+                v-model="refreshIntervalTime"
+                @change="changeRefreshInterval"
+                size="small"
+                style="width: 120px"
               >
                 <el-option :value="1000" label="1秒刷新" />
                 <el-option :value="2000" label="2秒刷新" />
@@ -46,7 +41,7 @@
             </div>
           </div>
         </template>
-        
+
         <el-row :gutter="20">
           <el-col :span="8">
             <div class="info-item">
@@ -121,10 +116,7 @@
           <div class="card-header">
             <span>流量趋势</span>
             <div class="chart-controls">
-              <el-button 
-                @click="refreshChart" 
-                size="small"
-              >
+              <el-button @click="refreshChart" size="small">
                 <el-icon><Refresh /></el-icon>
                 刷新图表
               </el-button>
@@ -133,7 +125,7 @@
         </template>
 
         <div class="chart-container">
-          <div ref="chartContainer" style="width: 100%; height: 500px;"></div>
+          <div ref="chartContainer" style="width: 100%; height: 500px"></div>
         </div>
       </el-card>
 
@@ -150,7 +142,7 @@
             </div>
           </div>
         </template>
-        
+
         <!-- 搜索和过滤控件 -->
         <div class="search-filters">
           <el-row :gutter="10" class="filter-row">
@@ -205,7 +197,7 @@
               </el-button>
             </el-col>
           </el-row>
-          
+
           <el-row :gutter="10" class="filter-row">
             <el-col :span="4">
               <el-date-picker
@@ -258,24 +250,17 @@
               />
             </el-col>
           </el-row>
-          
+
           <el-row :gutter="10" class="filter-row">
             <el-col :span="24">
               <div class="filter-actions">
-                <el-button @click="resetFilters" size="small">
-                  重置筛选
-                </el-button>
+                <el-button @click="resetFilters" size="small"> 重置筛选 </el-button>
               </div>
             </el-col>
           </el-row>
         </div>
 
-        <el-table 
-          :data="historicalData" 
-          stripe
-          style="width: 100%"
-          height="400"
-        >
+        <el-table :data="historicalData" stripe style="width: 100%" height="400">
           <el-table-column prop="recordTime" label="记录时间" width="180">
             <template #default="{ row }">
               {{ formatDate(row.recordTime) }}
@@ -350,7 +335,7 @@ const searchFilters = ref({
   minWaitingTime: null,
   maxWaitingTime: null,
   recordTimeFrom: null,
-  recordTimeTo: null
+  recordTimeTo: null,
 })
 
 // Chart date range
@@ -401,7 +386,7 @@ const startAutoRefresh = () => {
   if (refreshInterval.value) {
     clearInterval(refreshInterval.value)
   }
-  
+
   if (isAutoRefresh.value) {
     refreshInterval.value = setInterval(() => {
       if (!loading.value && !updating.value) {
@@ -413,8 +398,9 @@ const startAutoRefresh = () => {
 
 // 优化的实时更新方法，只更新数据部分
 const updateRealTimeRideData = async () => {
-  if (!isAutoRefresh.value || loading.value || updating.value || isUpdating.value || !rideId.value) return
-  
+  if (!isAutoRefresh.value || loading.value || updating.value || isUpdating.value || !rideId.value)
+    return
+
   isUpdating.value = true
   try {
     const response = await rideTrafficApi.getRealTimeRideTraffic(rideId.value)
@@ -435,7 +421,7 @@ const startOptimizedAutoRefresh = () => {
   if (refreshInterval.value) {
     clearInterval(refreshInterval.value)
   }
-  
+
   if (isAutoRefresh.value) {
     refreshInterval.value = setInterval(() => {
       updateRealTimeRideData()
@@ -470,7 +456,7 @@ const changeRefreshInterval = () => {
 // API calls
 const fetchRideRealTimeData = async () => {
   if (!rideId.value) return
-  
+
   try {
     loading.value = true
     const response = await rideTrafficApi.getRealTimeRideTraffic(rideId.value)
@@ -486,7 +472,7 @@ const fetchRideRealTimeData = async () => {
 
 const fetchHistoricalData = async () => {
   if (!rideId.value) return
-  
+
   try {
     loading.value = true
     const params = {
@@ -494,56 +480,56 @@ const fetchHistoricalData = async () => {
       page: historyPage.value,
       pageSize: historyPageSize.value,
       // Add sorting parameter
-      descending: searchFilters.value.sortOrder === 'desc'
+      descending: searchFilters.value.sortOrder === 'desc',
     }
-    
+
     // Add search filters
     if (searchFilters.value.keyword) {
       params.keyword = searchFilters.value.keyword
     }
-    
+
     if (searchFilters.value.isCrowded !== null) {
       params.isCrowded = searchFilters.value.isCrowded
     }
-    
+
     if (searchFilters.value.minVisitorCount !== null) {
       params.minVisitorCount = searchFilters.value.minVisitorCount
     }
-    
+
     if (searchFilters.value.maxVisitorCount !== null) {
       params.maxVisitorCount = searchFilters.value.maxVisitorCount
     }
-    
+
     if (searchFilters.value.minQueueLength !== null) {
       params.minQueueLength = searchFilters.value.minQueueLength
     }
-    
+
     if (searchFilters.value.maxQueueLength !== null) {
       params.maxQueueLength = searchFilters.value.maxQueueLength
     }
-    
+
     if (searchFilters.value.minWaitingTime !== null) {
       params.minWaitingTime = searchFilters.value.minWaitingTime
     }
-    
+
     if (searchFilters.value.maxWaitingTime !== null) {
       params.maxWaitingTime = searchFilters.value.maxWaitingTime
     }
-    
+
     if (searchFilters.value.recordTimeFrom) {
       params.recordTimeFrom = searchFilters.value.recordTimeFrom
     }
-    
+
     if (searchFilters.value.recordTimeTo) {
       params.recordTimeTo = searchFilters.value.recordTimeTo
     }
-    
+
     // Also check dateRange for backward compatibility
     if (dateRange.value && dateRange.value.length === 2) {
       if (!params.recordTimeFrom) params.recordTimeFrom = dateRange.value[0]
       if (!params.recordTimeTo) params.recordTimeTo = dateRange.value[1]
     }
-    
+
     const response = await rideTrafficApi.searchRideTraffic(params)
     historicalData.value = response.rideTrafficStats || []
     historyTotal.value = response.totalCount || 0
@@ -568,7 +554,7 @@ const resetFilters = () => {
     minWaitingTime: null,
     maxWaitingTime: null,
     recordTimeFrom: null,
-    recordTimeTo: null
+    recordTimeTo: null,
   }
   dateRange.value = []
   fetchHistoricalData()
@@ -580,11 +566,11 @@ const refreshChart = () => {
 
 const updateRideData = async () => {
   if (!rideId.value) return
-  
+
   try {
     updating.value = true
     await rideTrafficApi.updateRideTraffic(rideId.value, {
-      recordTime: new Date().toISOString()
+      recordTime: new Date().toISOString(),
     })
     await fetchRideRealTimeData()
     ElMessage.success('数据更新成功')
@@ -620,41 +606,41 @@ const initChart = () => {
 
 const updateChart = () => {
   if (!chart.value || !historicalData.value.length) return
-  
+
   // Always sort data by recordTime to ensure proper chronological order
   // regardless of how history data is sorted
-  const sortedData = [...historicalData.value].sort((a, b) => 
-    new Date(a.recordTime) - new Date(b.recordTime)
+  const sortedData = [...historicalData.value].sort(
+    (a, b) => new Date(a.recordTime) - new Date(b.recordTime),
   )
-  
-  const xAxisData = sortedData.map(item => {
+
+  const xAxisData = sortedData.map((item) => {
     const date = new Date(item.recordTime)
     // Include both date and time in the label
-    return date.toLocaleString('zh-CN', { 
-      month: 'numeric', 
-      day: 'numeric', 
-      hour: '2-digit', 
-      minute: '2-digit' 
+    return date.toLocaleString('zh-CN', {
+      month: 'numeric',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
     })
   })
-  
-  const visitorData = sortedData.map(item => item.visitorCount)
-  const queueData = sortedData.map(item => item.queueLength)
-  const waitData = sortedData.map(item => item.waitingTime)
-  
+
+  const visitorData = sortedData.map((item) => item.visitorCount)
+  const queueData = sortedData.map((item) => item.queueLength)
+  const waitData = sortedData.map((item) => item.waitingTime)
+
   const option = {
     tooltip: {
-      trigger: 'axis'
+      trigger: 'axis',
     },
     legend: {
-      data: ['游客数量', '队列长度', '等待时间']
+      data: ['游客数量', '队列长度', '等待时间'],
     },
     grid: {
       left: '8%',
       right: '8%',
       bottom: '20%',
       top: '15%',
-      containLabel: true
+      containLabel: true,
     },
     xAxis: {
       type: 'category',
@@ -663,14 +649,14 @@ const updateChart = () => {
       axisLabel: {
         rotate: 45,
         interval: 0,
-        fontSize: 12
-      }
+        fontSize: 12,
+      },
     },
     yAxis: {
       type: 'value',
       axisLabel: {
-        fontSize: 12
-      }
+        fontSize: 12,
+      },
     },
     series: [
       {
@@ -680,8 +666,8 @@ const updateChart = () => {
         smooth: true,
         symbolSize: 6,
         lineStyle: {
-          width: 2
-        }
+          width: 2,
+        },
       },
       {
         name: '队列长度',
@@ -690,8 +676,8 @@ const updateChart = () => {
         smooth: true,
         symbolSize: 6,
         lineStyle: {
-          width: 2
-        }
+          width: 2,
+        },
       },
       {
         name: '等待时间',
@@ -700,12 +686,12 @@ const updateChart = () => {
         smooth: true,
         symbolSize: 6,
         lineStyle: {
-          width: 2
-        }
-      }
-    ]
+          width: 2,
+        },
+      },
+    ],
   }
-  
+
   chart.value.setOption(option)
 }
 
@@ -714,22 +700,19 @@ onMounted(() => {
   fetchRideRealTimeData()
   initChart()
   startOptimizedAutoRefresh()
-  
+
   // Set default date range to last 7 days
   const endDate = new Date()
   const startDate = new Date()
   startDate.setDate(startDate.getDate() - 7)
-  dateRange.value = [
-    startDate.toISOString().split('T')[0],
-    endDate.toISOString().split('T')[0]
-  ]
-  
+  dateRange.value = [startDate.toISOString().split('T')[0], endDate.toISOString().split('T')[0]]
+
   // Set chart date range (can be same as history data or different)
   chartDateRange.value = [
     startDate.toISOString().split('T')[0],
-    endDate.toISOString().split('T')[0]
+    endDate.toISOString().split('T')[0],
   ]
-  
+
   fetchHistoricalData()
 })
 
@@ -741,12 +724,15 @@ onUnmounted(() => {
 })
 
 // Watch for route changes
-watch(() => route.params.id, (newId) => {
-  if (newId) {
-    fetchRideRealTimeData()
-    fetchHistoricalData()
-  }
-})
+watch(
+  () => route.params.id,
+  (newId) => {
+    if (newId) {
+      fetchRideRealTimeData()
+      fetchHistoricalData()
+    }
+  },
+)
 
 // Watch for window resize to resize chart
 window.addEventListener('resize', () => {

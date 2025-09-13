@@ -195,7 +195,7 @@ const availableTeams = ref([
   { teamId: 4, teamName: '安全检查团队A', teamType: 0 }, // Inspector
   { teamId: 5, teamName: '安全检查团队B', teamType: 0 }, // Inspector
   { teamId: 6, teamName: '综合运维团队', teamType: 2 }, // Mixed
-  { teamId: 7, teamName: '应急响应团队', teamType: 2 } // Mixed
+  { teamId: 7, teamName: '应急响应团队', teamType: 2 }, // Mixed
 ])
 
 // 搜索参数
@@ -389,7 +389,7 @@ const getTeamTypeText = (teamType) => {
   const typeMap = {
     0: '检查团队',
     1: '维护团队',
-    2: '综合团队'
+    2: '综合团队',
   }
   return typeMap[teamType] || '未知类型'
 }

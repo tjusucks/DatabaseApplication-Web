@@ -52,9 +52,9 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import { getRide, getRideStats } from '@/api/facilities';
+import { ref, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { getRide, getRideStats } from '@/api/facilities'
 
 const route = useRoute()
 const router = useRouter()
@@ -64,9 +64,9 @@ const loading = ref(false)
 const dateRange = ref([new Date(), new Date()])
 
 const fetchFacilityDetail = async () => {
-  const id = route.params.id;
-  facilityDetail.value = await getRide(id);
-};
+  const id = route.params.id
+  facilityDetail.value = await getRide(id)
+}
 
 const fetchRideStats = async () => {
   loading.value = true

@@ -91,10 +91,10 @@ export const getTransactionTypeName = (type) => {
   // 处理字符串类型（后端返回的枚举字符串）
   if (typeof type === 'string') {
     const stringToNameMap = {
-      'Income': '收入',
-      'Expense': '支出',
-      'Refund': '退款',
-      'Transfer': '转账'
+      Income: '收入',
+      Expense: '支出',
+      Refund: '退款',
+      Transfer: '转账',
     }
     if (stringToNameMap[type]) {
       return stringToNameMap[type]
@@ -113,15 +113,19 @@ export const getTransactionTypeName = (type) => {
  */
 export const mapToBackendTransactionType = (unifiedType) => {
   // 收入类型统一映射为 TransactionType.Income (0)
-  if (unifiedType === UnifiedTransactionType.TICKET_SALES ||
-      unifiedType === UnifiedTransactionType.OTHER_INCOME) {
+  if (
+    unifiedType === UnifiedTransactionType.TICKET_SALES ||
+    unifiedType === UnifiedTransactionType.OTHER_INCOME
+  ) {
     return TransactionType.Income // 0
   }
 
   // 支出类型统一映射为 TransactionType.Expense (1)
-  if (unifiedType === UnifiedTransactionType.SALARY_PAYMENT ||
-      unifiedType === UnifiedTransactionType.MAINTENANCE ||
-      unifiedType === UnifiedTransactionType.OTHER_EXPENSE) {
+  if (
+    unifiedType === UnifiedTransactionType.SALARY_PAYMENT ||
+    unifiedType === UnifiedTransactionType.MAINTENANCE ||
+    unifiedType === UnifiedTransactionType.OTHER_EXPENSE
+  ) {
     return TransactionType.Expense // 1
   }
 

@@ -121,7 +121,12 @@
             prop="capacity"
             :rules="[{ required: true, message: '请输入容量', trigger: 'blur' }]"
           >
-            <el-input-number v-model="newFacility.capacity" :min="1" :max="1000" placeholder="请输入容量" />
+            <el-input-number
+              v-model="newFacility.capacity"
+              :min="1"
+              :max="1000"
+              placeholder="请输入容量"
+            />
           </el-form-item>
 
           <el-form-item
@@ -129,7 +134,12 @@
             prop="duration"
             :rules="[{ required: true, message: '请输入运行时长', trigger: 'blur' }]"
           >
-            <el-input-number v-model="newFacility.duration" :min="1" :max="3600" placeholder="请输入运行时长" />
+            <el-input-number
+              v-model="newFacility.duration"
+              :min="1"
+              :max="3600"
+              placeholder="请输入运行时长"
+            />
           </el-form-item>
 
           <el-form-item
@@ -137,7 +147,12 @@
             prop="heightLimitMin"
             :rules="[{ required: true, message: '请输入最低身高限制', trigger: 'blur' }]"
           >
-            <el-input-number v-model="newFacility.heightLimitMin" :min="50" :max="300" placeholder="请输入最低身高限制" />
+            <el-input-number
+              v-model="newFacility.heightLimitMin"
+              :min="50"
+              :max="300"
+              placeholder="请输入最低身高限制"
+            />
           </el-form-item>
 
           <el-form-item
@@ -145,7 +160,12 @@
             prop="heightLimitMax"
             :rules="[{ required: true, message: '请输入最高身高限制', trigger: 'blur' }]"
           >
-            <el-input-number v-model="newFacility.heightLimitMax" :min="50" :max="300" placeholder="请输入最高身高限制" />
+            <el-input-number
+              v-model="newFacility.heightLimitMax"
+              :min="50"
+              :max="300"
+              placeholder="请输入最高身高限制"
+            />
           </el-form-item>
 
           <el-form-item label="开放日期">
@@ -159,7 +179,11 @@
           </el-form-item>
 
           <el-form-item label="管理员ID">
-            <el-input-number v-model="newFacility.managerId" :min="1" placeholder="请输入管理员ID" />
+            <el-input-number
+              v-model="newFacility.managerId"
+              :min="1"
+              placeholder="请输入管理员ID"
+            />
           </el-form-item>
 
           <el-form-item label="设施描述">
@@ -184,20 +208,38 @@
       <el-dialog title="设施详情" v-model="isDetailDialogVisible" width="600px">
         <div class="facility-detail" v-if="selectedFacility">
           <el-descriptions :column="2" border>
-            <el-descriptions-item label="设施ID">{{ selectedFacility.rideId }}</el-descriptions-item>
-            <el-descriptions-item label="设施名称">{{ selectedFacility.rideName }}</el-descriptions-item>
-            <el-descriptions-item label="位置">{{ selectedFacility.location }}</el-descriptions-item>
+            <el-descriptions-item label="设施ID">{{
+              selectedFacility.rideId
+            }}</el-descriptions-item>
+            <el-descriptions-item label="设施名称">{{
+              selectedFacility.rideName
+            }}</el-descriptions-item>
+            <el-descriptions-item label="位置">{{
+              selectedFacility.location
+            }}</el-descriptions-item>
             <el-descriptions-item label="状态">
               <el-tag :type="getStatusType(selectedFacility.rideStatus)">
                 {{ getStatusText(selectedFacility.rideStatus) }}
               </el-tag>
             </el-descriptions-item>
-            <el-descriptions-item label="容量">{{ selectedFacility.capacity }} 人</el-descriptions-item>
-            <el-descriptions-item label="运行时长">{{ selectedFacility.duration }} 秒</el-descriptions-item>
-            <el-descriptions-item label="最低身高限制">{{ selectedFacility.heightLimitMin }} cm</el-descriptions-item>
-            <el-descriptions-item label="最高身高限制">{{ selectedFacility.heightLimitMax }} cm</el-descriptions-item>
+            <el-descriptions-item label="容量"
+              >{{ selectedFacility.capacity }} 人</el-descriptions-item
+            >
+            <el-descriptions-item label="运行时长"
+              >{{ selectedFacility.duration }} 秒</el-descriptions-item
+            >
+            <el-descriptions-item label="最低身高限制"
+              >{{ selectedFacility.heightLimitMin }} cm</el-descriptions-item
+            >
+            <el-descriptions-item label="最高身高限制"
+              >{{ selectedFacility.heightLimitMax }} cm</el-descriptions-item
+            >
             <el-descriptions-item label="开放日期" span="2">
-              {{ selectedFacility.openDate ? new Date(selectedFacility.openDate).toLocaleDateString() : '未设置' }}
+              {{
+                selectedFacility.openDate
+                  ? new Date(selectedFacility.openDate).toLocaleDateString()
+                  : '未设置'
+              }}
             </el-descriptions-item>
             <el-descriptions-item label="管理员" span="2">
               {{ selectedFacility.managerName || '未分配' }}
@@ -224,15 +266,27 @@
       <!-- 设施编辑弹窗 -->
       <el-dialog title="编辑设施" v-model="isEditDialogVisible" width="600px">
         <el-form :model="editFacilityForm" ref="editFacilityFormRef" label-width="120px">
-          <el-form-item label="设施名称" prop="rideName" :rules="[{ required: true, message: '请输入设施名称', trigger: 'blur' }]">
+          <el-form-item
+            label="设施名称"
+            prop="rideName"
+            :rules="[{ required: true, message: '请输入设施名称', trigger: 'blur' }]"
+          >
             <el-input v-model="editFacilityForm.rideName" placeholder="请输入设施名称" />
           </el-form-item>
 
-          <el-form-item label="位置" prop="location" :rules="[{ required: true, message: '请输入设施位置', trigger: 'blur' }]">
+          <el-form-item
+            label="位置"
+            prop="location"
+            :rules="[{ required: true, message: '请输入设施位置', trigger: 'blur' }]"
+          >
             <el-input v-model="editFacilityForm.location" placeholder="请输入设施位置" />
           </el-form-item>
 
-          <el-form-item label="设施状态" prop="rideStatus" :rules="[{ required: true, message: '请选择设施状态', trigger: 'change' }]">
+          <el-form-item
+            label="设施状态"
+            prop="rideStatus"
+            :rules="[{ required: true, message: '请选择设施状态', trigger: 'change' }]"
+          >
             <el-select v-model="editFacilityForm.rideStatus" placeholder="请选择设施状态">
               <el-option label="运营中" :value="0" />
               <el-option label="维护中" :value="1" />
@@ -241,20 +295,56 @@
             </el-select>
           </el-form-item>
 
-          <el-form-item label="容量" prop="capacity" :rules="[{ required: true, message: '请输入容量', trigger: 'blur' }]">
-            <el-input-number v-model="editFacilityForm.capacity" :min="1" :max="1000" placeholder="请输入容量" />
+          <el-form-item
+            label="容量"
+            prop="capacity"
+            :rules="[{ required: true, message: '请输入容量', trigger: 'blur' }]"
+          >
+            <el-input-number
+              v-model="editFacilityForm.capacity"
+              :min="1"
+              :max="1000"
+              placeholder="请输入容量"
+            />
           </el-form-item>
 
-          <el-form-item label="运行时长(秒)" prop="duration" :rules="[{ required: true, message: '请输入运行时长', trigger: 'blur' }]">
-            <el-input-number v-model="editFacilityForm.duration" :min="1" :max="3600" placeholder="请输入运行时长" />
+          <el-form-item
+            label="运行时长(秒)"
+            prop="duration"
+            :rules="[{ required: true, message: '请输入运行时长', trigger: 'blur' }]"
+          >
+            <el-input-number
+              v-model="editFacilityForm.duration"
+              :min="1"
+              :max="3600"
+              placeholder="请输入运行时长"
+            />
           </el-form-item>
 
-          <el-form-item label="最低身高限制(cm)" prop="heightLimitMin" :rules="[{ required: true, message: '请输入最低身高限制', trigger: 'blur' }]">
-            <el-input-number v-model="editFacilityForm.heightLimitMin" :min="50" :max="300" placeholder="请输入最低身高限制" />
+          <el-form-item
+            label="最低身高限制(cm)"
+            prop="heightLimitMin"
+            :rules="[{ required: true, message: '请输入最低身高限制', trigger: 'blur' }]"
+          >
+            <el-input-number
+              v-model="editFacilityForm.heightLimitMin"
+              :min="50"
+              :max="300"
+              placeholder="请输入最低身高限制"
+            />
           </el-form-item>
 
-          <el-form-item label="最高身高限制(cm)" prop="heightLimitMax" :rules="[{ required: true, message: '请输入最高身高限制', trigger: 'blur' }]">
-            <el-input-number v-model="editFacilityForm.heightLimitMax" :min="50" :max="300" placeholder="请输入最高身高限制" />
+          <el-form-item
+            label="最高身高限制(cm)"
+            prop="heightLimitMax"
+            :rules="[{ required: true, message: '请输入最高身高限制', trigger: 'blur' }]"
+          >
+            <el-input-number
+              v-model="editFacilityForm.heightLimitMax"
+              :min="50"
+              :max="300"
+              placeholder="请输入最高身高限制"
+            />
           </el-form-item>
 
           <el-form-item label="开放日期">
@@ -268,7 +358,11 @@
           </el-form-item>
 
           <el-form-item label="管理员ID">
-            <el-input-number v-model="editFacilityForm.managerId" :min="1" placeholder="请输入管理员ID" />
+            <el-input-number
+              v-model="editFacilityForm.managerId"
+              :min="1"
+              placeholder="请输入管理员ID"
+            />
           </el-form-item>
 
           <el-form-item label="设施描述">
@@ -284,7 +378,9 @@
         <template #footer>
           <div class="dialog-footer">
             <el-button @click="isEditDialogVisible = false">取 消</el-button>
-            <el-button type="primary" @click="saveEditFacility" :loading="editLoading">保 存</el-button>
+            <el-button type="primary" @click="saveEditFacility" :loading="editLoading"
+              >保 存</el-button
+            >
           </div>
         </template>
       </el-dialog>
@@ -622,20 +718,20 @@ const resetSearch = () => {
 
 const getStatusType = (status) => {
   const statusMap = {
-    0: 'success',  // Operating - 运营中
-    1: 'warning',  // Maintenance - 维护中
-    2: 'info',     // Closed - 已关闭
-    3: 'danger'    // Testing - 测试中
+    0: 'success', // Operating - 运营中
+    1: 'warning', // Maintenance - 维护中
+    2: 'info', // Closed - 已关闭
+    3: 'danger', // Testing - 测试中
   }
   return statusMap[status] || 'info'
 }
 
 const getStatusText = (status) => {
   const statusMap = {
-    0: '运营中',   // Operating
-    1: '维护中',   // Maintenance
-    2: '已关闭',   // Closed
-    3: '测试中'    // Testing
+    0: '运营中', // Operating
+    1: '维护中', // Maintenance
+    2: '已关闭', // Closed
+    3: '测试中', // Testing
   }
   return statusMap[status] || '未知'
 }
