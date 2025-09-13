@@ -246,10 +246,13 @@ const loadData = async () => {
     const response = await searchSalaryRecords(params)
 
     // 根据实际的API响应结构调整数据处理
-    if (response && response.data) {
-      payrollData.value = response.data.salaryRecords || response.data
-      pagination.total =
-        response.data.totalCount || (response.data.length ? response.data.length : 0)
+    if (response && response.salaryRecords) {
+      payrollData.value = response.salaryRecords
+      pagination.total = response.totalCount || 0
+    } else if (response && response.data && response.data.salaryRecords) {
+      // 兼容另一种可能的响应格式
+      payrollData.value = response.data.salaryRecords
+      pagination.total = response.data.totalCount || 0
     } else {
       payrollData.value = []
       pagination.total = 0

@@ -242,12 +242,7 @@ const fullMenuList = [
         icon: 'UserFilled',
         roles: ['Admin', 'Manager'],
       },
-      {
-        path: '/hr/payroll/generate',
-        title: '工资单生成',
-        icon: 'DocumentAdd',
-        roles: ['Admin', 'Manager'],
-      },
+
       {
         path: '/hr/payroll/records',
         title: '工资记录',

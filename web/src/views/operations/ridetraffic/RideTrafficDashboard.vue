@@ -122,11 +122,13 @@
           </el-table-column>
           <el-table-column prop="visitorCount" label="游客数量" width="100">
             <template #default="{ row }">
-              <el-tag 
+              <el-tag
                 :type="getVisitorCountTagType(row.visitorCount)"
                 :class="{
-                  'flash-increase': getItemChangeType(row.rideId, 'visitorCount', row.visitorCount) === 'increase',
-                  'flash-decrease': getItemChangeType(row.rideId, 'visitorCount', row.visitorCount) === 'decrease'
+                  'flash-increase':
+                    getItemChangeType(row.rideId, 'visitorCount', row.visitorCount) === 'increase',
+                  'flash-decrease':
+                    getItemChangeType(row.rideId, 'visitorCount', row.visitorCount) === 'decrease',
                 }"
               >
                 {{ row.visitorCount }}
@@ -135,10 +137,12 @@
           </el-table-column>
           <el-table-column prop="queueLength" label="队列长度" width="100">
             <template #default="{ row }">
-              <span 
+              <span
                 :class="{
-                  'flash-increase': getItemChangeType(row.rideId, 'queueLength', row.queueLength) === 'increase',
-                  'flash-decrease': getItemChangeType(row.rideId, 'queueLength', row.queueLength) === 'decrease'
+                  'flash-increase':
+                    getItemChangeType(row.rideId, 'queueLength', row.queueLength) === 'increase',
+                  'flash-decrease':
+                    getItemChangeType(row.rideId, 'queueLength', row.queueLength) === 'decrease',
                 }"
               >
                 {{ row.queueLength }}
@@ -147,11 +151,13 @@
           </el-table-column>
           <el-table-column prop="waitingTime" label="等待时间(分钟)" width="120">
             <template #default="{ row }">
-              <span 
+              <span
                 :class="{
                   'high-waiting': row.waitingTime > 30,
-                  'flash-increase': getItemChangeType(row.rideId, 'waitingTime', row.waitingTime) === 'increase',
-                  'flash-decrease': getItemChangeType(row.rideId, 'waitingTime', row.waitingTime) === 'decrease'
+                  'flash-increase':
+                    getItemChangeType(row.rideId, 'waitingTime', row.waitingTime) === 'increase',
+                  'flash-decrease':
+                    getItemChangeType(row.rideId, 'waitingTime', row.waitingTime) === 'decrease',
                 }"
               >
                 {{ row.waitingTime }}
@@ -160,11 +166,13 @@
           </el-table-column>
           <el-table-column label="拥挤状态" width="100">
             <template #default="{ row }">
-              <el-tag 
+              <el-tag
                 :type="row.isCrowded ? 'danger' : 'success'"
                 :class="{
-                  'flash-increase': getItemChangeType(row.rideId, 'isCrowded', row.isCrowded) === 'increase',
-                  'flash-decrease': getItemChangeType(row.rideId, 'isCrowded', row.isCrowded) === 'decrease'
+                  'flash-increase':
+                    getItemChangeType(row.rideId, 'isCrowded', row.isCrowded) === 'increase',
+                  'flash-decrease':
+                    getItemChangeType(row.rideId, 'isCrowded', row.isCrowded) === 'decrease',
                 }"
               >
                 {{ row.isCrowded ? '拥挤' : '正常' }}
@@ -278,7 +286,7 @@ const hasItemChanges = (rideId, field) => {
 const getItemChangeType = (rideId, field, currentValue) => {
   const changes = itemChanges.value[rideId]
   if (!changes || !changes[field]) return ''
-  
+
   const change = changes[field]
   if (change.from < change.to) return 'increase'
   if (change.from > change.to) return 'decrease'
@@ -405,51 +413,51 @@ const updateRealTimeStats = async () => {
       // 增量更新方式，避免整个数组替换导致的闪烁
       const newRides = response
       const currentRides = rides.value
-      
+
       // 创建一个新的数组来存储更新后的数据
       const updatedRides = []
-      
+
       // 处理每个新数据项
       for (let i = 0; i < newRides.length; i++) {
         const newRide = newRides[i]
-        
+
         // 查找对应的当前项
-        const currentIndex = currentRides.findIndex(ride => ride.rideId === newRide.rideId)
+        const currentIndex = currentRides.findIndex((ride) => ride.rideId === newRide.rideId)
         const currentRide = currentIndex >= 0 ? currentRides[currentIndex] : null
-        
+
         if (currentRide) {
           // 检查哪些字段发生了变化
           const changes = {}
           let hasChanges = false
-          
-          Object.keys(newRide).forEach(key => {
+
+          Object.keys(newRide).forEach((key) => {
             if (currentRide[key] !== newRide[key]) {
               changes[key] = {
                 from: currentRide[key],
-                to: newRide[key]
+                to: newRide[key],
               }
               hasChanges = true
             }
           })
-          
+
           // 如果有变化，更新当前项并标记变化
           if (hasChanges) {
             // 更新当前项的值
             Object.assign(currentRide, newRide)
-            
+
             // 记录变化用于动画
             itemChanges.value[newRide.rideId] = {
               ...changes,
-              timestamp: Date.now()
+              timestamp: Date.now(),
             }
-            
+
             // 清除变化标记（1秒后）
             setTimeout(() => {
               if (itemChanges.value[newRide.rideId]) {
                 delete itemChanges.value[newRide.rideId]
               }
             }, 1000)
-            
+
             updatedRides.push(currentRide)
           } else {
             // 没有变化，直接使用当前项
@@ -459,22 +467,22 @@ const updateRealTimeStats = async () => {
           // 新增项
           itemChanges.value[newRide.rideId] = {
             isNew: true,
-            timestamp: Date.now()
+            timestamp: Date.now(),
           }
-          
+
           setTimeout(() => {
             if (itemChanges.value[newRide.rideId]) {
               delete itemChanges.value[newRide.rideId]
             }
           }, 1000)
-          
-          updatedRides.push({...newRide})
+
+          updatedRides.push({ ...newRide })
         }
       }
-      
+
       // 更新引用而不是替换整个数组
       rides.value.splice(0, rides.value.length, ...updatedRides)
-      
+
       totalRides.value = newRides.length
       lastUpdate.value = new Date()
     }
