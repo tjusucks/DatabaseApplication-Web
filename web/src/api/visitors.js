@@ -235,3 +235,31 @@ export function updateVisitorBlacklistStatus(id, data) {
     return unblacklistVisitor(id)
   }
 }
+
+// ==================== 入园检票相关 API ====================
+
+/**
+ * 创建入园记录
+ * @param {Object} data - { visitorId, gateName, ticketId? }
+ */
+export function createEntry(data) {
+  return request({
+    url: '/api/user/visitors/entry',
+    method: 'post',
+    data,
+  })
+}
+
+/**
+ * 创建出园记录
+ * @param {Object} data - { visitorId, gateName }
+ */
+export function createExit(data) {
+  return request({
+    url: '/api/user/visitors/exit',
+    method: 'post',
+    data,
+  })
+}
+
+

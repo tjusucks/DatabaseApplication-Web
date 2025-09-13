@@ -63,6 +63,12 @@ const fullMenuList = [
         roles: ['Admin', 'Manager'],
       },
       {
+        path: '/tickets/entry',
+        title: '入园检票',
+        icon: 'Checked',
+        roles: ['Admin', 'Manager', 'Employee'],
+      },
+      {
         path: '/tickets/statistics',
         title: '销售统计',
         icon: 'TrendCharts',

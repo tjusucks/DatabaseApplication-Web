@@ -130,6 +130,7 @@ const getRouteNameFromPath = (path) => {
     '/tickets/types': 'TicketTypes',
     '/tickets/pricing': 'TicketPricing',
     '/tickets/sales': 'TicketSales',
+    '/tickets/entry': 'TicketEntry',
     '/tickets/statistics': 'TicketStatistics',
     '/dashboard': 'Dashboard',
     // 可以根据需要添加更多映射

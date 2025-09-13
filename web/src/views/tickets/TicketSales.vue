@@ -48,18 +48,16 @@ import { storeToRefs } from 'pinia'
 import PageTemplate from '@/components/PageTemplate.vue'
 import { ElMessage } from 'element-plus'
 
-// [最终修正] 同时导入 useTicketStore 和 useReservationStore
+// 导入 stores
 import { useTicketStore, useReservationStore } from '@/stores/tickets.js'
 
-// 1. 初始化两个需要的 store
+// 1. 初始化 stores
 const ticketStore = useTicketStore()
 const reservationStore = useReservationStore()
 
 // 2. 从各自的 store 中解构所需的状态和方法
 // 从 ticketStore 获取票种信息
-const { ticketTypes } = storeToRefs(ticketStore)
-// 从 reservationStore 获取销售方法
-const { createSale } = reservationStore // <-- 直接解构 action 是可以的，因为 Pinia 的 setup store 写法已经处理了 this 绑定
+const { ticketTypes, loadingTicketTypes } = storeToRefs(ticketStore)
 
 // 3. 本地状态
 const isSubmitting = ref(false)
@@ -96,8 +94,8 @@ const handleSubmit = async () => {
       isSubmitting.value = true
       const saleData = { ...saleForm, totalPrice: totalPrice.value }
 
-      // 调用从 reservationStore 中获取的 createSale 方法
-      const success = await createSale(saleData)
+      // 调用 reservationStore 的 createSale 方法
+      const success = await reservationStore.createSale(saleData)
 
       if (success) {
         resetForm()

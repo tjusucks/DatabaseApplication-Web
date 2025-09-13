@@ -8,7 +8,7 @@ import request from '@/utils/request'
  */
 export function createEntryRecord(data) {
   return request({
-    url: '/api/user/entries',
+    url: '/api/user/entries', // 添加/api前缀保持一致性
     method: 'post',
     data,
   })

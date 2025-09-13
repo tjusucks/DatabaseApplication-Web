@@ -34,6 +34,7 @@ class RoutePreloader {
       TicketTypes: () => import('@/views/tickets/TicketTypes.vue'),
       TicketPricing: () => import('@/views/tickets/TicketPricing.vue'),
       TicketSales: () => import('@/views/tickets/TicketSales.vue'),
+      TicketEntry: () => import('@/views/tickets/TicketEntry.vue'),
       TicketStatistics: () => import('@/views/tickets/TicketStatistics.vue'),
       Dashboard: () => import('@/views/dashboard/index.vue'),
       // 可以根据需要添加更多路由
