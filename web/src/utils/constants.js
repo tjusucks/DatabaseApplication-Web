@@ -52,38 +52,98 @@ const allTypeNames = {
 
 /**
  * 根据交易记录的来源 (source) 和类型 (transactionType) 获取其可读的中文名称。
+ * 注意：由于现在后端只接收基础类型（0-3），这个函数主要用于显示从不同来源获取的数据
  * @param {string} source - 记录的来源，如 'salary', 'maintenance', 'manual'。
- * @param {number} type - 记录的 `transactionType`。
+ * @param {number} type - 记录的 `transactionType`（可能是扩展类型或基础类型）。
  * @returns {string} - 返回对应的中文类型名称。
  */
 export const getSourceTypeName = (source, type) => {
-  // 业务来源优先
+  // 业务来源优先（这些通常来自其他系统，保持扩展类型用于显示）
   if (source === 'salary') return '工资发放'
   if (source === 'maintenance') return '设备维护'
   if (source === 'ticket') return '门票销售'
   if (source === 'refund') return '门票退款'
-  // 手动录入
+
+  // 手动录入的记录（这些会被映射为基础类型发送到后端）
   if (source === 'manual' || !source) {
-    // finance API 原始类型兼容
-    if (type === UnifiedTransactionType.OTHER_EXPENSE || type === 1) return '其他支出'
-    if (type === UnifiedTransactionType.OTHER_INCOME || type === 0) return '其他收入'
+    // 优先检查扩展类型（用于前端显示）
+    if (type === UnifiedTransactionType.OTHER_EXPENSE) return '其他支出'
+    if (type === UnifiedTransactionType.OTHER_INCOME) return '其他收入'
     if (type === UnifiedTransactionType.TICKET_REFUND) return '门票退款'
     if (type === UnifiedTransactionType.SALARY_PAYMENT) return '工资发放'
     if (type === UnifiedTransactionType.MAINTENANCE) return '设备维护'
+    if (type === UnifiedTransactionType.TICKET_SALES) return '门票销售'
+
+    // 兜底：映射基础类型（从后端返回的数据）
+    if (type === TransactionType.Income) return '收入'
+    if (type === TransactionType.Expense) return '支出'
+    if (type === TransactionType.Refund) return '退款'
+    if (type === TransactionType.Transfer) return '转账'
   }
-  // 兜底：映射 finance API 的原始类型
-  if (type === 0) return '收入'
-  if (type === 1) return '支出'
-  if (type === 2) return '退款'
-  if (type === 3) return '转账'
-  // 前端自定义类型
+
+  // 最终兜底
   return getTransactionTypeName(type)
 }
 
 export const getTransactionTypeName = (type) => {
   if (type === null || type === undefined) return '---'
+
+  // 处理字符串类型（后端返回的枚举字符串）
+  if (typeof type === 'string') {
+    const stringToNameMap = {
+      'Income': '收入',
+      'Expense': '支出',
+      'Refund': '退款',
+      'Transfer': '转账'
+    }
+    if (stringToNameMap[type]) {
+      return stringToNameMap[type]
+    }
+  }
+
   // 优先从 allTypeNames 中查找，如果找不到，再尝试从旧的 TransactionTypeNames 查找
   return allTypeNames[type] || TransactionTypeNames[type] || '未知类型'
+}
+
+/**
+ * 将前端扩展的UnifiedTransactionType映射为后端基础的TransactionType枚举值
+ * 这确保了前端发送给后端的transactionType值在数据库约束范围内（0-3）
+ * @param {number} unifiedType - 前端扩展的交易类型值
+ * @returns {number} 后端基础的TransactionType枚举值（0-3）
+ */
+export const mapToBackendTransactionType = (unifiedType) => {
+  // 收入类型统一映射为 TransactionType.Income (0)
+  if (unifiedType === UnifiedTransactionType.TICKET_SALES ||
+      unifiedType === UnifiedTransactionType.OTHER_INCOME) {
+    return TransactionType.Income // 0
+  }
+
+  // 支出类型统一映射为 TransactionType.Expense (1)
+  if (unifiedType === UnifiedTransactionType.SALARY_PAYMENT ||
+      unifiedType === UnifiedTransactionType.MAINTENANCE ||
+      unifiedType === UnifiedTransactionType.OTHER_EXPENSE) {
+    return TransactionType.Expense // 1
+  }
+
+  // 退款类型映射为 TransactionType.Refund (2)
+  if (unifiedType === UnifiedTransactionType.TICKET_REFUND) {
+    return TransactionType.Refund // 2
+  }
+
+  // 如果传入的已经是基础类型（0-3），直接返回
+  if (unifiedType >= 0 && unifiedType <= 3) {
+    return unifiedType
+  }
+
+  // 默认情况：如果无法识别，根据数值范围判断
+  if (unifiedType >= 10 && unifiedType <= 19) {
+    return TransactionType.Income // 收入类
+  } else if (unifiedType >= 20 && unifiedType <= 29) {
+    return TransactionType.Expense // 支出类
+  }
+
+  // 兜底：返回其他收入
+  return TransactionType.Income
 }
 
 /**

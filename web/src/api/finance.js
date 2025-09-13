@@ -32,7 +32,7 @@ export function createFinancialRecord(data) {
  */
 export function getFinancialRecordById(id) {
   return request({
-    url: '/api/resource/financial-records/${id}',
+    url: `/api/resource/financial-records/${id}`,
     method: 'get',
   })
 }
@@ -44,7 +44,7 @@ export function getFinancialRecordById(id) {
  */
 export function updateFinancialRecord(id, data) {
   return request({
-    url: '/api/resource/financial-records/${id}',
+    url: `/api/resource/financial-records/${id}`,
     method: 'put',
     data,
   })
@@ -56,7 +56,7 @@ export function updateFinancialRecord(id, data) {
  */
 export function deleteFinancialRecord(id) {
   return request({
-    url: '/api/resource/financial-records/${id}',
+    url: `/api/resource/financial-records/${id}`,
     method: 'delete',
   })
 }
@@ -106,7 +106,7 @@ export function getFinanceStats(params) {
  */
 export function getRecordsByType(transactionType, params) {
   return request({
-    url: '/api/resource/financial-records/by-type/${transactionType}',
+    url: `/api/resource/financial-records/by-type/${transactionType}`,
     method: 'get',
     params,
   })
@@ -216,7 +216,7 @@ export function processPayroll(data) {
  */
 export function searchMaintenanceRecords(query) {
   return request({
-    url: '/api/resource/maintenance-records/search',
+    url: '/api/resource/maintenance/search',
     method: 'get',
     params: query,
   })
@@ -228,7 +228,7 @@ export function searchMaintenanceRecords(query) {
  */
 export function createMaintenanceRecord(data) {
   return request({
-    url: '/api/resource/maintenance-records',
+    url: '/api/resource/maintenance',
     method: 'post',
     data,
   })
@@ -240,7 +240,7 @@ export function createMaintenanceRecord(data) {
  */
 export function getMaintenanceRecord(id) {
   return request({
-    url: '/api/resource/maintenance-records/${id}',
+    url: `/api/resource/maintenance/${id}`,
     method: 'get',
   })
 }
@@ -252,7 +252,7 @@ export function getMaintenanceRecord(id) {
  */
 export function updateMaintenanceRecord(id, data) {
   return request({
-    url: '/api/resource/maintenance-records/${id}',
+    url: `/api/resource/maintenance/${id}`,
     method: 'put',
     data,
   })
@@ -264,7 +264,7 @@ export function updateMaintenanceRecord(id, data) {
  */
 export function deleteMaintenanceRecord(id) {
   return request({
-    url: '/api/resource/maintenance-records/${id}',
+    url: `/api/resource/maintenance/${id}`,
     method: 'delete',
   })
 }
@@ -277,7 +277,7 @@ export function deleteMaintenanceRecord(id) {
  */
 export function searchTicketSales(query) {
   return request({
-    url: '/api/resource/tickets/search', // 假设这是票务搜索的端点
+    url: '/api/ticketing/tickets/sales/search', // 假设这是票务搜索的端点
     method: 'get',
     params: query,
   })
@@ -291,8 +291,32 @@ export function searchTicketSales(query) {
  */
 export function searchRefunds(query) {
   return request({
-    url: '/api/resource/refunds/search', // 假设这是退款搜索的端点
+    url: '/api/ticketing/refunds/search', // 假设这是退款搜索的端点
     method: 'get',
     params: query,
+  })
+}
+
+/**
+ * 获取票务销售统计信息
+ * @param {Object} params - 查询参数
+ */
+export function getTicketSalesStats(params) {
+  return request({
+    url: '/api/ticketing/tickets/sales/stats',
+    method: 'get',
+    params,
+  })
+}
+
+/**
+ * 获取分组的票务销售统计信息
+ * @param {Object} params - 查询参数，包括groupBy字段
+ */
+export function getTicketSalesGroupedStats(params) {
+  return request({
+    url: '/api/ticketing/tickets/sales/stats/grouped',
+    method: 'get',
+    params,
   })
 }

@@ -193,24 +193,21 @@ const compatibleRequest = function (config) {
   // 处理传统的 { url, method, data, params } 格式
   const { url, method = 'get', data, params, ...restConfig } = config
 
-  // 如果URL已经以/api开头，去掉这个前缀，因为service已经有baseURL: '/api'
-  const cleanUrl = url.startsWith('/api') ? url.substring(4) : url
-
   // 根据method调用对应的service方法
   switch (method.toLowerCase()) {
     case 'get':
-      return service.get(cleanUrl, { params, ...restConfig })
+      return service.get(url, { params, ...restConfig })
     case 'post':
-      return service.post(cleanUrl, data, restConfig)
+      return service.post(url, data, restConfig)
     case 'put':
-      return service.put(cleanUrl, data, restConfig)
+      return service.put(url, data, restConfig)
     case 'delete':
-      return service.delete(cleanUrl, restConfig)
+      return service.delete(url, restConfig)
     case 'patch':
-      return service.patch(cleanUrl, data, restConfig)
+      return service.patch(url, data, restConfig)
     default:
       // 对于默认情况，也需要处理URL
-      const cleanConfig = { ...config, url: cleanUrl }
+      const cleanConfig = { ...config, url: url }
       return service(cleanConfig)
   }
 }

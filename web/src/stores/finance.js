@@ -10,12 +10,18 @@ import {
   searchMaintenanceRecords,
   searchTicketSales, // 导入票务销售API
   searchRefunds, // 导入退款API
+  getTicketSalesStats, // 导入票务销售统计API
+  getTicketSalesGroupedStats, // 导入分组票务销售统计API
 } from '@/api/finance'
 
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
-import { UnifiedTransactionType, incomeTypeOptions } from '@/utils/constants'
+import {
+  UnifiedTransactionType,
+  TransactionType,
+  mapToBackendTransactionType
+} from '@/utils/constants'
 
 export const useFinanceStore = defineStore('finance', () => {
   // 统一的状态管理
@@ -116,7 +122,9 @@ export const useFinanceStore = defineStore('finance', () => {
     try {
       await createFinancialRecord(payload)
       ElMessage.success('新增成功！')
-      const isIncome = incomeTypeOptions.some((opt) => opt.value === payload.transactionType)
+      // 使用基础TransactionType枚举值判断是否为收入
+      // TransactionType.Income = 0
+      const isIncome = payload.transactionType === TransactionType.Income
       if (isIncome) {
         await fetchIncomes()
       } else {
@@ -124,7 +132,8 @@ export const useFinanceStore = defineStore('finance', () => {
       }
     } catch (error) {
       ElMessage.error(error.message || '新增失败')
-      const isIncome = incomeTypeOptions.some((opt) => opt.value === payload.transactionType)
+      // 使用基础TransactionType枚举值判断是否为收入
+      const isIncome = payload.transactionType === TransactionType.Income
       if (isIncome) {
         await fetchIncomes()
       } else {
@@ -138,7 +147,9 @@ export const useFinanceStore = defineStore('finance', () => {
     try {
       await updateFinancialRecord(id, payload)
       ElMessage.success('更新成功！')
-      const isIncome = incomeTypeOptions.some((opt) => opt.value === payload.transactionType)
+      // 使用基础TransactionType枚举值判断是否为收入
+      // TransactionType.Income = 0
+      const isIncome = payload.transactionType === TransactionType.Income
       if (isIncome) {
         await fetchIncomes()
       } else {
@@ -225,20 +236,21 @@ export const useFinanceStore = defineStore('finance', () => {
           pageSize,
           startDate: lastParams.value.startDate,
           endDate: lastParams.value.endDate,
-          status: 1, // TicketStatus.USED or similar status indicating completed sale
+          // Note: Removed 'status' parameter as it's not in the API specification
         }
         const response = await searchTicketSales(ticketQuery)
-        const ticketIncomes = response.tickets.map((t) => ({
+        const ticketSales = response?.ticketSales || []
+        const ticketIncomes = ticketSales.map((t) => ({
           recordId: `ticket-${t.ticketId}`,
           transactionType: UnifiedTransactionType.TICKET_SALES,
           amount: t.price,
           paymentMethod: t.paymentMethod, // 假设票务记录有支付方式
-          description: `门票销售 - ${t.ticketTypeName || '标准票'}`,
-          transactionDate: t.purchaseDate,
+          description: `门票销售 - ${t.ticketTypeName || t.ticketType || '标准票'}`,
+          transactionDate: t.purchaseDate || t.saleDate,
           source: 'ticket',
         }))
         allIncomes.push(...ticketIncomes)
-        totalCount += response.totalCount
+        totalCount += response?.totalCount || 0
       } catch (error) {
         ElMessage.error(error.message || `获取门票销售记录失败`)
       }
@@ -380,18 +392,52 @@ export const useFinanceStore = defineStore('finance', () => {
     pagination.value.total = totalCount
   }
 
-  const addIncome = (payload) =>
-    addRecord({
+  const addIncome = (payload) => {
+    // 将前端的扩展交易类型映射为后端基础类型
+    const backendTransactionType = mapToBackendTransactionType(
+      payload.transactionType || UnifiedTransactionType.OTHER_INCOME
+    )
+
+    return addRecord({
       ...payload,
-      transactionType: payload.transactionType || UnifiedTransactionType.OTHER_INCOME,
+      transactionType: backendTransactionType, // 使用映射后的基础类型（0-3）
     })
-  const addExpense = (payload) =>
-    addRecord({
+  }
+
+  const addExpense = (payload) => {
+    // 将前端的扩展交易类型映射为后端基础类型
+    const backendTransactionType = mapToBackendTransactionType(
+      payload.transactionType || UnifiedTransactionType.OTHER_EXPENSE
+    )
+
+    return addRecord({
       ...payload,
-      transactionType: payload.transactionType || UnifiedTransactionType.OTHER_EXPENSE,
+      transactionType: backendTransactionType, // 使用映射后的基础类型（0-3）
     })
-  const updateIncome = (id, payload) => updateRecord(id, { ...payload })
-  const updateExpense = (id, payload) => updateRecord(id, { ...payload })
+  }
+  const updateIncome = (id, payload) => {
+    // 将前端的扩展交易类型映射为后端基础类型
+    const backendTransactionType = payload.transactionType
+      ? mapToBackendTransactionType(payload.transactionType)
+      : undefined
+
+    return updateRecord(id, {
+      ...payload,
+      ...(backendTransactionType !== undefined && { transactionType: backendTransactionType })
+    })
+  }
+
+  const updateExpense = (id, payload) => {
+    // 将前端的扩展交易类型映射为后端基础类型
+    const backendTransactionType = payload.transactionType
+      ? mapToBackendTransactionType(payload.transactionType)
+      : undefined
+
+    return updateRecord(id, {
+      ...payload,
+      ...(backendTransactionType !== undefined && { transactionType: backendTransactionType })
+    })
+  }
   const deleteIncome = (id, source) => deleteRecord(id, source, true) // 传入 isIncome = true
   const deleteExpense = (id, source) => deleteRecord(id, source, false) // 传入 isIncome = false
 
@@ -488,6 +534,36 @@ export const useFinanceStore = defineStore('finance', () => {
     }
   }
 
+  /**
+   * 获取票务销售统计信息
+   * @param {Object} params - 查询参数
+   */
+  const fetchTicketSalesStats = async (params) => {
+    try {
+      const response = await getTicketSalesStats(params)
+      return response
+    } catch (error) {
+      console.error('获取票务销售统计失败:', error)
+      ElMessage.error('获取票务销售统计失败')
+      throw error
+    }
+  }
+
+  /**
+   * 获取分组的票务销售统计信息
+   * @param {Object} params - 查询参数，包括groupBy字段
+   */
+  const fetchTicketSalesGroupedStats = async (params) => {
+    try {
+      const response = await getTicketSalesGroupedStats(params)
+      return response
+    } catch (error) {
+      console.error('获取分组票务销售统计失败:', error)
+      ElMessage.error('获取分组票务销售统计失败')
+      throw error
+    }
+  }
+
   // 返回所有 state 和 actions
   return {
     incomes,
@@ -515,5 +591,7 @@ export const useFinanceStore = defineStore('finance', () => {
     fetchGroupedStats,
     fetchTrendDataByDay, // 修复：将 getDailyOverviewForTrend 重命名为 fetchTrendDataByDay
     fetchConsumptionRecords,
+    fetchTicketSalesStats,
+    fetchTicketSalesGroupedStats,
   }
 })
