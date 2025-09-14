@@ -320,7 +320,7 @@ export const useFinanceStore = defineStore('finance', () => {
           recordId: `payroll-${sr.salaryRecordId}`,
           transactionType: UnifiedTransactionType.SALARY_PAYMENT,
           amount: sr.salary,
-          paymentMethod: 2, // 假设为移动支付/银行转账
+          paymentMethod: sr.paymentMethod, // 假设为移动支付/银行转账
           description: `工资发放 - ${new Date(sr.payDate).toLocaleDateString()}`,
           transactionDate: sr.payDate,
           source: 'salary',

@@ -19,9 +19,21 @@
 
     <!-- 数据统计卡片 -->
     <div class="stats-section">
+      <div class="stats-header">
+        <h3>数据概览</h3>
+        <el-button
+          type="primary"
+          :icon="loading ? 'Loading' : 'Refresh'"
+          :loading="loading"
+          @click="refreshData"
+          size="small"
+        >
+          刷新数据
+        </el-button>
+      </div>
       <el-row :gutter="20">
         <el-col :xs="24" :sm="12" :md="6" v-for="stat in statsData" :key="stat.title">
-          <el-card class="stat-card" :class="stat.type">
+          <el-card class="stat-card" :class="stat.type" v-loading="loading">
             <div class="stat-content">
               <div class="stat-icon">
                 <el-icon :size="32">
@@ -47,16 +59,16 @@
 
     <!-- 图表和快捷操作 -->
     <el-row :gutter="20" class="content-section">
-      <!-- 图表区域 -->
-      <el-col :xs="24" :lg="16">
-        <el-card title="数据概览" class="chart-card">
-          <div class="chart-container">
-            <div class="chart-placeholder">
-              <el-icon size="64" color="#ddd"><TrendCharts /></el-icon>
-              <p>图表功能开发中...</p>
-            </div>
-          </div>
-        </el-card>
+      <!-- 地图区域 -->
+      <el-col :xs="24" :lg="16" class="map-column">
+        <div class="map-container">
+          <img
+            src="@/assets/map.jpeg"
+            alt="游乐园地图"
+            class="park-map-image"
+            @error="handleImageError"
+          />
+        </div>
       </el-col>
 
       <!-- 快捷操作 -->
@@ -102,6 +114,13 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { ElMessage } from 'element-plus'
+// 导入API函数
+import { getVisitorStats } from '@/api/visitors'
+import { getFinanceOverview } from '@/api/finance'
+import { getRideStats } from '@/api/facilities'
+import { getEmployees } from '@/api/hr'
+import { getEntryRecordStats } from '@/api/entryRecords'
+import { getTicketSalesStats } from '@/api/ticket'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -116,41 +135,217 @@ const currentDate = computed(() => {
   })
 })
 
+// 加载状态
+const loading = ref(true)
+
 // 统计数据
 const statsData = ref([
   {
     title: '今日游客',
-    value: '1,234',
-    change: '+12.5%',
+    value: '加载中...',
+    change: '--',
     trend: 'up',
     icon: 'User',
     type: 'primary',
   },
   {
     title: '今日收入',
-    value: '¥45,678',
-    change: '+8.2%',
+    value: '加载中...',
+    change: '--',
     trend: 'up',
     icon: 'Money',
     type: 'success',
   },
   {
     title: '设施运行',
-    value: '28/30',
-    change: '-2',
-    trend: 'down',
+    value: '加载中...',
+    change: '--',
+    trend: 'up',
     icon: 'OfficeBuilding',
     type: 'warning',
   },
   {
     title: '员工在岗',
-    value: '156',
-    change: '+3',
+    value: '加载中...',
+    change: '--',
     trend: 'up',
     icon: 'Avatar',
     type: 'info',
   },
 ])
+
+// 获取今日日期范围
+const getTodayDateRange = () => {
+  const today = new Date()
+  const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate())
+  const todayEnd = new Date(todayStart.getTime() + 24 * 60 * 60 * 1000 - 1)
+
+  return {
+    startDate: todayStart.toISOString(),
+    endDate: todayEnd.toISOString(),
+    entryTimeStart: todayStart.toISOString(),
+    entryTimeEnd: todayEnd.toISOString()
+  }
+}
+
+// 获取昨日日期范围
+const getYesterdayDateRange = () => {
+  const yesterday = new Date()
+  yesterday.setDate(yesterday.getDate() - 1)
+  const yesterdayStart = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate())
+  const yesterdayEnd = new Date(yesterdayStart.getTime() + 24 * 60 * 60 * 1000 - 1)
+
+  return {
+    entryTimeStart: yesterdayStart.toISOString(),
+    entryTimeEnd: yesterdayEnd.toISOString()
+  }
+}
+
+// 格式化数字
+const formatNumber = (num) => {
+  if (num === null || num === undefined) return '0'
+  return num.toLocaleString('zh-CN')
+}
+
+// 格式化货币
+const formatCurrency = (amount) => {
+  if (amount === null || amount === undefined) return '¥0'
+  return `¥${amount.toLocaleString('zh-CN')}`
+}
+
+// 计算变化趋势
+const calculateTrend = (current, previous) => {
+  if (!previous || previous === 0) return { change: '--', trend: 'up' }
+  const changePercent = ((current - previous) / previous * 100).toFixed(1)
+  return {
+    change: `${changePercent > 0 ? '+' : ''}${changePercent}%`,
+    trend: changePercent >= 0 ? 'up' : 'down'
+  }
+}
+
+// 加载统计数据
+const loadDashboardStats = async () => {
+  loading.value = true
+  const dateRange = getTodayDateRange()
+  const yesterdayRange = getYesterdayDateRange()
+
+  try {
+    // 并行获取所有统计数据
+    const [
+      todayEntryStatsResult,
+      yesterdayEntryStatsResult,
+      financeStatsResult,
+      facilityStatsResult,
+      employeeStatsResult,
+      ticketStatsResult
+    ] = await Promise.allSettled([
+      getEntryRecordStats({ entryTimeStart: dateRange.entryTimeStart, entryTimeEnd: dateRange.entryTimeEnd }),
+      getEntryRecordStats({ entryTimeStart: yesterdayRange.entryTimeStart, entryTimeEnd: yesterdayRange.entryTimeEnd }),
+      getFinanceOverview(dateRange),
+      getRideStats(),
+      getEmployees({ isActive: true }),
+      getTicketSalesStats(dateRange)
+    ])
+
+    // 处理今日游客数据
+    if (todayEntryStatsResult.status === 'fulfilled' && todayEntryStatsResult.value) {
+      const todayVisitors = todayEntryStatsResult.value.totalEntries || 0
+
+      // 获取昨日数据用于趋势对比
+      let yesterdayVisitors = 0
+      if (yesterdayEntryStatsResult.status === 'fulfilled' && yesterdayEntryStatsResult.value) {
+        yesterdayVisitors = yesterdayEntryStatsResult.value.totalEntries || 0
+      }
+
+      const trend = calculateTrend(todayVisitors, yesterdayVisitors)
+
+      statsData.value[0] = {
+        ...statsData.value[0],
+        value: formatNumber(todayVisitors),
+        change: trend.change,
+        trend: trend.trend
+      }
+    } else {
+      statsData.value[0] = { ...statsData.value[0], value: '0', change: '--' }
+    }
+
+    // 处理今日收入数据
+    if (financeStatsResult.status === 'fulfilled' && financeStatsResult.value) {
+      const todayIncome = financeStatsResult.value.totalIncome || 0
+      const yesterdayIncome = financeStatsResult.value.previousIncome || 0
+      const trend = calculateTrend(todayIncome, yesterdayIncome)
+
+      statsData.value[1] = {
+        ...statsData.value[1],
+        value: formatCurrency(todayIncome),
+        change: trend.change,
+        trend: trend.trend
+      }
+    } else if (ticketStatsResult.status === 'fulfilled' && ticketStatsResult.value) {
+      // 如果财务API失败，尝试使用票务销售数据
+      const todayIncome = ticketStatsResult.value.totalAmount || 0
+      const yesterdayIncome = ticketStatsResult.value.previousAmount || 0
+      const trend = calculateTrend(todayIncome, yesterdayIncome)
+
+      statsData.value[1] = {
+        ...statsData.value[1],
+        value: formatCurrency(todayIncome),
+        change: trend.change,
+        trend: trend.trend
+      }
+    } else {
+      statsData.value[1] = { ...statsData.value[1], value: '¥0', change: '--' }
+    }
+
+    // 处理设施运行数据
+    if (facilityStatsResult.status === 'fulfilled' && facilityStatsResult.value) {
+      const totalFacilities = facilityStatsResult.value.totalCount || 0
+      const activeFacilities = facilityStatsResult.value.activeCount || 0
+      const previousActive = facilityStatsResult.value.previousActiveCount || activeFacilities
+      const change = activeFacilities - previousActive
+
+      statsData.value[2] = {
+        ...statsData.value[2],
+        value: `${activeFacilities}/${totalFacilities}`,
+        change: change > 0 ? `+${change}` : change.toString(),
+        trend: change >= 0 ? 'up' : 'down'
+      }
+    } else {
+      statsData.value[2] = { ...statsData.value[2], value: '0/0', change: '--' }
+    }
+
+    // 处理员工在岗数据
+    if (employeeStatsResult.status === 'fulfilled' && employeeStatsResult.value) {
+      const onDutyEmployees = employeeStatsResult.value.totalCount || 0
+      const previousOnDuty = employeeStatsResult.value.previousCount || onDutyEmployees
+      const change = onDutyEmployees - previousOnDuty
+
+      statsData.value[3] = {
+        ...statsData.value[3],
+        value: formatNumber(onDutyEmployees),
+        change: change > 0 ? `+${change}` : change.toString(),
+        trend: change >= 0 ? 'up' : 'down'
+      }
+    } else {
+      statsData.value[3] = { ...statsData.value[3], value: '0', change: '--' }
+    }
+
+  } catch (error) {
+    console.error('加载仪表板统计数据失败:', error)
+    ElMessage.error('加载统计数据失败，请稍后重试')
+
+    // 设置默认值
+    statsData.value.forEach((stat, index) => {
+      statsData.value[index] = {
+        ...stat,
+        value: index === 1 ? '¥0' : (index === 2 ? '0/0' : '0'),
+        change: '--'
+      }
+    })
+  } finally {
+    loading.value = false
+  }
+}
 
 // 快捷操作
 const quickActions = computed(() => {
@@ -236,10 +431,21 @@ const handleQuickAction = (action) => {
   }
 }
 
+// 刷新数据
+const refreshData = async () => {
+  await loadDashboardStats()
+  ElMessage.success('数据已刷新')
+}
+
 // 组件挂载时获取数据
-onMounted(() => {
-  // 这里可以调用 API 获取实际的统计数据
+onMounted(async () => {
   console.log('Dashboard mounted, loading data...')
+  await loadDashboardStats()
+
+  // 设置定时刷新（每5分钟）
+  setInterval(() => {
+    loadDashboardStats()
+  }, 5 * 60 * 1000)
 })
 </script>
 
@@ -281,6 +487,20 @@ onMounted(() => {
 
 .stats-section {
   margin-bottom: 20px;
+}
+
+.stats-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.stats-header h3 {
+  margin: 0;
+  color: #303133;
+  font-size: 18px;
+  font-weight: 600;
 }
 
 .stat-card {
@@ -369,25 +589,36 @@ onMounted(() => {
   margin-bottom: 20px;
 }
 
-.chart-card {
+.map-column {
   margin-bottom: 20px;
 }
 
-.chart-container {
-  height: 300px;
+.map-container {
+  width: 100%;
+  height: 400px; /* 设置固定高度以充分利用空间 */
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
 }
 
-.chart-placeholder {
-  text-align: center;
-  color: #909399;
+.park-map-image {
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+  object-fit: cover; /* 改为cover以填满容器 */
 }
 
-.chart-placeholder p {
-  margin-top: 16px;
-  font-size: 16px;
+.park-map-image:hover {
+  transform: scale(1.02);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
 }
 
 .quick-actions-card {
@@ -461,6 +692,18 @@ onMounted(() => {
 
   .stat-icon {
     margin-right: 0;
+  }
+
+  .map-container {
+    height: 300px; /* 移动端稍微降低高度 */
+    padding: 15px;
+  }
+}
+
+/* 大屏幕优化 */
+@media (min-width: 1200px) {
+  .map-container {
+    height: 450px; /* 大屏幕增加高度 */
   }
 }
 </style>

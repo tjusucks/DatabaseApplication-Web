@@ -190,12 +190,7 @@ const fullMenuList = [
     icon: 'DataAnalysis',
     roles: ['Admin', 'Manager'],
     children: [
-      {
-        path: '/operations/analytics',
-        title: '数据统计',
-        icon: 'PieChart',
-        roles: ['Admin', 'Manager'],
-      },
+
       {
         path: '/operations/ridetraffic',
         title: '流量监控',
