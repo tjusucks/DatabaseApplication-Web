@@ -45,7 +45,7 @@ const FacilityMonitoring = () => import('@/views/facilities/FacilityMonitoring.v
 const MaintenanceRecords = () => import('@/views/maintenance/MaintenanceRecords.vue')
 const MaintenanceSchedule = () => import('@/views/maintenance/MaintenanceSchedule.vue')
 const SafetyInspections = () => import('@/views/safety/SafetyInspections.vue')
-const OperationsAnalytics = () => import('@/views/operations/OperationsAnalytics.vue')
+
 
 // 财务管理模块
 const FinanceIncome = () => import('@/views/finance/FinanceIncome.vue')
@@ -419,14 +419,7 @@ const routes = [
     component: Layout,
     meta: { requiresAuth: true },
     children: [
-      {
-        path: 'analytics',
-        name: 'OperationsAnalytics',
-        component: OperationsAnalytics,
-        meta: {
-          title: '运营分析',
-        },
-      },
+
       {
         path: 'ridetraffic',
         name: 'RideTrafficDashboard',
