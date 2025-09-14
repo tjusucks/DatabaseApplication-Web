@@ -47,16 +47,16 @@
 
     <!-- 图表和快捷操作 -->
     <el-row :gutter="20" class="content-section">
-      <!-- 图表区域 -->
-      <el-col :xs="24" :lg="16">
-        <el-card title="数据概览" class="chart-card">
-          <div class="chart-container">
-            <div class="chart-placeholder">
-              <el-icon size="64" color="#ddd"><TrendCharts /></el-icon>
-              <p>图表功能开发中...</p>
-            </div>
-          </div>
-        </el-card>
+      <!-- 地图区域 -->
+      <el-col :xs="24" :lg="16" class="map-column">
+        <div class="map-container">
+          <img
+            src="@/assets/map.jpeg"
+            alt="游乐园地图"
+            class="park-map-image"
+            @error="handleImageError"
+          />
+        </div>
       </el-col>
 
       <!-- 快捷操作 -->
@@ -369,25 +369,36 @@ onMounted(() => {
   margin-bottom: 20px;
 }
 
-.chart-card {
+.map-column {
   margin-bottom: 20px;
 }
 
-.chart-container {
-  height: 300px;
+.map-container {
+  width: 100%;
+  height: 400px; /* 设置固定高度以充分利用空间 */
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
 }
 
-.chart-placeholder {
-  text-align: center;
-  color: #909399;
+.park-map-image {
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+  object-fit: cover; /* 改为cover以填满容器 */
 }
 
-.chart-placeholder p {
-  margin-top: 16px;
-  font-size: 16px;
+.park-map-image:hover {
+  transform: scale(1.02);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
 }
 
 .quick-actions-card {
@@ -461,6 +472,18 @@ onMounted(() => {
 
   .stat-icon {
     margin-right: 0;
+  }
+
+  .map-container {
+    height: 300px; /* 移动端稍微降低高度 */
+    padding: 15px;
+  }
+}
+
+/* 大屏幕优化 */
+@media (min-width: 1200px) {
+  .map-container {
+    height: 450px; /* 大屏幕增加高度 */
   }
 }
 </style>
